@@ -2704,9 +2704,22 @@ namespace Walkabout
                 }
                 else if (view.ActiveSecurity != null)
                 {
-                    this.securitiesControl.Selected = view.ActiveSecurity;
+                    var s = view.ActiveSecurity;
+                    this.securitiesControl.Selected = s;
                     this.toolBox.Selected = this.securitiesControl;
                     this.StockGraph.Generator = null; // wait for stock history to load.
+
+                    // Async load of security info.
+                    var mgr = (StockQuoteManager)this.quotes;
+                    if (mgr != null)
+                    {
+                        mgr.HistoryAvailable -= this.OnStockHistoryAvailable;
+                        mgr.HistoryAvailable += this.OnStockHistoryAvailable;
+                        if (!string.IsNullOrEmpty(s.Symbol))
+                        {
+                            mgr.BeginDownloadHistory(s.Symbol);
+                        }
+                    }
                 }
 
             }
@@ -2728,6 +2741,101 @@ namespace Walkabout
             //
             this.UpdateCaption(this.CurrentView.Caption);
 
+        }
+
+        private void OnStockHistoryAvailable(object sender, StockQuoteHistory e)
+        {
+            if (this.CurrentView is TransactionsView view)
+            {
+                var security = view.ActiveSecurity;
+                if (security != null && e != null && security.Symbol == e.Symbol)
+                {
+                    TransactionCollection tc = view.TheActiveGrid.ItemsSource as TransactionCollection;
+                    if (tc != null)
+                    {
+                        this.FillInMissingUnitPrices(view, security, tc.GetOriginalTransactions());
+                    }
+                }
+            }
+        }
+
+        private async void FillInMissingUnitPrices(TransactionsView view, Security security, IEnumerable<Transaction> transactions)
+        {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
+            {
+#endif
+            StockQuoteManager manager = (StockQuoteManager)this.quotes;
+            StockQuoteHistory history = await manager.GetCachedHistory(security.Symbol);
+            if (history != null)
+            {
+                List<StockQuote> sorted = history.GetSorted();
+
+                if (sorted.Count == 0)
+                {
+                    // there's nothing in the history list 
+                    return;
+                }
+
+                // Ok, so the list of transactions should all be investments related to this security and 
+                // we have a stock quote history which can be used to fill in any missing details on the
+                // UnitPrices associated with this stock (for example, Dividends may be missing UnitPrice).
+                int pos = 0;
+                bool changed = false;
+                try
+                {
+                    this.myMoney.BeginUpdate(this);
+                    StockQuote quote = sorted[0];
+                    foreach (Transaction t in transactions)
+                    {
+                        Investment i = t.Investment;
+                        if (i != null && i.Security == security)
+                        {
+                            while (pos < sorted.Count)
+                            {
+                                StockQuote nextQuote = sorted[pos];
+                                if (nextQuote.Date > t.Date)
+                                {
+                                    break;
+                                }
+                                quote = nextQuote;
+                                pos++;
+                            }
+                            if (t.Date >= quote.Date)
+                            {
+                                if (i.UnitPrice == 0)
+                                {
+                                    i.UnitPrice = quote.Close;
+                                    changed = true;
+                                }
+                                else if (i.UnitPrice != quote.Close)
+                                {
+                                    if (i.TradeType == InvestmentTradeType.Buy || i.TradeType == InvestmentTradeType.Sell)
+                                    {
+                                        // normal for this to be a bit different, should we do a a sanity check though?
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine(string.Format("{0}: {1} close price {2} on {3} didn't match our transaction at {4} UnitPrice {5}",
+                                            t.Account.Name, security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    this.myMoney.EndUpdate();
+                }
+                if (changed && view.ActiveSecurity == security)
+                {
+                    view.RefreshViewBySecurity(security, view.SelectedRowId);
+                }
+            }
+#if PerformanceBlocks
+            }
+#endif
         }
 
         private void RestorePreviouslySavedSelection(IView view, long selectedRowId)

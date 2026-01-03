@@ -1,1010 +1,1012 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SampleData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  
-  <Accounts>
-    <SampleAccount Name="AMEX" Type="Credit" Frequency="801" />
-    <SampleAccount Name="BECU Checking" Type="Checking" Frequency="2234" />
-    <SampleAccount Name="BECU Savings" Type="Savings" Frequency="74" />
-    <SampleAccount Name="Visa" Type="Credit" Frequency="450" />
-    <SampleAccount Name="Discover Card" Type="Credit" Frequency="2163" />
-    <SampleAccount Name="Ameritrade" Type="Brokerage" Frequency="10" />
-    <SampleAccount Name="Fidelity" Type="Brokerage" TaxStatus="TaxDeferred" Frequency="10" />
-    <SampleAccount Name="Fidelity IRA" Type="Brokerage" TaxStatus="TaxFree" Frequency="10" />
-  </Accounts>
 
-  <Securities>
-      <SampleSecurity Symbol="MSFT" Name="Microsoft corp" SecurityType="Equity" >
-          <Split Date="2003-02-18" Numerator="2" Denominator="1"/>
-          <Split Date="1999-03-29" Numerator="2" Denominator="1"/>
-          <Split Date="1998-02-23" Numerator="2" Denominator="1"/>
-          <Split Date="1996-12-09" Numerator="2" Denominator="1"/>
-          <Split Date="1996-05-23" Numerator="2" Denominator="1"/>
-          <Split Date="1992-06-15" Numerator="3" Denominator="2"/>
-          <Split Date="1991-06-27" Numerator="3" Denominator="2"/>
-          <Split Date="1990-04-16" Numerator="2" Denominator="1"/>
-          <Split Date="1987-09-21" Numerator="2" Denominator="1"/>
-      </SampleSecurity>
-      <SampleSecurity Symbol="AAPL" Name="Apple Corp" SecurityType="Equity">
-          <Split Date="2020-08-31" Numerator="4" Denominator="1"/>
-          <Split Date="2014-06-09" Numerator="7" Denominator="1"/>
-          <Split Date="2005-02-28" Numerator="2" Denominator="1"/>
-          <Split Date="2000-06-21" Numerator="2" Denominator="1"/>
-          <Split Date="1987-06-16" Numerator="2" Denominator="1"/>
-      </SampleSecurity>
-      <SampleSecurity Symbol="GOOG" Name="Google" SecurityType="Equity"/>
-      <SampleSecurity Symbol="IBM" Name="IBM Corp" SecurityType="Equity">
-          <Split Date="1999-05-27" Numerator="2" Denominator="1"/>
-          <Split Date="1997-05-28" Numerator="2" Denominator="1"/>
-      </SampleSecurity>
-      <SampleSecurity Symbol="F" Name="Ford" SecurityType="Equity">
-          <Split Date="1994-06-06" Numerator="2" Denominator="1"/>
-      </SampleSecurity>
-      <SampleSecurity Symbol="GLD" Name="Gold Index" SecurityType="MutualFund"/>
-      <SampleSecurity Symbol="VWEHX" Name="Vanguard High Yield Corporate Inv" SecurityType="MutualFund"/>
-  </Securities> 
-    
-  <Payees>
-    <SamplePayee Name="Sprint PCS" Frequency="66" Type="Check">
-      <Categories>
-        <SampleCategory Name="Telephone:Mobile Phone" Type="Expense" Frequency="66" Average="-107" Min="-275" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    
-    <SamplePayee Name="Costco Gas" Frequency="316" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="260" Average="-40" Min="-76" Max="-12" />
-        <SampleCategory Name="Auto:Fuel:Mazda" Type="Expense" Frequency="1" Average="-29" Min="-29" Max="-29" />
-        <SampleCategory Name="Travel:Fuel" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-        <SampleCategory Name="Auto:Fuel:XC70" Type="Expense" Frequency="9" Average="-39" Min="-46" Max="-30" />
-        <SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="43" Average="-31" Min="-46" Max="-16" />
-        <SampleCategory Name="Travel:Auto" Type="Expense" Frequency="2" Average="-23" Min="-25" Max="-20" />
-      </Categories>
-    </SamplePayee>
-    
-    <SamplePayee Name="Garlic Jims Famous Gourmet Pizza" Frequency="66" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="64" Average="-27" Min="-56" Max="-11" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-20" Min="-24" Max="-15" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Veterinary Hostpital" Frequency="13" Type="Check">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="13" Average="-82" Min="-222" Max="-11" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Safeway" Frequency="762" Type="Debit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="527" Average="-33" Min="-199" Max="0" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="138" Average="-7" Min="-79" Max="0" />
-        <SampleCategory Name="Fun:Parties" Type="Expense" Frequency="2" Average="-25" Min="-40" Max="-9" />
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="59" Average="-10" Min="-51" Max="-1" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-15" Min="-15" Max="-15" />
-        <SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="2" Average="-11" Min="-14" Max="-9" />
-        <SampleCategory Name="Gifts:Allowance" Type="Expense" Frequency="2" Average="-26" Min="-32" Max="-20" />
-        <SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
-        <SampleCategory Name="Fun:Video Rental" Type="Expense" Frequency="10" Average="-5" Min="-16" Max="-3" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="4" Average="-7" Min="-16" Max="-3" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="3" Average="-10" Min="-15" Max="-5" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-17" Min="-20" Max="-13" />
-        <SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="2" Average="-36" Min="-40" Max="-32" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Household:Photography" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="World Market" Frequency="15" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="15" Average="-31" Min="-100" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="AAA" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Auto:AAA Membership" Type="Expense" Frequency="6" Average="-71" Min="-86" Max="-13" />
-        <SampleCategory Name="Travel:Gear" Type="Expense" Frequency="2" Average="-207" Min="-242" Max="-171" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-89" Min="-89" Max="-89" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Travel:Government Fees" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Education:Geography" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Radio Shack" Frequency="49" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="39" Average="-33" Min="-199" Max="27" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-51" Min="-108" Max="54" />
-        <SampleCategory Name="Household:Batteries" Type="Expense" Frequency="2" Average="-19" Min="-21" Max="-16" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="-11" Min="-37" Max="13" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Costco" Frequency="324" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="93" Average="-7" Min="-21" Max="0" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="155" Average="-119" Min="-693" Max="12" />
-        <SampleCategory Name="Split" Type="None" Frequency="1" Average="-350" Min="-350" Max="-350" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="10" Average="-3" Min="-12" Max="-1" />
-        <SampleCategory Name="Sports:Swimming" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="5" Average="41" Min="-64" Max="98" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="4" Average="-65" Min="-136" Max="-23" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="2" Average="-19" Min="-32" Max="-6" />
-        <SampleCategory Name="Household:Refunds" Type="Expense" Frequency="2" Average="347" Min="20" Max="674" />
-        <SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-376" Min="-376" Max="-376" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="5" Average="394" Min="-307" Max="870" />
-        <SampleCategory Name="Travel:Passports" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Travel" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="3" Average="-120" Min="-204" Max="-73" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="3" Average="29" Min="18" Max="43" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-        <SampleCategory Name="Household:Memberships" Type="Expense" Frequency="7" Average="-83" Min="-100" Max="-41" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="53" Min="53" Max="53" />
-        <SampleCategory Name="Savings:Rebates" Type="Savings" Frequency="4" Average="458" Min="20" Max="642" />
-        <SampleCategory Name="Wages &amp; Salary:Taxes:Preparation" Type="Income" Frequency="1" Average="45" Min="45" Max="45" />
-        <SampleCategory Name="Household:Tools" Type="Expense" Frequency="2" Average="-68" Min="-158" Max="21" />
-        <SampleCategory Name="Medical:Eye" Type="Expense" Frequency="2" Average="-18" Min="-18" Max="-18" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="107" Min="107" Max="107" />
-        <SampleCategory Name="Home:Improvement" Type="Expense" Frequency="1" Average="-4621" Min="-4621" Max="-4621" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="4" Average="-534" Min="-2243" Max="236" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="13" Min="-559" Max="537" />
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="23" Min="23" Max="23" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-527" Min="-527" Max="-527" />
-        <SampleCategory Name="Medical:Supplies" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
-        <SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="5" Average="-32" Min="-40" Max="-13" />
-        <SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="65" Min="65" Max="65" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Rite Aid" Frequency="23" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="7" Average="-24" Min="-44" Max="-5" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="8" Average="-20" Min="-46" Max="-4" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-5" Min="-6" Max="-4" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
-        <SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Starbucks" Frequency="85" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="63" Average="-29" Min="-108" Max="-1" />
-        <SampleCategory Name="Food:Breakfast" Type="Expense" Frequency="14" Average="-83" Min="-108" Max="-5" />
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="2" Average="-9" Min="-17" Max="-1" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-67" Min="-105" Max="-15" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="GTC Telecom" Frequency="104" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Telephone" Type="Expense" Frequency="104" Average="-16" Min="-98" Max="-2" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="ARCO" Frequency="166" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Auto:Fuel:XC70" Type="Expense" Frequency="87" Average="-40" Min="-62" Max="-18" />
-        <SampleCategory Name="Auto:Fuel:Mazda" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="4" Average="-50" Min="-61" Max="-40" />
-        <SampleCategory Name="Auto:Fuel:Other" Type="Expense" Frequency="3" Average="-60" Min="-73" Max="-53" />
-        <SampleCategory Name="Education:Attic" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="70" Average="-28" Min="-46" Max="-5" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Home Depot" Frequency="215" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="6" Average="-14" Min="-30" Max="16" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="46" Average="-32" Min="-211" Max="54" />
-        <SampleCategory Name="Household:Tools" Type="Expense" Frequency="5" Average="-62" Min="-288" Max="4" />
-        <SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="19" Average="-45" Min="-224" Max="44" />
-        <SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="4" Average="-33" Min="-66" Max="-15" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="-376" Min="-684" Max="34" />
-        <SampleCategory Name="Landscaping" Type="Expense" Frequency="3" Average="-33" Min="-117" Max="46" />
-        <SampleCategory Name="Household:Batteries" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
-        <SampleCategory Name="Home:Improvement" Type="Expense" Frequency="79" Average="-52" Min="-912" Max="224" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="2" Average="-56" Min="-93" Max="-20" />
-        <SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="5" Average="-64" Min="-75" Max="-56" />
-        <SampleCategory Name="Landscaping:Maintenance" Type="Expense" Frequency="4" Average="-26" Min="-44" Max="-2" />
-        <SampleCategory Name="Education:Science" Type="Expense" Frequency="1" Average="-66" Min="-66" Max="-66" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="4" Average="-43" Min="-90" Max="21" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
-        <SampleCategory Name="Sports:Shooting" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
-        <SampleCategory Name="Fun:Festivals" Type="Expense" Frequency="4" Average="-59" Min="-157" Max="-5" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="15" Average="-47" Min="-100" Max="0" />
-        <SampleCategory Name="Household:Security" Type="Expense" Frequency="1" Average="10" Min="10" Max="10" />
-        <SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="4" Average="-16" Min="-40" Max="3" />
-        <SampleCategory Name="Charity:Religious" Type="Expense" Frequency="1" Average="-161" Min="-161" Max="-161" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-250" Min="-250" Max="-250" />
-        <SampleCategory Name="Education" Type="Expense" Frequency="2" Average="-16" Min="-17" Max="-16" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="McLendon Hardware" Frequency="49" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="24" Average="-25" Min="-114" Max="0" />
-        <SampleCategory Name="Household:Tools" Type="Expense" Frequency="5" Average="-18" Min="-32" Max="-4" />
-        <SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="2" Average="-44" Min="-69" Max="-19" />
-        <SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="2" Average="-13" Min="-13" Max="-12" />
-        <SampleCategory Name="Household:Repairs" Type="Expense" Frequency="3" Average="-73" Min="-202" Max="-6" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-18" Min="-24" Max="-11" />
-        <SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="4" Average="-51" Min="-113" Max="-17" />
-        <SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-26" Min="-26" Max="-26" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="3" Average="-5" Min="-56" Max="25" />
-        <SampleCategory Name="Landscaping:Vegetables" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="World Vision" Frequency="96" Type="Check">
-      <Categories>
-        <SampleCategory Name="Charity:Religious" Type="Expense" Frequency="86" Average="-46" Min="-100" Max="-5" />
-        <SampleCategory Name="Charity:Other" Type="Expense" Frequency="8" Average="-61" Min="-147" Max="-20" />
-        <SampleCategory Name="Charity" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="State Farm Insurance" Frequency="53" Type="Check">
-      <Categories>
-        <SampleCategory Name="Auto:Insurance" Type="Expense" Frequency="30" Average="-351" Min="-1191" Max="1191" />
-        <SampleCategory Name="Home:Insurance" Type="Expense" Frequency="15" Average="-926" Min="-3100" Max="286" />
-        <SampleCategory Name="Home:Insurance" Type="Expense" Frequency="7" Average="-354" Min="-2077" Max="19" />
-        <SampleCategory Name="Household:Personal Liability Insurance" Type="Expense" Frequency="1" Average="-279" Min="-279" Max="-279" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Bank of America" Frequency="15" Type="Check">
-      <Categories>
-        <SampleCategory Name="Home:Mortgage" Type="Expense" Frequency="15" Average="-2063" Min="-2063" Max="-2063" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Comcast" Frequency="64" Type="Check">
-      <Categories>
-        <SampleCategory Name="Utilities:Cable TV" Type="Expense" Frequency="64" Average="-62" Min="-74" Max="-49" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Puget Sound Energy" Frequency="65" Type="Check">
-      <Categories>
-        <SampleCategory Name="Utilities:Electric &amp; Gas" Type="Expense" Frequency="64" Average="-223" Min="-428" Max="-102" />
-        <SampleCategory Name="Savings:Rebates" Type="Savings" Frequency="1" Average="50" Min="50" Max="50" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Albertsons" Frequency="18" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="17" Average="-15" Min="-62" Max="-1" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-47" Min="-47" Max="-47" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Top Foods" Frequency="111" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="94" Average="-52" Min="-203" Max="-2" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="12" Average="-7" Min="-13" Max="0" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-6" Min="-10" Max="-2" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Target" Frequency="122" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="24" Average="-17" Min="-89" Max="76" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="23" Average="-23" Min="-126" Max="3" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="9" Average="-71" Min="-218" Max="-5" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="15" Average="-45" Min="-141" Max="-2" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="2" Average="-32" Min="-32" Max="-32" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="2" Average="-2" Min="-2" Max="-2" />
-        <SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-47" Min="-47" Max="-47" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-3" Min="-5" Max="-2" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="15" Min="-34" Max="65" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="14" Average="-43" Min="-109" Max="9" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="8" Average="-54" Min="-128" Max="-5" />
-        <SampleCategory Name="Household:Tools" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="6" Average="-28" Min="-48" Max="-4" />
-        <SampleCategory Name="Fun:Parties" Type="Expense" Frequency="1" Average="-21" Min="-21" Max="-21" />
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Household:Pets" Type="Expense" Frequency="1" Average="6" Min="6" Max="6" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-38" Min="-38" Max="-38" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="4" Average="-88" Min="-195" Max="-7" />
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Ruby's Diner" Frequency="131" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="52" Average="-50" Min="-92" Max="-3" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="75" Average="-50" Min="-99" Max="-17" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-52" Min="-66" Max="-35" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="DeYoung's Farm &amp; Garden" Frequency="76" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="39" Average="-45" Min="-133" Max="-5" />
-        <SampleCategory Name="Household:Pets" Type="Expense" Frequency="15" Average="-46" Min="-181" Max="84" />
-        <SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="22" Average="-31" Min="-83" Max="-10" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Water District" Frequency="32" Type="Check">
-      <Categories>
-        <SampleCategory Name="Utilities:Water" Type="Expense" Frequency="32" Average="-126" Min="-510" Max="-42" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Whole Foods" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="11" Average="-61" Min="-167" Max="-11" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-31" Min="-41" Max="-20" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Applebee's" Frequency="109" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="83" Average="-60" Min="-123" Max="-20" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="26" Average="-50" Min="-76" Max="-14" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="PCC" Frequency="61" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="56" Average="-42" Min="-119" Max="-3" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-10" Min="-14" Max="-7" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-17" Min="-19" Max="-16" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Dairy Queen" Frequency="21" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="4" Average="-11" Min="-20" Max="-6" />
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="13" Average="-7" Min="-20" Max="-1" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="3" Average="-7" Min="-9" Max="-5" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="In Harmony" Frequency="36" Type="Check">
-      <Categories>
-        <SampleCategory Name="Landscaping:Maintenance" Type="Expense" Frequency="36" Average="-147" Min="-438" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Jerusalem Post" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="11" Average="-26" Min="-49" Max="-3" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Volvo Dealer" Frequency="26" Type="Check">
-      <Categories>
-        <SampleCategory Name="Auto:Service &amp; Repair" Type="Expense" Frequency="24" Average="-150" Min="-956" Max="-23" />
-        <SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
-        <SampleCategory Name="Auto:Purchase" Type="Expense" Frequency="1" Average="-2000" Min="-2000" Max="-2000" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Big Foot Bagels" Frequency="36" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="34" Average="-14" Min="-21" Max="-5" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-18" Min="-30" Max="-7" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Amazon.com" Frequency="55" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="32" Average="-25" Min="-190" Max="7" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-28" Min="-28" Max="-28" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="6" Average="-83" Min="-293" Max="-25" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="2" Average="-15" Min="-18" Max="-12" />
-        <SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="6" Average="-15" Min="-31" Max="-7" />
-        <SampleCategory Name="Electronics" Type="Expense" Frequency="4" Average="-124" Min="-178" Max="-63" />
-        <SampleCategory Name="Education:Software" Type="Expense" Frequency="2" Average="0" Min="-71" Max="71" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="REI" Frequency="81" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="74" Average="-136" Min="-855" Max="290" />
-        <SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-563" Min="-563" Max="-563" />
-        <SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-305" Min="-305" Max="-305" />
-        <SampleCategory Name="Household:Memberships" Type="Expense" Frequency="1" Average="26" Min="26" Max="26" />
-        <SampleCategory Name="Fun:Camping" Type="Expense" Frequency="2" Average="-157" Min="-179" Max="-135" />
-        <SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="1" Average="-11" Min="-11" Max="-11" />
-        <SampleCategory Name="Sports:Cycling" Type="Expense" Frequency="1" Average="-33" Min="-33" Max="-33" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="PetSmart" Frequency="27" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="16" Average="-17" Min="-76" Max="10" />
-        <SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="3" Average="-17" Min="-30" Max="-8" />
-        <SampleCategory Name="Household:Pets" Type="Expense" Frequency="8" Average="-28" Min="-144" Max="-2" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Jamba Juice" Frequency="25" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="22" Average="-12" Min="-39" Max="-4" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-28" Min="-28" Max="-28" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-31" Min="-31" Max="-31" />
-        <SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Waste Management" Frequency="21" Type="Check">
-      <Categories>
-        <SampleCategory Name="Utilities:Trash" Type="Expense" Frequency="21" Average="-129" Min="-150" Max="-92" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Fred Meyer" Frequency="44" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="6" Average="-33" Min="-63" Max="-7" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="9" Average="-65" Min="-121" Max="-15" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="10" Average="-47" Min="-119" Max="42" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="5" Average="-6" Min="-10" Max="-1" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="4" Average="-47" Min="-68" Max="-21" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
-        <SampleCategory Name="Household:Kitchen" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-        <SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-35" Min="-35" Max="-35" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-76" Min="-82" Max="-71" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="-68" Min="-87" Max="-48" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Molbaks Inc." Frequency="19" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="4" Average="-25" Min="-57" Max="-7" />
-        <SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="9" Average="-74" Min="-146" Max="-8" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-52" Min="-79" Max="-21" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Landscaping:Vegetables" Type="Expense" Frequency="1" Average="-76" Min="-76" Max="-76" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Walmart" Frequency="22" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-18" Min="-21" Max="-15" />
-        <SampleCategory Name="Travel:Supplies" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
-        <SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="4" Average="-21" Min="-37" Max="-3" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="2" Average="-38" Min="-73" Max="-3" />
-        <SampleCategory Name="Fun:Camping" Type="Expense" Frequency="2" Average="-71" Min="-183" Max="41" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-45" Min="-45" Max="-45" />
-        <SampleCategory Name="Household:Pets" Type="Expense" Frequency="1" Average="-105" Min="-105" Max="-105" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-53" Min="-81" Max="-26" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-49" Min="-49" Max="-49" />
-        <SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-43" Min="-43" Max="-43" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-108" Min="-119" Max="-96" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Verizon" Frequency="63" Type="Check">
-      <Categories>
-        <SampleCategory Name="Telephone" Type="Expense" Frequency="63" Average="-40" Min="-83" Max="-33" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Barnes &amp; Noble" Frequency="77" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="53" Average="-31" Min="-92" Max="-6" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="9" Average="-6" Min="-20" Max="-3" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="2" Average="-16" Min="-17" Max="-16" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-62" Min="-113" Max="-16" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-7" Min="-13" Max="-2" />
-        <SampleCategory Name="Education:Software" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-        <SampleCategory Name="Fun:Books &amp; Magazines" Type="Expense" Frequency="2" Average="-54" Min="-78" Max="-29" />
-        <SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="1" Average="-42" Min="-42" Max="-42" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="McDonalds" Frequency="102" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="36" Average="-7" Min="-16" Max="-1" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="58" Average="-8" Min="-25" Max="-1" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-46" Min="-57" Max="-36" />
-        <SampleCategory Name="Food" Type="Expense" Frequency="5" Average="-11" Min="-14" Max="-8" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Quizno's" Frequency="160" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-26" Min="-26" Max="-26" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="108" Average="-16" Min="-51" Max="0" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="51" Average="-17" Min="-37" Max="-1" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Pony Mailbox" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Postage" Type="Expense" Frequency="10" Average="-18" Min="-77" Max="-4" />
-        <SampleCategory Name="Travel:Government Fees" Type="Expense" Frequency="2" Average="-22" Min="-23" Max="-20" />
-        <SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-78" Min="-78" Max="-78" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Blockbuster Video" Frequency="60" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="16" Average="-9" Min="-65" Max="36" />
-        <SampleCategory Name="Fun:Video Rental" Type="Expense" Frequency="44" Average="-7" Min="-115" Max="36" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Office Max" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="6" Average="-33" Min="-128" Max="-2" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="3" Average="-26" Min="-64" Max="-4" />
-        <SampleCategory Name="Education:TPA" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
-        <SampleCategory Name="Education:Arts" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Teddy's Bigger Burgers" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="11" Average="-24" Min="-48" Max="-4" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Pallino Pastaria" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="9" Average="-28" Min="-47" Max="-15" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-40" Min="-57" Max="-24" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Famous Footwear" Frequency="15" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="14" Average="-28" Min="-322" Max="142" />
-        <SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Department of Licensing" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Auto:Registration" Type="Expense" Frequency="6" Average="-45" Min="-61" Max="-20" />
-        <SampleCategory Name="Auto:Driver's Licence" Type="Expense" Frequency="4" Average="-32" Min="-53" Max="-25" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Play It Again Sports" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Sports:Cycling" Type="Expense" Frequency="1" Average="81" Min="81" Max="81" />
-        <SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="4" Average="-42" Min="-76" Max="-4" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="4" Average="-9" Min="-23" Max="-1" />
-        <SampleCategory Name="Sports:Swimming" Type="Expense" Frequency="1" Average="-43" Min="-43" Max="-43" />
-        <SampleCategory Name="Sports:Baseball" Type="Expense" Frequency="1" Average="-46" Min="-46" Max="-46" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="NewEgg.com" Frequency="35" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="32" Average="-254" Min="-1745" Max="161" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-314" Min="-556" Max="-71" />
-        <SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-116" Min="-116" Max="-116" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Marriot Atlanta Store" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="12" Average="-8" Min="-15" Max="-3" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Marta Atlanta" Frequency="12" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Train" Type="Expense" Frequency="12" Average="-13" Min="-18" Max="-4" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Seattle Times" Frequency="14" Type="Check">
-      <Categories>
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="14" Average="-61" Min="-98" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Foot Zone" Frequency="15" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="13" Average="-82" Min="-255" Max="109" />
-        <SampleCategory Name="Clothing:Shoes" Type="Expense" Frequency="2" Average="0" Min="-109" Max="109" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Staples" Frequency="45" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Electronics:Printing" Type="Expense" Frequency="1" Average="-161" Min="-161" Max="-161" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="22" Average="-36" Min="-106" Max="0" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="7" Average="-37" Min="-137" Max="4" />
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="10" Average="0" Min="-129" Max="326" />
-        <SampleCategory Name="Travel:Supplies" Type="Expense" Frequency="1" Average="-23" Min="-23" Max="-23" />
-        <SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-124" Min="-124" Max="-124" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-32" Min="-55" Max="-9" />
-        <SampleCategory Name="Auto:Parts" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="The Whole Pet Shop" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="14" Average="-44" Min="-78" Max="-8" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Chinese Restaurant" Frequency="28" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="28" Average="-64" Min="-99" Max="-46" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Animal Healing Center" Frequency="24" Type="Check">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="24" Average="-102" Min="-328" Max="140" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Travelsmith Catalogue" Frequency="21" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="21" Average="-86" Min="-419" Max="190" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Baskin Robbins" Frequency="23" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="11" Average="-13" Min="-24" Max="-5" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
-        <SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="7" Average="-29" Min="-40" Max="-15" />
-        <SampleCategory Name="Education:TPA" Type="Expense" Frequency="1" Average="-31" Min="-31" Max="-31" />
-        <SampleCategory Name="Fun:Parties" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Subway" Frequency="24" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="20" Average="-16" Min="-34" Max="-5" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="4" Average="-27" Min="-46" Max="-14" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="The Lego Store" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-156" Min="-156" Max="-156" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-98" Min="-165" Max="-33" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-221" Min="-405" Max="-36" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="5" Average="-81" Min="-143" Max="-53" />
-        <SampleCategory Name="Education:First Lego League" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Red Robin" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="10" Average="-44" Min="-85" Max="-10" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Dentist" Frequency="11" Type="Check">
-      <Categories>
-        <SampleCategory Name="Medical:Dentist" Type="Expense" Frequency="11" Average="-78" Min="-200" Max="-12" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Black Angus" Frequency="29" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="24" Average="-117" Min="-227" Max="-28" />
-        <SampleCategory Name="Gifts:Anniversary" Type="Expense" Frequency="1" Average="-177" Min="-177" Max="-177" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-159" Min="-212" Max="-96" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-65" Min="-65" Max="-65" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Lands End" Frequency="28" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="27" Average="-85" Min="-437" Max="218" />
-        <SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Gymnastics" Frequency="15" Type="Check">
-      <Categories>
-        <SampleCategory Name="Sports:Gymnastics" Type="Expense" Frequency="15" Average="-251" Min="-533" Max="-30" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="KFC" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="8" Average="-28" Min="-45" Max="-8" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-10" Min="-14" Max="-5" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Fry's Electronics" Frequency="55" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="37" Average="-258" Min="-4025" Max="163" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="11" Average="-5" Min="-16" Max="-1" />
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="3" Average="-46" Min="-91" Max="-16" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-222" Min="-222" Max="-222" />
-        <SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-51" Min="-51" Max="-51" />
-        <SampleCategory Name="Electronics:Software" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="1" Average="-1591" Min="-1591" Max="-1591" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Milk Delivery" Frequency="32" Type="Check">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="32" Average="-21" Min="-57" Max="-8" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Soccer West" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="11" Average="-64" Min="-140" Max="-13" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Borders Books" Frequency="22" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="5" Average="-33" Min="-89" Max="-9" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="17" Average="-45" Min="-114" Max="15" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Stevens Pass Ski Resort" Frequency="28" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="25" Average="-89" Min="-289" Max="-18" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="3" Average="-21" Min="-22" Max="-18" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Ben Franklin" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="3" Average="-39" Min="-75" Max="-17" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="2" Average="-21" Min="-37" Max="-5" />
-        <SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
-        <SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-165" Min="-165" Max="-165" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-11" Min="-11" Max="-11" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Audible Books" Frequency="26" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="15" Average="-15" Min="-22" Max="68" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="11" Average="-16" Min="-41" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Great Harvest Bakery" Frequency="41" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="41" Average="-10" Min="-29" Max="0" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Osh Kosh B'gosh" Frequency="17" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="16" Average="-71" Min="-212" Max="-26" />
-        <SampleCategory Name="Home:Improvement" Type="Expense" Frequency="1" Average="-17" Min="-17" Max="-17" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="QFC" Frequency="19" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="13" Average="-12" Min="-36" Max="-3" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-2" Min="-3" Max="-1" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-9" Min="-12" Max="-6" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Trader Joe's" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="13" Average="-27" Min="-93" Max="0" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Round Table Pizza" Frequency="40" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="39" Average="-36" Min="-84" Max="-11" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Southwest Airlines" Frequency="45" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Air" Type="Expense" Frequency="35" Average="-217" Min="-394" Max="243" />
-        <SampleCategory Name="Wages &amp; Salary:Insurance" Type="Income" Frequency="10" Average="0" Min="0" Max="0" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Consumer Reports" Frequency="16" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="15" Average="-14" Min="-26" Max="24" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Cost Plus World Market" Frequency="12" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="11" Average="-34" Min="-162" Max="-1" />
-        <SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="IKEA" Frequency="18" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
-        <SampleCategory Name="Household:Furnishings" Type="Expense" Frequency="1" Average="-73" Min="-73" Max="-73" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="14" Average="-133" Min="-585" Max="79" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-10" Min="-17" Max="-3" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Lego Shop At Home" Frequency="12" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-150" Min="-293" Max="-36" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="4" Average="-174" Min="-391" Max="-64" />
-        <SampleCategory Name="Education:First Lego League" Type="Expense" Frequency="2" Average="-281" Min="-291" Max="-272" />
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="2" Average="-37" Min="-71" Max="-3" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-127" Min="-127" Max="-127" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Pacific Science Center" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Memberships" Type="Expense" Frequency="3" Average="-102" Min="-131" Max="-85" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-29" Min="-35" Max="-23" />
-        <SampleCategory Name="Education:Field Trips" Type="Expense" Frequency="4" Average="-47" Min="-75" Max="-18" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="2" Average="-23" Min="-29" Max="-17" />
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
-        <SampleCategory Name="Travel:Parking" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Countrywide" Frequency="49" Type="Check">
-      <Categories>
-        <SampleCategory Name="Home:Mortgage" Type="Expense" Frequency="49" Average="-2063" Min="-2063" Max="-2063" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Alaska Airlines" Frequency="21" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
-        <SampleCategory Name="Travel:Air" Type="Expense" Frequency="20" Average="-187" Min="-299" Max="-60" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Chinese Restaurant" Frequency="104" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="101" Average="-58" Min="-113" Max="-25" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-114" Min="-129" Max="-100" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Stevens Pass Cascadian" Frequency="15" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="12" Average="-9" Min="-27" Max="-4" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-13" Min="-19" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Toys R Us" Frequency="15" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="7" Average="-35" Min="-97" Max="-14" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-36" Min="-36" Max="-36" />
-        <SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-43" Min="-43" Max="-43" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="2" Average="-42" Min="-89" Max="4" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Linens N Things" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Linens" Type="Expense" Frequency="8" Average="-99" Min="-457" Max="-5" />
-        <SampleCategory Name="Household:Kitchen" Type="Expense" Frequency="3" Average="-39" Min="-54" Max="-13" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="3" Average="-51" Min="-81" Max="-30" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Ski Rentals" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="9" Average="-209" Min="-500" Max="32" />
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-609" Min="-609" Max="-609" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Tapatio Mexican Grill" Frequency="44" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="42" Average="-40" Min="-83" Max="-7" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-8" Min="-9" Max="-7" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Sir Plus" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Fun:Camping" Type="Expense" Frequency="1" Average="-49" Min="-49" Max="-49" />
-        <SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-110" Min="-110" Max="-110" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-58" Min="-72" Max="-43" />
-        <SampleCategory Name="Education:Cub Scouts" Type="Expense" Frequency="3" Average="-18" Min="-33" Max="-3" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
-        <SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Bartell Drugs" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
-        <SampleCategory Name="Food:Groceries" Type="Expense" Frequency="3" Average="-6" Min="-12" Max="-1" />
-        <SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="2" Average="-14" Min="-19" Max="-10" />
-        <SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-35" Min="-35" Max="-35" />
-        <SampleCategory Name="Medical" Type="Expense" Frequency="2" Average="-27" Min="-30" Max="-25" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-76" Min="-76" Max="-76" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Stevens Pass" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="5" Average="-279" Min="-540" Max="-74" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="3" Average="-11" Min="-16" Max="-7" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="34" Min="34" Max="34" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="SeaTac Airport" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Parking" Type="Expense" Frequency="5" Average="-3" Min="-6" Max="-2" />
-        <SampleCategory Name="Auto:Parking" Type="Expense" Frequency="2" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-8" Min="-8" Max="-7" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-3" Min="-5" Max="0" />
-        <SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Lego Store" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-65" Min="-65" Max="-65" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-66" Min="-90" Max="-42" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="6" Average="-54" Min="-199" Max="-10" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-95" Min="-95" Max="-95" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Intuit" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Wages &amp; Salary:Taxes:Preparation" Type="Income" Frequency="9" Average="-7" Min="-76" Max="76" />
-        <SampleCategory Name="Electronics:Software" Type="Expense" Frequency="4" Average="-30" Min="-65" Max="-7" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Loews" Frequency="13" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Fun:Movies" Type="Expense" Frequency="10" Average="-27" Min="-49" Max="-10" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-27" Min="-30" Max="-24" />
-        <SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Residential House Cleaning" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Cleaning" Type="Expense" Frequency="14" Average="-126" Min="-135" Max="-125" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Tina Eddy" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="10" Average="-30" Min="-50" Max="-25" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="A Canine Experience" Frequency="11" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="11" Average="-127" Min="-755" Max="-25" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Veterinary Hospital" Frequency="22" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="17" Average="-158" Min="-563" Max="-21" />
-        <SampleCategory Name="Household:Pets" Type="Expense" Frequency="2" Average="-99" Min="-138" Max="-60" />
-        <SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="3" Average="-103" Min="-199" Max="-44" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Denny's" Frequency="12" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="4" Average="-12" Min="-20" Max="-3" />
-        <SampleCategory Name="Food:Breakfast" Type="Expense" Frequency="3" Average="-12" Min="-20" Max="-7" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="4" Average="-3" Min="-5" Max="-1" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Museum Of Flight" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
-        <SampleCategory Name="Education:Field Trips" Type="Expense" Frequency="6" Average="-15" Min="-45" Max="-3" />
-        <SampleCategory Name="Education:Memberships" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
-        <SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="USPS" Frequency="10" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Postage" Type="Expense" Frequency="6" Average="-4" Min="-7" Max="-1" />
-        <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
-        <SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-36" Min="-36" Max="-36" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
-        <SampleCategory Name="Education:Usborne" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Legoland" Frequency="14" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Travel:Entertainment" Type="Expense" Frequency="2" Average="-49" Min="-75" Max="-23" />
-        <SampleCategory Name="Travel:Food" Type="Expense" Frequency="2" Average="-22" Min="-34" Max="-10" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="3" Average="-123" Min="-290" Max="-7" />
-        <SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-6" Min="-10" Max="-3" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="4" Average="-16" Min="-28" Max="-11" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Sears" Frequency="20" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="-272" Min="-906" Max="63" />
-        <SampleCategory Name="Household:Tools" Type="Expense" Frequency="3" Average="-165" Min="-366" Max="-43" />
-        <SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-73" Min="-73" Max="-73" />
-        <SampleCategory Name="Clothing" Type="Expense" Frequency="7" Average="-36" Min="-64" Max="-19" />
-        <SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-69" Min="-69" Max="-69" />
-        <SampleCategory Name="Home:Improvement" Type="Expense" Frequency="2" Average="-214" Min="-304" Max="-125" />
-        <SampleCategory Name="Medical" Type="Expense" Frequency="1" Average="-102" Min="-102" Max="-102" />
-        <SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-1810" Min="-1810" Max="-1810" />
-      </Categories>
-    </SamplePayee>
-    <SamplePayee Name="Hobby Town USA" Frequency="19" Type="Credit">
-      <Categories>
-        <SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
-        <SampleCategory Name="Household:Supplies" Type="Expense" Frequency="2" Average="-13" Min="-13" Max="-13" />
-        <SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="15" Average="-19" Min="-80" Max="-5" />
-        <SampleCategory Name="Education:Cub Scouts" Type="Expense" Frequency="1" Average="-55" Min="-55" Max="-55" />
-      </Categories>
-    </SamplePayee>
-  </Payees>
-</SampleData> 
+	<Accounts>
+		<SampleAccount Name="AMEX" Type="Credit" Frequency="801" />
+		<SampleAccount Name="BECU Checking" Type="Checking" Frequency="2234" />
+		<SampleAccount Name="BECU Savings" Type="Savings" Frequency="74" />
+		<SampleAccount Name="Visa" Type="Credit" Frequency="450" />
+		<SampleAccount Name="Discover Card" Type="Credit" Frequency="2163" />
+		<SampleAccount Name="Ameritrade" Type="Brokerage" Frequency="10" />
+		<SampleAccount Name="Fidelity" Type="Brokerage" TaxStatus="TaxDeferred" Frequency="10" />
+		<SampleAccount Name="Fidelity IRA" Type="Brokerage" TaxStatus="TaxFree" Frequency="10" />
+	</Accounts>
+
+	<Securities>
+		<SampleSecurity Symbol="MSFT" Name="Microsoft corp" SecurityType="Equity" >
+			<Split Date="2003-02-18" Numerator="2" Denominator="1"/>
+			<Split Date="1999-03-29" Numerator="2" Denominator="1"/>
+			<Split Date="1998-02-23" Numerator="2" Denominator="1"/>
+			<Split Date="1996-12-09" Numerator="2" Denominator="1"/>
+			<Split Date="1996-05-23" Numerator="2" Denominator="1"/>
+			<Split Date="1992-06-15" Numerator="3" Denominator="2"/>
+			<Split Date="1991-06-27" Numerator="3" Denominator="2"/>
+			<Split Date="1990-04-16" Numerator="2" Denominator="1"/>
+			<Split Date="1987-09-21" Numerator="2" Denominator="1"/>
+		</SampleSecurity>
+		<SampleSecurity Symbol="AAPL" Name="Apple Corp" SecurityType="Equity">
+			<Split Date="2020-08-31" Numerator="4" Denominator="1"/>
+			<Split Date="2014-06-09" Numerator="7" Denominator="1"/>
+			<Split Date="2005-02-28" Numerator="2" Denominator="1"/>
+			<Split Date="2000-06-21" Numerator="2" Denominator="1"/>
+			<Split Date="1987-06-16" Numerator="2" Denominator="1"/>
+		</SampleSecurity>
+		<SampleSecurity Symbol="GOOG" Name="Google" SecurityType="Equity">
+			<Split Date="2022-07-18" Numerator="20" Denominator="1"/>
+		</SampleSecurity>
+		<SampleSecurity Symbol="IBM" Name="IBM Corp" SecurityType="Equity">
+			<Split Date="1999-05-27" Numerator="2" Denominator="1"/>
+			<Split Date="1997-05-28" Numerator="2" Denominator="1"/>
+		</SampleSecurity>
+		<SampleSecurity Symbol="F" Name="Ford" SecurityType="Equity">
+			<Split Date="1994-06-06" Numerator="2" Denominator="1"/>
+		</SampleSecurity>
+		<SampleSecurity Symbol="GLD" Name="Gold Index" SecurityType="MutualFund"/>
+		<SampleSecurity Symbol="VWEHX" Name="Vanguard High Yield Corporate Inv" SecurityType="MutualFund"/>
+	</Securities>
+
+	<Payees>
+		<SamplePayee Name="Sprint PCS" Frequency="66" Type="Check">
+			<Categories>
+				<SampleCategory Name="Telephone:Mobile Phone" Type="Expense" Frequency="66" Average="-107" Min="-275" Max="-27" />
+			</Categories>
+		</SamplePayee>
+
+		<SamplePayee Name="Costco Gas" Frequency="316" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="260" Average="-40" Min="-76" Max="-12" />
+				<SampleCategory Name="Auto:Fuel:Mazda" Type="Expense" Frequency="1" Average="-29" Min="-29" Max="-29" />
+				<SampleCategory Name="Travel:Fuel" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+				<SampleCategory Name="Auto:Fuel:XC70" Type="Expense" Frequency="9" Average="-39" Min="-46" Max="-30" />
+				<SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="43" Average="-31" Min="-46" Max="-16" />
+				<SampleCategory Name="Travel:Auto" Type="Expense" Frequency="2" Average="-23" Min="-25" Max="-20" />
+			</Categories>
+		</SamplePayee>
+
+		<SamplePayee Name="Garlic Jims Famous Gourmet Pizza" Frequency="66" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="64" Average="-27" Min="-56" Max="-11" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-20" Min="-24" Max="-15" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Veterinary Hostpital" Frequency="13" Type="Check">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="13" Average="-82" Min="-222" Max="-11" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Safeway" Frequency="762" Type="Debit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="527" Average="-33" Min="-199" Max="0" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="138" Average="-7" Min="-79" Max="0" />
+				<SampleCategory Name="Fun:Parties" Type="Expense" Frequency="2" Average="-25" Min="-40" Max="-9" />
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="59" Average="-10" Min="-51" Max="-1" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-15" Min="-15" Max="-15" />
+				<SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="2" Average="-11" Min="-14" Max="-9" />
+				<SampleCategory Name="Gifts:Allowance" Type="Expense" Frequency="2" Average="-26" Min="-32" Max="-20" />
+				<SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
+				<SampleCategory Name="Fun:Video Rental" Type="Expense" Frequency="10" Average="-5" Min="-16" Max="-3" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="4" Average="-7" Min="-16" Max="-3" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="3" Average="-10" Min="-15" Max="-5" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-17" Min="-20" Max="-13" />
+				<SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="2" Average="-36" Min="-40" Max="-32" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Household:Photography" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="World Market" Frequency="15" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="15" Average="-31" Min="-100" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="AAA" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Auto:AAA Membership" Type="Expense" Frequency="6" Average="-71" Min="-86" Max="-13" />
+				<SampleCategory Name="Travel:Gear" Type="Expense" Frequency="2" Average="-207" Min="-242" Max="-171" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-89" Min="-89" Max="-89" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Travel:Government Fees" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Education:Geography" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Radio Shack" Frequency="49" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="39" Average="-33" Min="-199" Max="27" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-51" Min="-108" Max="54" />
+				<SampleCategory Name="Household:Batteries" Type="Expense" Frequency="2" Average="-19" Min="-21" Max="-16" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="-11" Min="-37" Max="13" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Costco" Frequency="324" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="93" Average="-7" Min="-21" Max="0" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="155" Average="-119" Min="-693" Max="12" />
+				<SampleCategory Name="Split" Type="None" Frequency="1" Average="-350" Min="-350" Max="-350" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="10" Average="-3" Min="-12" Max="-1" />
+				<SampleCategory Name="Sports:Swimming" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="5" Average="41" Min="-64" Max="98" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="4" Average="-65" Min="-136" Max="-23" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="2" Average="-19" Min="-32" Max="-6" />
+				<SampleCategory Name="Household:Refunds" Type="Expense" Frequency="2" Average="347" Min="20" Max="674" />
+				<SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-376" Min="-376" Max="-376" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="5" Average="394" Min="-307" Max="870" />
+				<SampleCategory Name="Travel:Passports" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Travel" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="3" Average="-120" Min="-204" Max="-73" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="3" Average="29" Min="18" Max="43" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+				<SampleCategory Name="Household:Memberships" Type="Expense" Frequency="7" Average="-83" Min="-100" Max="-41" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="53" Min="53" Max="53" />
+				<SampleCategory Name="Savings:Rebates" Type="Savings" Frequency="4" Average="458" Min="20" Max="642" />
+				<SampleCategory Name="Wages &amp; Salary:Taxes:Preparation" Type="Income" Frequency="1" Average="45" Min="45" Max="45" />
+				<SampleCategory Name="Household:Tools" Type="Expense" Frequency="2" Average="-68" Min="-158" Max="21" />
+				<SampleCategory Name="Medical:Eye" Type="Expense" Frequency="2" Average="-18" Min="-18" Max="-18" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="107" Min="107" Max="107" />
+				<SampleCategory Name="Home:Improvement" Type="Expense" Frequency="1" Average="-4621" Min="-4621" Max="-4621" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="4" Average="-534" Min="-2243" Max="236" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="13" Min="-559" Max="537" />
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="23" Min="23" Max="23" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-527" Min="-527" Max="-527" />
+				<SampleCategory Name="Medical:Supplies" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
+				<SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="5" Average="-32" Min="-40" Max="-13" />
+				<SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="65" Min="65" Max="65" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Rite Aid" Frequency="23" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="7" Average="-24" Min="-44" Max="-5" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="8" Average="-20" Min="-46" Max="-4" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-5" Min="-6" Max="-4" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
+				<SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Starbucks" Frequency="85" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="63" Average="-29" Min="-108" Max="-1" />
+				<SampleCategory Name="Food:Breakfast" Type="Expense" Frequency="14" Average="-83" Min="-108" Max="-5" />
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="2" Average="-9" Min="-17" Max="-1" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-67" Min="-105" Max="-15" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="GTC Telecom" Frequency="104" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Telephone" Type="Expense" Frequency="104" Average="-16" Min="-98" Max="-2" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="ARCO" Frequency="166" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Auto:Fuel:XC70" Type="Expense" Frequency="87" Average="-40" Min="-62" Max="-18" />
+				<SampleCategory Name="Auto:Fuel:Mazda" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="4" Average="-50" Min="-61" Max="-40" />
+				<SampleCategory Name="Auto:Fuel:Other" Type="Expense" Frequency="3" Average="-60" Min="-73" Max="-53" />
+				<SampleCategory Name="Education:Attic" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Auto:Fuel" Type="Expense" Frequency="70" Average="-28" Min="-46" Max="-5" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Home Depot" Frequency="215" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="6" Average="-14" Min="-30" Max="16" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="46" Average="-32" Min="-211" Max="54" />
+				<SampleCategory Name="Household:Tools" Type="Expense" Frequency="5" Average="-62" Min="-288" Max="4" />
+				<SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="19" Average="-45" Min="-224" Max="44" />
+				<SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="4" Average="-33" Min="-66" Max="-15" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="-376" Min="-684" Max="34" />
+				<SampleCategory Name="Landscaping" Type="Expense" Frequency="3" Average="-33" Min="-117" Max="46" />
+				<SampleCategory Name="Household:Batteries" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
+				<SampleCategory Name="Home:Improvement" Type="Expense" Frequency="79" Average="-52" Min="-912" Max="224" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="2" Average="-56" Min="-93" Max="-20" />
+				<SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="5" Average="-64" Min="-75" Max="-56" />
+				<SampleCategory Name="Landscaping:Maintenance" Type="Expense" Frequency="4" Average="-26" Min="-44" Max="-2" />
+				<SampleCategory Name="Education:Science" Type="Expense" Frequency="1" Average="-66" Min="-66" Max="-66" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="4" Average="-43" Min="-90" Max="21" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
+				<SampleCategory Name="Sports:Shooting" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
+				<SampleCategory Name="Fun:Festivals" Type="Expense" Frequency="4" Average="-59" Min="-157" Max="-5" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="15" Average="-47" Min="-100" Max="0" />
+				<SampleCategory Name="Household:Security" Type="Expense" Frequency="1" Average="10" Min="10" Max="10" />
+				<SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="4" Average="-16" Min="-40" Max="3" />
+				<SampleCategory Name="Charity:Religious" Type="Expense" Frequency="1" Average="-161" Min="-161" Max="-161" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-250" Min="-250" Max="-250" />
+				<SampleCategory Name="Education" Type="Expense" Frequency="2" Average="-16" Min="-17" Max="-16" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="McLendon Hardware" Frequency="49" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="24" Average="-25" Min="-114" Max="0" />
+				<SampleCategory Name="Household:Tools" Type="Expense" Frequency="5" Average="-18" Min="-32" Max="-4" />
+				<SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="2" Average="-44" Min="-69" Max="-19" />
+				<SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="2" Average="-13" Min="-13" Max="-12" />
+				<SampleCategory Name="Household:Repairs" Type="Expense" Frequency="3" Average="-73" Min="-202" Max="-6" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-18" Min="-24" Max="-11" />
+				<SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="4" Average="-51" Min="-113" Max="-17" />
+				<SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-26" Min="-26" Max="-26" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="3" Average="-5" Min="-56" Max="25" />
+				<SampleCategory Name="Landscaping:Vegetables" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="World Vision" Frequency="96" Type="Check">
+			<Categories>
+				<SampleCategory Name="Charity:Religious" Type="Expense" Frequency="86" Average="-46" Min="-100" Max="-5" />
+				<SampleCategory Name="Charity:Other" Type="Expense" Frequency="8" Average="-61" Min="-147" Max="-20" />
+				<SampleCategory Name="Charity" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-50" Min="-50" Max="-50" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="State Farm Insurance" Frequency="53" Type="Check">
+			<Categories>
+				<SampleCategory Name="Auto:Insurance" Type="Expense" Frequency="30" Average="-351" Min="-1191" Max="1191" />
+				<SampleCategory Name="Home:Insurance" Type="Expense" Frequency="15" Average="-926" Min="-3100" Max="286" />
+				<SampleCategory Name="Home:Insurance" Type="Expense" Frequency="7" Average="-354" Min="-2077" Max="19" />
+				<SampleCategory Name="Household:Personal Liability Insurance" Type="Expense" Frequency="1" Average="-279" Min="-279" Max="-279" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Bank of America" Frequency="15" Type="Check">
+			<Categories>
+				<SampleCategory Name="Home:Mortgage" Type="Expense" Frequency="15" Average="-2063" Min="-2063" Max="-2063" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Comcast" Frequency="64" Type="Check">
+			<Categories>
+				<SampleCategory Name="Utilities:Cable TV" Type="Expense" Frequency="64" Average="-62" Min="-74" Max="-49" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Puget Sound Energy" Frequency="65" Type="Check">
+			<Categories>
+				<SampleCategory Name="Utilities:Electric &amp; Gas" Type="Expense" Frequency="64" Average="-223" Min="-428" Max="-102" />
+				<SampleCategory Name="Savings:Rebates" Type="Savings" Frequency="1" Average="50" Min="50" Max="50" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Albertsons" Frequency="18" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="17" Average="-15" Min="-62" Max="-1" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-47" Min="-47" Max="-47" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Top Foods" Frequency="111" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="94" Average="-52" Min="-203" Max="-2" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="12" Average="-7" Min="-13" Max="0" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-6" Min="-10" Max="-2" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Target" Frequency="122" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="24" Average="-17" Min="-89" Max="76" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="23" Average="-23" Min="-126" Max="3" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="9" Average="-71" Min="-218" Max="-5" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="15" Average="-45" Min="-141" Max="-2" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="2" Average="-32" Min="-32" Max="-32" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="2" Average="-2" Min="-2" Max="-2" />
+				<SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-47" Min="-47" Max="-47" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-3" Min="-5" Max="-2" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="15" Min="-34" Max="65" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="14" Average="-43" Min="-109" Max="9" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="8" Average="-54" Min="-128" Max="-5" />
+				<SampleCategory Name="Household:Tools" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="6" Average="-28" Min="-48" Max="-4" />
+				<SampleCategory Name="Fun:Parties" Type="Expense" Frequency="1" Average="-21" Min="-21" Max="-21" />
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Household:Pets" Type="Expense" Frequency="1" Average="6" Min="6" Max="6" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-38" Min="-38" Max="-38" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="4" Average="-88" Min="-195" Max="-7" />
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-8" Min="-8" Max="-8" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Ruby's Diner" Frequency="131" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="52" Average="-50" Min="-92" Max="-3" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="75" Average="-50" Min="-99" Max="-17" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-52" Min="-66" Max="-35" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="DeYoung's Farm &amp; Garden" Frequency="76" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="39" Average="-45" Min="-133" Max="-5" />
+				<SampleCategory Name="Household:Pets" Type="Expense" Frequency="15" Average="-46" Min="-181" Max="84" />
+				<SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="22" Average="-31" Min="-83" Max="-10" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Water District" Frequency="32" Type="Check">
+			<Categories>
+				<SampleCategory Name="Utilities:Water" Type="Expense" Frequency="32" Average="-126" Min="-510" Max="-42" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Whole Foods" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="11" Average="-61" Min="-167" Max="-11" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-31" Min="-41" Max="-20" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Applebee's" Frequency="109" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="83" Average="-60" Min="-123" Max="-20" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="26" Average="-50" Min="-76" Max="-14" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="PCC" Frequency="61" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="56" Average="-42" Min="-119" Max="-3" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-10" Min="-14" Max="-7" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="2" Average="-17" Min="-19" Max="-16" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Dairy Queen" Frequency="21" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="4" Average="-11" Min="-20" Max="-6" />
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="13" Average="-7" Min="-20" Max="-1" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="3" Average="-7" Min="-9" Max="-5" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="In Harmony" Frequency="36" Type="Check">
+			<Categories>
+				<SampleCategory Name="Landscaping:Maintenance" Type="Expense" Frequency="36" Average="-147" Min="-438" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Jerusalem Post" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="11" Average="-26" Min="-49" Max="-3" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Volvo Dealer" Frequency="26" Type="Check">
+			<Categories>
+				<SampleCategory Name="Auto:Service &amp; Repair" Type="Expense" Frequency="24" Average="-150" Min="-956" Max="-23" />
+				<SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
+				<SampleCategory Name="Auto:Purchase" Type="Expense" Frequency="1" Average="-2000" Min="-2000" Max="-2000" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Big Foot Bagels" Frequency="36" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="34" Average="-14" Min="-21" Max="-5" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-18" Min="-30" Max="-7" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Amazon.com" Frequency="55" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="32" Average="-25" Min="-190" Max="7" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-28" Min="-28" Max="-28" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="6" Average="-83" Min="-293" Max="-25" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="2" Average="-15" Min="-18" Max="-12" />
+				<SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="6" Average="-15" Min="-31" Max="-7" />
+				<SampleCategory Name="Electronics" Type="Expense" Frequency="4" Average="-124" Min="-178" Max="-63" />
+				<SampleCategory Name="Education:Software" Type="Expense" Frequency="2" Average="0" Min="-71" Max="71" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="REI" Frequency="81" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="74" Average="-136" Min="-855" Max="290" />
+				<SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-563" Min="-563" Max="-563" />
+				<SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-305" Min="-305" Max="-305" />
+				<SampleCategory Name="Household:Memberships" Type="Expense" Frequency="1" Average="26" Min="26" Max="26" />
+				<SampleCategory Name="Fun:Camping" Type="Expense" Frequency="2" Average="-157" Min="-179" Max="-135" />
+				<SampleCategory Name="Household:Maintenance" Type="Expense" Frequency="1" Average="-11" Min="-11" Max="-11" />
+				<SampleCategory Name="Sports:Cycling" Type="Expense" Frequency="1" Average="-33" Min="-33" Max="-33" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="PetSmart" Frequency="27" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="16" Average="-17" Min="-76" Max="10" />
+				<SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="3" Average="-17" Min="-30" Max="-8" />
+				<SampleCategory Name="Household:Pets" Type="Expense" Frequency="8" Average="-28" Min="-144" Max="-2" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Jamba Juice" Frequency="25" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="22" Average="-12" Min="-39" Max="-4" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-28" Min="-28" Max="-28" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-31" Min="-31" Max="-31" />
+				<SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Waste Management" Frequency="21" Type="Check">
+			<Categories>
+				<SampleCategory Name="Utilities:Trash" Type="Expense" Frequency="21" Average="-129" Min="-150" Max="-92" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Fred Meyer" Frequency="44" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="6" Average="-33" Min="-63" Max="-7" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="9" Average="-65" Min="-121" Max="-15" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="10" Average="-47" Min="-119" Max="42" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="1" Average="-16" Min="-16" Max="-16" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="5" Average="-6" Min="-10" Max="-1" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="4" Average="-47" Min="-68" Max="-21" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
+				<SampleCategory Name="Household:Kitchen" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+				<SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="1" Average="-35" Min="-35" Max="-35" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-76" Min="-82" Max="-71" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="2" Average="-68" Min="-87" Max="-48" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Molbaks Inc." Frequency="19" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Landscaping:Supplies" Type="Expense" Frequency="4" Average="-25" Min="-57" Max="-7" />
+				<SampleCategory Name="Landscaping:Plants" Type="Expense" Frequency="9" Average="-74" Min="-146" Max="-8" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-52" Min="-79" Max="-21" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Landscaping:Vegetables" Type="Expense" Frequency="1" Average="-76" Min="-76" Max="-76" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Walmart" Frequency="22" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-18" Min="-21" Max="-15" />
+				<SampleCategory Name="Travel:Supplies" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
+				<SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="4" Average="-21" Min="-37" Max="-3" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="2" Average="-38" Min="-73" Max="-3" />
+				<SampleCategory Name="Fun:Camping" Type="Expense" Frequency="2" Average="-71" Min="-183" Max="41" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-45" Min="-45" Max="-45" />
+				<SampleCategory Name="Household:Pets" Type="Expense" Frequency="1" Average="-105" Min="-105" Max="-105" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-53" Min="-81" Max="-26" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-49" Min="-49" Max="-49" />
+				<SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-43" Min="-43" Max="-43" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-108" Min="-119" Max="-96" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Verizon" Frequency="63" Type="Check">
+			<Categories>
+				<SampleCategory Name="Telephone" Type="Expense" Frequency="63" Average="-40" Min="-83" Max="-33" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Barnes &amp; Noble" Frequency="77" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="53" Average="-31" Min="-92" Max="-6" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="9" Average="-6" Min="-20" Max="-3" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="2" Average="-16" Min="-17" Max="-16" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="4" Average="-62" Min="-113" Max="-16" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-7" Min="-13" Max="-2" />
+				<SampleCategory Name="Education:Software" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+				<SampleCategory Name="Fun:Books &amp; Magazines" Type="Expense" Frequency="2" Average="-54" Min="-78" Max="-29" />
+				<SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="1" Average="-42" Min="-42" Max="-42" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="McDonalds" Frequency="102" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="36" Average="-7" Min="-16" Max="-1" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="58" Average="-8" Min="-25" Max="-1" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-46" Min="-57" Max="-36" />
+				<SampleCategory Name="Food" Type="Expense" Frequency="5" Average="-11" Min="-14" Max="-8" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Quizno's" Frequency="160" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="1" Average="-26" Min="-26" Max="-26" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="108" Average="-16" Min="-51" Max="0" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="51" Average="-17" Min="-37" Max="-1" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Pony Mailbox" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Postage" Type="Expense" Frequency="10" Average="-18" Min="-77" Max="-4" />
+				<SampleCategory Name="Travel:Government Fees" Type="Expense" Frequency="2" Average="-22" Min="-23" Max="-20" />
+				<SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-78" Min="-78" Max="-78" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Blockbuster Video" Frequency="60" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="16" Average="-9" Min="-65" Max="36" />
+				<SampleCategory Name="Fun:Video Rental" Type="Expense" Frequency="44" Average="-7" Min="-115" Max="36" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Office Max" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="6" Average="-33" Min="-128" Max="-2" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="3" Average="-26" Min="-64" Max="-4" />
+				<SampleCategory Name="Education:TPA" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
+				<SampleCategory Name="Education:Arts" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Teddy's Bigger Burgers" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="11" Average="-24" Min="-48" Max="-4" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Pallino Pastaria" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="9" Average="-28" Min="-47" Max="-15" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-40" Min="-57" Max="-24" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Famous Footwear" Frequency="15" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="14" Average="-28" Min="-322" Max="142" />
+				<SampleCategory Name="Auto:Fuel:SUV" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Department of Licensing" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Auto:Registration" Type="Expense" Frequency="6" Average="-45" Min="-61" Max="-20" />
+				<SampleCategory Name="Auto:Driver's Licence" Type="Expense" Frequency="4" Average="-32" Min="-53" Max="-25" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Play It Again Sports" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Sports:Cycling" Type="Expense" Frequency="1" Average="81" Min="81" Max="81" />
+				<SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="4" Average="-42" Min="-76" Max="-4" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="4" Average="-9" Min="-23" Max="-1" />
+				<SampleCategory Name="Sports:Swimming" Type="Expense" Frequency="1" Average="-43" Min="-43" Max="-43" />
+				<SampleCategory Name="Sports:Baseball" Type="Expense" Frequency="1" Average="-46" Min="-46" Max="-46" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="NewEgg.com" Frequency="35" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="32" Average="-254" Min="-1745" Max="161" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-314" Min="-556" Max="-71" />
+				<SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-116" Min="-116" Max="-116" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Marriot Atlanta Store" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="12" Average="-8" Min="-15" Max="-3" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-19" Min="-19" Max="-19" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Marta Atlanta" Frequency="12" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Train" Type="Expense" Frequency="12" Average="-13" Min="-18" Max="-4" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Seattle Times" Frequency="14" Type="Check">
+			<Categories>
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="14" Average="-61" Min="-98" Max="-27" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Foot Zone" Frequency="15" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="13" Average="-82" Min="-255" Max="109" />
+				<SampleCategory Name="Clothing:Shoes" Type="Expense" Frequency="2" Average="0" Min="-109" Max="109" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Staples" Frequency="45" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Electronics:Printing" Type="Expense" Frequency="1" Average="-161" Min="-161" Max="-161" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="22" Average="-36" Min="-106" Max="0" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="7" Average="-37" Min="-137" Max="4" />
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="10" Average="0" Min="-129" Max="326" />
+				<SampleCategory Name="Travel:Supplies" Type="Expense" Frequency="1" Average="-23" Min="-23" Max="-23" />
+				<SampleCategory Name="Electronics:Supplies" Type="Expense" Frequency="1" Average="-124" Min="-124" Max="-124" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-32" Min="-55" Max="-9" />
+				<SampleCategory Name="Auto:Parts" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="The Whole Pet Shop" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="14" Average="-44" Min="-78" Max="-8" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Chinese Restaurant" Frequency="28" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="28" Average="-64" Min="-99" Max="-46" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Animal Healing Center" Frequency="24" Type="Check">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="24" Average="-102" Min="-328" Max="140" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Travelsmith Catalogue" Frequency="21" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="21" Average="-86" Min="-419" Max="190" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Baskin Robbins" Frequency="23" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="11" Average="-13" Min="-24" Max="-5" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-22" Min="-22" Max="-22" />
+				<SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="7" Average="-29" Min="-40" Max="-15" />
+				<SampleCategory Name="Education:TPA" Type="Expense" Frequency="1" Average="-31" Min="-31" Max="-31" />
+				<SampleCategory Name="Fun:Parties" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Subway" Frequency="24" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="20" Average="-16" Min="-34" Max="-5" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="4" Average="-27" Min="-46" Max="-14" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="The Lego Store" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-156" Min="-156" Max="-156" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-98" Min="-165" Max="-33" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-221" Min="-405" Max="-36" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="5" Average="-81" Min="-143" Max="-53" />
+				<SampleCategory Name="Education:First Lego League" Type="Expense" Frequency="1" Average="-13" Min="-13" Max="-13" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Red Robin" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="10" Average="-44" Min="-85" Max="-10" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Dentist" Frequency="11" Type="Check">
+			<Categories>
+				<SampleCategory Name="Medical:Dentist" Type="Expense" Frequency="11" Average="-78" Min="-200" Max="-12" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Black Angus" Frequency="29" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="24" Average="-117" Min="-227" Max="-28" />
+				<SampleCategory Name="Gifts:Anniversary" Type="Expense" Frequency="1" Average="-177" Min="-177" Max="-177" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-159" Min="-212" Max="-96" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-65" Min="-65" Max="-65" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Lands End" Frequency="28" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="27" Average="-85" Min="-437" Max="218" />
+				<SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Gymnastics" Frequency="15" Type="Check">
+			<Categories>
+				<SampleCategory Name="Sports:Gymnastics" Type="Expense" Frequency="15" Average="-251" Min="-533" Max="-30" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="KFC" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="8" Average="-28" Min="-45" Max="-8" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-10" Min="-14" Max="-5" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Fry's Electronics" Frequency="55" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Electronics:Hardware" Type="Expense" Frequency="37" Average="-258" Min="-4025" Max="163" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="11" Average="-5" Min="-16" Max="-1" />
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="3" Average="-46" Min="-91" Max="-16" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-222" Min="-222" Max="-222" />
+				<SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-51" Min="-51" Max="-51" />
+				<SampleCategory Name="Electronics:Software" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="1" Average="-1591" Min="-1591" Max="-1591" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Milk Delivery" Frequency="32" Type="Check">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="32" Average="-21" Min="-57" Max="-8" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Soccer West" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Sports:Soccer" Type="Expense" Frequency="11" Average="-64" Min="-140" Max="-13" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Borders Books" Frequency="22" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="5" Average="-33" Min="-89" Max="-9" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="17" Average="-45" Min="-114" Max="15" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Stevens Pass Ski Resort" Frequency="28" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="25" Average="-89" Min="-289" Max="-18" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="3" Average="-21" Min="-22" Max="-18" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Ben Franklin" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="3" Average="-39" Min="-75" Max="-17" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="2" Average="-21" Min="-37" Max="-5" />
+				<SampleCategory Name="Education:Robotics" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
+				<SampleCategory Name="Charity:Other" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-165" Min="-165" Max="-165" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-11" Min="-11" Max="-11" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Audible Books" Frequency="26" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="15" Average="-15" Min="-22" Max="68" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="11" Average="-16" Min="-41" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Great Harvest Bakery" Frequency="41" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="41" Average="-10" Min="-29" Max="0" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Osh Kosh B'gosh" Frequency="17" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="16" Average="-71" Min="-212" Max="-26" />
+				<SampleCategory Name="Home:Improvement" Type="Expense" Frequency="1" Average="-17" Min="-17" Max="-17" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="QFC" Frequency="19" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="13" Average="-12" Min="-36" Max="-3" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-2" Min="-3" Max="-1" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-9" Min="-12" Max="-6" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Trader Joe's" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="13" Average="-27" Min="-93" Max="0" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Round Table Pizza" Frequency="40" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="39" Average="-36" Min="-84" Max="-11" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Southwest Airlines" Frequency="45" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Air" Type="Expense" Frequency="35" Average="-217" Min="-394" Max="243" />
+				<SampleCategory Name="Wages &amp; Salary:Insurance" Type="Income" Frequency="10" Average="0" Min="0" Max="0" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Consumer Reports" Frequency="16" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="15" Average="-14" Min="-26" Max="24" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Cost Plus World Market" Frequency="12" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="11" Average="-34" Min="-162" Max="-1" />
+				<SampleCategory Name="Gifts:Thankyou" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="IKEA" Frequency="18" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
+				<SampleCategory Name="Household:Furnishings" Type="Expense" Frequency="1" Average="-73" Min="-73" Max="-73" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="14" Average="-133" Min="-585" Max="79" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-10" Min="-17" Max="-3" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Lego Shop At Home" Frequency="12" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="3" Average="-150" Min="-293" Max="-36" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="4" Average="-174" Min="-391" Max="-64" />
+				<SampleCategory Name="Education:First Lego League" Type="Expense" Frequency="2" Average="-281" Min="-291" Max="-272" />
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="2" Average="-37" Min="-71" Max="-3" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-127" Min="-127" Max="-127" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Pacific Science Center" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Memberships" Type="Expense" Frequency="3" Average="-102" Min="-131" Max="-85" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-29" Min="-35" Max="-23" />
+				<SampleCategory Name="Education:Field Trips" Type="Expense" Frequency="4" Average="-47" Min="-75" Max="-18" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="2" Average="-23" Min="-29" Max="-17" />
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-100" Min="-100" Max="-100" />
+				<SampleCategory Name="Travel:Parking" Type="Expense" Frequency="1" Average="-10" Min="-10" Max="-10" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Countrywide" Frequency="49" Type="Check">
+			<Categories>
+				<SampleCategory Name="Home:Mortgage" Type="Expense" Frequency="49" Average="-2063" Min="-2063" Max="-2063" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Alaska Airlines" Frequency="21" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel" Type="Expense" Frequency="1" Average="-5" Min="-5" Max="-5" />
+				<SampleCategory Name="Travel:Air" Type="Expense" Frequency="20" Average="-187" Min="-299" Max="-60" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Chinese Restaurant" Frequency="104" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-27" Min="-27" Max="-27" />
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="101" Average="-58" Min="-113" Max="-25" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="2" Average="-114" Min="-129" Max="-100" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Stevens Pass Cascadian" Frequency="15" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="12" Average="-9" Min="-27" Max="-4" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-13" Min="-19" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Toys R Us" Frequency="15" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="7" Average="-35" Min="-97" Max="-14" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-36" Min="-36" Max="-36" />
+				<SampleCategory Name="Fun:Video Games" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-24" Min="-24" Max="-24" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-43" Min="-43" Max="-43" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="2" Average="-42" Min="-89" Max="4" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Linens N Things" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Linens" Type="Expense" Frequency="8" Average="-99" Min="-457" Max="-5" />
+				<SampleCategory Name="Household:Kitchen" Type="Expense" Frequency="3" Average="-39" Min="-54" Max="-13" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="3" Average="-51" Min="-81" Max="-30" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Ski Rentals" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="9" Average="-209" Min="-500" Max="32" />
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-609" Min="-609" Max="-609" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Tapatio Mexican Grill" Frequency="44" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="42" Average="-40" Min="-83" Max="-7" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-8" Min="-9" Max="-7" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Sir Plus" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Fun:Camping" Type="Expense" Frequency="1" Average="-49" Min="-49" Max="-49" />
+				<SampleCategory Name="Education:Boy Scouts" Type="Expense" Frequency="1" Average="-110" Min="-110" Max="-110" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="2" Average="-58" Min="-72" Max="-43" />
+				<SampleCategory Name="Education:Cub Scouts" Type="Expense" Frequency="3" Average="-18" Min="-33" Max="-3" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-20" Min="-20" Max="-20" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
+				<SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="1" Average="-30" Min="-30" Max="-30" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Bartell Drugs" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="1" Average="-32" Min="-32" Max="-32" />
+				<SampleCategory Name="Food:Groceries" Type="Expense" Frequency="3" Average="-6" Min="-12" Max="-1" />
+				<SampleCategory Name="Medical:Pharmaceuticals" Type="Expense" Frequency="2" Average="-14" Min="-19" Max="-10" />
+				<SampleCategory Name="Household:Personal Care" Type="Expense" Frequency="1" Average="-35" Min="-35" Max="-35" />
+				<SampleCategory Name="Medical" Type="Expense" Frequency="2" Average="-27" Min="-30" Max="-25" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-76" Min="-76" Max="-76" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Stevens Pass" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Sports:Skiing" Type="Expense" Frequency="5" Average="-279" Min="-540" Max="-74" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="3" Average="-11" Min="-16" Max="-7" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="34" Min="34" Max="34" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="SeaTac Airport" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Parking" Type="Expense" Frequency="5" Average="-3" Min="-6" Max="-2" />
+				<SampleCategory Name="Auto:Parking" Type="Expense" Frequency="2" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="2" Average="-8" Min="-8" Max="-7" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="3" Average="-3" Min="-5" Max="0" />
+				<SampleCategory Name="Education:Books" Type="Expense" Frequency="1" Average="-6" Min="-6" Max="-6" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Lego Store" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Gifts:Birthday" Type="Expense" Frequency="1" Average="-65" Min="-65" Max="-65" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="2" Average="-66" Min="-90" Max="-42" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="6" Average="-54" Min="-199" Max="-10" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-95" Min="-95" Max="-95" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Intuit" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Wages &amp; Salary:Taxes:Preparation" Type="Income" Frequency="9" Average="-7" Min="-76" Max="76" />
+				<SampleCategory Name="Electronics:Software" Type="Expense" Frequency="4" Average="-30" Min="-65" Max="-7" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Loews" Frequency="13" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Fun:Movies" Type="Expense" Frequency="10" Average="-27" Min="-49" Max="-10" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="2" Average="-27" Min="-30" Max="-24" />
+				<SampleCategory Name="Gifts" Type="Expense" Frequency="1" Average="-25" Min="-25" Max="-25" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Residential House Cleaning" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Cleaning" Type="Expense" Frequency="14" Average="-126" Min="-135" Max="-125" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Tina Eddy" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="10" Average="-30" Min="-50" Max="-25" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="A Canine Experience" Frequency="11" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="11" Average="-127" Min="-755" Max="-25" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Veterinary Hospital" Frequency="22" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Pets:Dogs" Type="Expense" Frequency="17" Average="-158" Min="-563" Max="-21" />
+				<SampleCategory Name="Household:Pets" Type="Expense" Frequency="2" Average="-99" Min="-138" Max="-60" />
+				<SampleCategory Name="Household:Pets:Rabbits" Type="Expense" Frequency="3" Average="-103" Min="-199" Max="-44" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Denny's" Frequency="12" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Dinner" Type="Expense" Frequency="4" Average="-12" Min="-20" Max="-3" />
+				<SampleCategory Name="Food:Breakfast" Type="Expense" Frequency="3" Average="-12" Min="-20" Max="-7" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="4" Average="-3" Min="-5" Max="-1" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-9" Min="-9" Max="-9" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Museum Of Flight" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="1" Average="-14" Min="-14" Max="-14" />
+				<SampleCategory Name="Education:Field Trips" Type="Expense" Frequency="6" Average="-15" Min="-45" Max="-3" />
+				<SampleCategory Name="Education:Memberships" Type="Expense" Frequency="1" Average="-48" Min="-48" Max="-48" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-12" Min="-12" Max="-12" />
+				<SampleCategory Name="Food" Type="Expense" Frequency="1" Average="-4" Min="-4" Max="-4" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="USPS" Frequency="10" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Postage" Type="Expense" Frequency="6" Average="-4" Min="-7" Max="-1" />
+				<SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="1" Average="-2" Min="-2" Max="-2" />
+				<SampleCategory Name="Gifts:Christmas" Type="Expense" Frequency="1" Average="-36" Min="-36" Max="-36" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-3" Min="-3" Max="-3" />
+				<SampleCategory Name="Education:Usborne" Type="Expense" Frequency="1" Average="-1" Min="-1" Max="-1" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Legoland" Frequency="14" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Travel:Entertainment" Type="Expense" Frequency="2" Average="-49" Min="-75" Max="-23" />
+				<SampleCategory Name="Travel:Food" Type="Expense" Frequency="2" Average="-22" Min="-34" Max="-10" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="3" Average="-123" Min="-290" Max="-7" />
+				<SampleCategory Name="Food:Treats" Type="Expense" Frequency="2" Average="-6" Min="-10" Max="-3" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="1" Average="-18" Min="-18" Max="-18" />
+				<SampleCategory Name="Food:Lunches" Type="Expense" Frequency="4" Average="-16" Min="-28" Max="-11" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Sears" Frequency="20" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Household:Appliances" Type="Expense" Frequency="4" Average="-272" Min="-906" Max="63" />
+				<SampleCategory Name="Household:Tools" Type="Expense" Frequency="3" Average="-165" Min="-366" Max="-43" />
+				<SampleCategory Name="Household:Furniture" Type="Expense" Frequency="1" Average="-73" Min="-73" Max="-73" />
+				<SampleCategory Name="Clothing" Type="Expense" Frequency="7" Average="-36" Min="-64" Max="-19" />
+				<SampleCategory Name="Household:Linens" Type="Expense" Frequency="1" Average="-69" Min="-69" Max="-69" />
+				<SampleCategory Name="Home:Improvement" Type="Expense" Frequency="2" Average="-214" Min="-304" Max="-125" />
+				<SampleCategory Name="Medical" Type="Expense" Frequency="1" Average="-102" Min="-102" Max="-102" />
+				<SampleCategory Name="Household" Type="Expense" Frequency="1" Average="-1810" Min="-1810" Max="-1810" />
+			</Categories>
+		</SamplePayee>
+		<SamplePayee Name="Hobby Town USA" Frequency="19" Type="Credit">
+			<Categories>
+				<SampleCategory Name="Education:Supplies" Type="Expense" Frequency="1" Average="-7" Min="-7" Max="-7" />
+				<SampleCategory Name="Household:Supplies" Type="Expense" Frequency="2" Average="-13" Min="-13" Max="-13" />
+				<SampleCategory Name="Fun:Toys &amp; Games" Type="Expense" Frequency="15" Average="-19" Min="-80" Max="-5" />
+				<SampleCategory Name="Education:Cub Scouts" Type="Expense" Frequency="1" Average="-55" Min="-55" Max="-55" />
+			</Categories>
+		</SamplePayee>
+	</Payees>
+</SampleData>
