@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/OnlineService/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Online Services - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Online Services", url: "#_top", children: [
+              {title: "Cache", url: "#cache" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+
+    <h1 id="online-services">Online Services<a class="headerlink" href="#online-services" title="Permanent link">#</a></h1>
+<p>Daily stock prices and exchange rates can be downloaded from a configured online service.  Select <strong>Online Services...</strong>  from the Online Menu to configure your service.</p>
+<p>When stock quote information is downloaded you will see full stock quote information available in the <a href="../../Charts/StockChart/">Stock Chart</a>.<br />
+When Exchange Rate information is downloaded you will see up to date currency exchange rates in the
+<a href="../../Basics/Currencies/">Currencies View</a>.</p>
+<p><img alt="" src="../../Images/OnlineServices.png" /></p>
+<p>MyMoney can download from <strong>twelvedata.com</strong> or <strong>yahoo.com</strong> .  These services require a registered account and will provide an API Key which you enter here.  Depending on your plan you will also have limits on the number of requests per minute or per day or per month.  Enter those numbers here and MyMoney will ensure those limits are not exceeded.  Just leave the value at 0 if there is no limit.  MyMoney recommends
+using <strong>twelvedata.com</strong>.</p>
+<p>During the download you will see some progress information in the status bar on the bottom right.  If the download is blocked on the quota limits this progress bar may pause for a moment.  If you reach daily or monthly limits the download will print an error message explaining why the stock quotes are not updating right now.</p>
+<p><a href="https://twelvedata.com/">https://twelvedata.com/</a>
+TwelveData provides stock, forex, cryptocurrency, ETF info with up to 20 years of historical data.  The free account can do 8 requests/minute,
+and 800 per day. To setup a free account on their website, click their Get Started button, create a new account and copy the "api key" to the API Key field in the MyMoney Stock Quote Service Dialog.</p>
+<p><a href="https://www.fastforex.io/">https://fastforex.io/</a>
+Click "Get Your Free API Key Today" button right on the home page, and enter your name and email, then click "get free api key".  The same page will give you a message saying "Your API key is: " with a number that looks like a GUID, and so copy that to the API key field in the MyMoney Online Services Dialog.  This free key will expire in 8 days, but if you want to use the paid service for $18/month you will get a huge a limit of 1,000,000 API requests per month and MyMoney is unlikely to ever hit that limit.  The current rates are cached and only updated once per day.</p>
+<h3 id="cache">Cache<a class="headerlink" href="#cache" title="Permanent link">#</a></h3>
+<p>The stock quote information is cached in a folder named <code>StockQuotes</code>
+next to your *.mmdb money database file.  There is also a special
+<code>DownloadLog.xml</code> index file in this folder which keeps tabs on how
+recently the stock quotes were updated and so on.  These cached files
+are used to efficiently compute the historical market value for your
+<a href="../InvestmentAccounts/">investment accounts</a> which you can view by selecting
+different dates in the <a href="../reports/InvestmentPortfolio.md">Portfolio Report</a>
+and in the <a href="../reports/NetworthReport.md">Networth Report</a>.</p>
+
+  <br>
+    
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
