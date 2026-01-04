@@ -1553,6 +1553,12 @@ namespace Walkabout.Views
             {
                 // We could have TransactionViewName.Account or TransactionViewName.Portfolio;
                 Account account = this.activeAccount;
+                if (this.selector is TransactionFixedSelector ts && ts.IsEmpty)
+                {
+                    // this is the special empty fixed selector which happens when we have no accounts.
+                    // so replace this with a proper account selector.
+                    this.selector = new TransactionAccountSelector(null, account.Name);
+                }
                 isBrokerage = (account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement);
                 if (account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement)
                 {

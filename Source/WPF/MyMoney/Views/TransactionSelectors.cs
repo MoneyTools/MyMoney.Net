@@ -4,6 +4,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Windows.Navigation;
 using System.Xml.Serialization;
 using Walkabout.Data;
 
@@ -428,6 +429,9 @@ namespace Walkabout.Views
             }
             this.data = data;
         }
+
+        public bool IsEmpty => data == null || data.Count == 0;
+
         public override IEnumerable<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
         {
             return this.data;
