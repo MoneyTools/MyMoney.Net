@@ -1886,7 +1886,7 @@ namespace Walkabout.Views
                 this.Commit();
                 this.FireBeforeViewStateChanged();
 
-                this.selector = new TransactionAccountSelector(a.Name);
+                this.selector = new TransactionAccountSelector(null, a.Name);
                 bool accountChanged = this.ActiveAccount != a;
                 long currentRowId = this.SelectedRowId;
                 if (accountChanged && this.TransactionFilter != TransactionFilter.All)
@@ -2079,7 +2079,7 @@ namespace Walkabout.Views
             IList<Transaction> transactions = new List<Transaction>();
             if (p != null)
             {
-                this.selector = new TransactionPayeeSelector(p.Name);
+                this.selector = new TransactionPayeeSelector(null, p.Name);
                 if (this.TransactionFilter != TransactionFilter.All)
                 {
                     this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
@@ -2122,12 +2122,20 @@ namespace Walkabout.Views
         {
             this.SwitchLayout("TheGrid_BySecurity");
             this.SetActiveAccount(null, null, null, s, null);
-            this.selector = new TransactionSecuritySelector(s.Name);
+            this.selector = new TransactionSecuritySelector(null, s.Name);
             if (this.TransactionFilter != TransactionFilter.All)
             {
                 this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
             }
             var transactions = this.GetSelectedTransactions();
+            foreach (var t in transactions)
+            {
+                if (t.Investment != null)
+                {
+                    t.Investment.CurrentUnits = t.Investment.Units;
+                    t.Investment.CurrentUnitPrice = t.Investment.UnitPrice;
+                }
+            }
             var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
             this.Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);            
         }
@@ -2201,7 +2209,7 @@ namespace Walkabout.Views
                 caption += " " + p.Name;
             }
 
-            this.selector = new TransactionPayeeSelector(p?.Name);
+            this.selector = new TransactionPayeeSelector(null, p?.Name);
             if (this.TransactionFilter != TransactionFilter.All)
             {
                 this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
@@ -2324,7 +2332,7 @@ namespace Walkabout.Views
             this.SwitchLayout("TheGrid_TransactionFromDetails");
             this.SetActiveAccount(null, null, null, null, contextToView.Building);
 
-            this.selector = new TransactionRentalSelector(contextToView);
+            this.selector = new TransactionRentalSelector(null, contextToView);
             if (this.TransactionFilter != TransactionFilter.All)
             {
                 this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
@@ -2339,7 +2347,12 @@ namespace Walkabout.Views
 
         internal IList<Transaction> GetSelectedTransactions()
         {
-            return this.selector.GetSelectedTransactions(this.GetSelectorContext());
+            var result = this.selector.GetSelectedTransactions(this.GetSelectorContext());
+            if (result is IList<Transaction> list)
+            {
+                return list;
+            }
+            return result.ToList();
         }
 
         #endregion
@@ -5159,400 +5172,6 @@ namespace Walkabout.Views
 
     }
 
-    public class TransactionSelectorContext
-    {
-        public bool IsReconciling;
-        public DateTime? StatementReconcileDateBegin;
-        public MyMoney Money;
-    }
-
-    [XmlInclude(typeof(TransactionAccountSelector))]
-    [XmlInclude(typeof(TransactionPayeeSelector))]
-    [XmlInclude(typeof(TransactionCategorySelector))]
-    [XmlInclude(typeof(TransactionSecuritySelector))]
-    [XmlInclude(typeof(TransactionRangeSelector))]
-    [XmlInclude(typeof(TransactionQuerySelector))]
-    [XmlInclude(typeof(TransactionFilterSelector))]
-    [XmlInclude(typeof(TransactionRentalSelector))]
-    [XmlInclude(typeof(TransactionFixedSelector))]
-    public abstract class TransactionSelector
-    {
-        public TransactionSelector Previous { get; set; }
-
-        public abstract IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context);
-    }
-
-    public class TransactionFixedSelector : TransactionSelector
-    {
-        private IList<Transaction> data;
-
-        public TransactionFixedSelector() { }
-
-        public TransactionFixedSelector(IList<Transaction> data)
-        {
-            this.data = data;
-        }
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            if (this.data != null)
-            {
-                return this.data;
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-        }
-    }
-
-    public class TransactionAccountSelector : TransactionSelector
-    {
-        public string AccountName { get; set; }
-
-        public TransactionAccountSelector() { }
-
-        public TransactionAccountSelector(string accountName)
-        {
-            this.AccountName = accountName;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-            var account = money.Accounts.FindAccount(this.AccountName);
-            if (account != null)
-            {
-                if (this.Previous == null)
-                {
-                    return money.Transactions.GetTransactionsFrom(account);
-                }
-
-                var result = new List<Transaction>();
-                foreach (var t in this.Previous.GetSelectedTransactions(context))
-                {
-                    if (t.Account == account)
-                    {
-                        result.Add(t);
-                    }
-                }
-                return result;
-            }
-            return new List<Transaction>();
-        }
-    }
-
-    public class TransactionPayeeSelector : TransactionSelector
-    {
-        public string PayeeName { get; set; }
-
-        public TransactionPayeeSelector() { }
-
-        public TransactionPayeeSelector(string payeeName)
-        {
-            this.PayeeName = payeeName;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-            var payee = money.Payees.FindPayee(this.PayeeName, false);
-            if (payee != null)
-            {
-                if (this.Previous == null)
-                {
-                    return money.Transactions.GetTransactionsByPayee(payee, null);
-                }
-                var result = new List<Transaction>();
-                foreach (var t in this.Previous.GetSelectedTransactions(context))
-                {
-                    if (t.Payee == payee)
-                    {
-                        result.Add(t);
-                    }
-                }
-                return result;
-            }
-            return new List<Transaction>();
-        }
-    }
-
-    public class TransactionCategorySelector : TransactionSelector
-    {
-        public string CategoryName { get; set; }
-
-        public TransactionCategorySelector() { }
-
-        public TransactionCategorySelector(TransactionSelector previous, string categoryName)
-        {
-            this.Previous = previous;
-            this.CategoryName = categoryName;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-            var category = money.Categories.FindCategory(this.CategoryName);
-            if (category != null)
-            {
-                if (this.Previous == null)
-                {
-                    return money.Transactions.GetTransactionsByCategory(category, null);
-                }
-
-                var result = new List<Transaction>();
-                foreach (var t in this.Previous.GetSelectedTransactions(context))
-                {
-                    Category c = t.Category;
-                    // if the transaction is a subcategory then it is a match.
-                    while (c != null)
-                    {
-                        if (c == category)
-                        {
-                            result.Add(t);
-                            break;
-                        }
-                        c = c.ParentCategory;
-                    }
-                }
-                return result;
-            }
-            return new List<Transaction>();
-        }
-    }
-
-    public class TransactionSecuritySelector : TransactionSelector
-    {
-        public string SecurityName { get; set; }
-
-        public TransactionSecuritySelector() { }
-
-        public TransactionSecuritySelector(string securityName)
-        {
-            this.SecurityName = securityName;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-            var security = money.Securities.FindSecurity(this.SecurityName, false);
-            if (security != null)
-            {
-                if (this.Previous == null)
-                {
-                    return money.Transactions.GetTransactionsBySecurity(security, null);
-                }
-
-                var result = new List<Transaction>();
-                foreach (var t in this.Previous.GetSelectedTransactions(context))
-                {
-                    if (t.Investment != null && t.Investment.Security == security)
-                    {
-                        result.Add(t);
-                    }
-                }
-                return result;
-            }
-            return new List<Transaction>();
-        }
-    }
-
-    public class TransactionRentalSelector : TransactionSelector
-    {
-        public RentalBuildingSingleYearSingleDepartment Department { get; set; }
-
-        public TransactionRentalSelector() { }
-
-        public TransactionRentalSelector(RentalBuildingSingleYearSingleDepartment department)
-        {
-            this.Department = department;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-            Category c = money.Categories.FindCategory(this.Department.DepartmentCategory);
-            return money.Transactions.GetTransactionsByCategory(c, this.Department.Year, false);
-        }
-    }
-
-    public class TransactionRangeSelector : TransactionSelector
-    {
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-
-        public TransactionRangeSelector() { }
-
-        public TransactionRangeSelector(TransactionSelector previous, DateTime startDate, DateTime endDate)
-        {
-            this.Previous = previous;
-            this.StartDate = startDate;
-            this.EndDate = endDate;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var money = context.Money;
-
-            IList<Transaction> data = (this.Previous == null) ? money.Transactions.GetAllTransactionsByDate() : this.Previous.GetSelectedTransactions(context);
-
-            var result = new List<Transaction>();
-            foreach (var t in data)
-            {
-                if (t.Date >= this.StartDate && t.Date < this.EndDate)
-                {
-                    result.Add(t);
-                }
-            }
-            return result;
-        }
-    }
-
-    public class TransactionQuerySelector : TransactionSelector
-    {
-        public QueryRow[] Query { get; set; }
-
-        public TransactionQuerySelector() { } // for XML serialization
-
-        public TransactionQuerySelector(QueryRow[] query)
-        {
-            // Previous not supported, this must always be the root selector.
-            this.Query = query;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            return context.Money.Transactions.ExecuteQuery(this.Query);
-        }
-    }
-
-    public class TransactionFilterSelector : TransactionSelector
-    {          
-        public TransactionFilter Filter { get; set; }
-
-        public TransactionFilterSelector() { } // for xml serialization
-
-        public TransactionFilterSelector(TransactionSelector previous, TransactionFilter filter)
-        {
-            if (previous == null)
-            {
-                throw new NotSupportedException("TransactionFilterSelector requires a root selector");
-            }
-            this.Previous = previous;
-            this.Filter = filter;
-        }
-
-        public override IList<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
-        {
-            var predicate = this.GetTransactionIncludePredicate(context.IsReconciling, context.StatementReconcileDateBegin);
-            var data = (this.Previous != null) ? this.Previous.GetSelectedTransactions(context) : context.Money.Transactions.GetAllTransactions();
-            List<Transaction> result = new List<Transaction>();
-            foreach (var t in data)
-            {
-                if (predicate(t)) result.Add(t);
-            }
-            return result;
-        }
-
-        public Predicate<Transaction> GetTransactionIncludePredicate(bool isReconciling, DateTime? statementDate)
-        {
-            Predicate<Transaction> predicate = null;
-            switch (this.Filter)
-            {
-                case TransactionFilter.All:
-                case TransactionFilter.Custom:
-                    predicate = new Predicate<Transaction>((t) => { return true; });
-                    break;
-                case TransactionFilter.Accepted:
-                    predicate = new Predicate<Transaction>((t) => { return !t.Unaccepted; });
-                    break;
-                case TransactionFilter.Unaccepted:
-                    predicate = new Predicate<Transaction>((t) => { return t.Unaccepted; });
-                    break;
-                case TransactionFilter.Reconciled:
-                    if (!isReconciling)
-                    {
-                        // We are not in BALANCING mode so use the normal un-reconcile filter (show all transactions that are not reconciled)
-                        predicate = new Predicate<Transaction>((t) => { return t.Status == TransactionStatus.Reconciled; });
-                    }
-                    else
-                    {
-                        // While balancing we need to see the reconciled transactions for the current statement date as well as any 
-                        // before or after that are not reconciled.
-                        predicate = new Predicate<Transaction>((t) =>
-                        {
-                            return (t.Status == TransactionStatus.Reconciled) ||
-                                    t.IsReconciling || this.IsIncludedInCurrentStatement(t, statementDate);
-                        });
-                    }
-                    break;
-                case TransactionFilter.Unreconciled:
-                    if (!isReconciling)
-                    {
-                        // We are not in BALANCING mode so use the normal un-reconcile filter (show all transactions that are not reconciled)
-                        predicate = new Predicate<Transaction>((t) => { return t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void; });
-                    }
-                    else
-                    {
-                        // While balancing we need to see the reconciled transactions for the current statement date as well as any 
-                        // before or after that are not reconciled.
-                        predicate = new Predicate<Transaction>((t) =>
-                        {
-                            return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void) ||
-                                    t.IsReconciling || this.IsIncludedInCurrentStatement(t, statementDate);
-                        });
-                    }
-                    break;
-                case TransactionFilter.Categorized:
-                    predicate = new Predicate<Transaction>((t) =>
-                    {
-                        if (t.Status == TransactionStatus.Void)
-                        {
-                            return false; // no point seeing these
-                        }
-                        if (t.IsFakeSplit)
-                        {
-                            return false;
-                        }
-                        if (t.IsSplit)
-                        {
-                            return t.Splits.Unassigned == 0; // then all splits are good!
-                        }
-                        return t.Category != null;
-                    });
-                    break;
-                case TransactionFilter.Uncategorized:
-                    predicate = new Predicate<Transaction>((t) =>
-                    {
-                        if (t.Status == TransactionStatus.Void)
-                        {
-                            return false; // no point seeing these
-                        }
-                        if (t.IsFakeSplit)
-                        {
-                            return false; // this represents a category by definition.
-                        }
-                        if (t.IsSplit)
-                        {
-                            return t.Splits.Unassigned > 0; // then there is more to categorize in the splits!
-                        }
-                        return t.Category == null;
-                    });
-                    break;
-            }
-            return predicate;
-        }
-
-        private bool IsIncludedInCurrentStatement(Transaction t, DateTime? statementDate)
-        {
-            if (statementDate.HasValue)
-            {
-                return t.Date >= statementDate.Value;
-            }
-
-            return true;
-        }
-
-    }
 
     //==========================================================================================
     public class TransactionViewState : ViewState

@@ -10226,8 +10226,6 @@ namespace Walkabout.Data
 
                 if (t.Investment.Security == s)
                 {
-                    t.Investment.CurrentUnits = t.Investment.Units;
-                    t.Investment.CurrentUnitPrice = t.Investment.UnitPrice;
                     view.Add(t);
                 }
             }
@@ -10333,36 +10331,15 @@ namespace Walkabout.Data
                     continue;
                 }
 
-                if (t.IsSplit)
+                if (t.CategoryMatches(matches))
                 {
-                    bool all = true;
-                    foreach (Split s in t.Splits.Items)
-                    {
-                        if (!matches(s.Category))
-                        {
-                            all = false;
-                            break;
-                        }
-                    }
-                    if (all)
-                    {
-                        // all splits match the category so the whole transaction can be listed.
-                        view.Add(t);
-                    }
-                    else
-                    {
-                        // add fake transactions to promote the specific split out so we can see it.
-                        foreach (Split s in t.Splits.Items)
-                        {
-                            if (matches(s.Category))
-                            {
-                                view.Add(new Transaction(t, s));
-                            }
-                        }
-                    }
+                    view.Add(t);
                 }
-                else if (matches(t.Category) ||
-                    (money != null && c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
+                else if (t.SplitMatchesCategory(matches, out Split s))
+                {
+                    view.Add(new Transaction(t, s));
+                }
+                else if (money != null && (c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
                 {
                     view.Add(t);
                 }
@@ -12873,6 +12850,50 @@ namespace Walkabout.Data
         public void UpdateCategoriesView()
         {
             this.RaisePropertyChanged("Categories");
+        }
+
+        internal bool CategoryMatches(Predicate<Category> matches)
+        {
+            if (this.IsSplit)
+            {
+                bool all = true;
+                foreach (Split s in this.Splits.Items)
+                {
+                    if (!matches(s.Category))
+                    {
+                        all = false;
+                        break;
+                    }
+                }
+                if (all)
+                {
+                    // all splits match the category so the whole transaction can be listed.
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return matches(this.Category);
+        }
+
+        internal bool SplitMatchesCategory(Predicate<Category> matches, out Split match)
+        {
+            if (this.IsSplit)
+            {
+                // add fake transactions to promote the specific split out so we can see it.
+                foreach (Split s in this.Splits.Items)
+                {
+                    if (matches(s.Category))
+                    {
+                        match = s;
+                        return true;
+                    }
+                }
+            }
+            match = null;
+            return false;
         }
 
         #endregion
