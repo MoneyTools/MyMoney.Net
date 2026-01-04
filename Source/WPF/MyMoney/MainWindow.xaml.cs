@@ -3256,17 +3256,13 @@ namespace Walkabout
             if (selection == null)
             {
                 selection = new Charts.HistoryChartColumn() { Range = HistoryRange.Year };
-                if (rows.Count > 0)
-                {
-                    selection.StartDate = rows[0].Date;
-                }
-                else
-                {
-                    selection.StartDate = DateTime.Today;
-                }
             }
             selection.Values = rows;
             selection.Brush = brush;
+            if (selection.StartDate == DateTime.MinValue)
+            {
+                selection.StartDate = selection.ActualStartDate;
+            }
             this.HistoryChart.Selection = selection;
         }
 

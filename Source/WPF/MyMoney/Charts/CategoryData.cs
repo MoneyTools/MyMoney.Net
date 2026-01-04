@@ -15,7 +15,6 @@ namespace Walkabout.Charts
         private double total;
         private Color? color;
         private Brush background;
-        private readonly List<Transaction> transactions = new List<Transaction>();
 
         public CategoryData(Category c)
         {
@@ -24,8 +23,6 @@ namespace Walkabout.Charts
         }
 
         public Category Category { get; set; }
-
-        //public List<Transaction> Transactions { get { return this.transactions; } }
 
         public string Name
         {
