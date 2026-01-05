@@ -1424,6 +1424,7 @@ namespace Walkabout.Views
             this.SetActiveAccount(null, null, null, null, null);
             Account danglingAccount = new Account() { Type = AccountType.Cash };
 
+            this.SetTransactionFilterNoUpdate(TransactionFilter.All);
             var sortedDanglingList = dangling.ToList<Transaction>();
             sortedDanglingList.Sort(comparison: (a,b)=>a.Date.CompareTo(b.Date));
             this.selector = new TransactionFixedSelector(sortedDanglingList);
@@ -1432,9 +1433,6 @@ namespace Walkabout.Views
             this.Display(data, TransactionViewName.Custom, "Dangling transfers", this.SelectedRowId);
             this.FireAfterViewStateChanged(this.SelectedRowId);
         }
-
-        // request a new selected row on view refresh
-        private long requestedRowId;
 
         public ViewState ViewState
         {
@@ -1507,22 +1505,20 @@ namespace Walkabout.Views
                     RentBuilding building = this.myMoney.Buildings.FindByName(state.Rental);
                     this.SetActiveAccount(account, category, payee, security, building);
 
-                    this.currentDisplayName = state.CurrentDisplayName;                    
-                    this.requestedRowId = state.SelectedRow;
+                    this.currentDisplayName = state.CurrentDisplayName;      
                     this.selector = state.Selector;
 
-                    this.UpdateView();
+                    this.UpdateView(TransactionSelection.Specific, state.SelectedRow);
 
                     this.viewStateLock--;
                 }
             }
         }
 
-        private void UpdateView()
+        public void UpdateView(TransactionSelection selection, long selectedRowId)
         {
             // Back/Forwards navigation has happened so we are restoring a new view state, which may also involve
             // switching the layout type, query panel, and transaction filter.
-
             bool showQuery = false;
             for (TransactionSelector s = this.selector; s != null; s = s.Previous)
             {
@@ -1541,10 +1537,15 @@ namespace Walkabout.Views
                 }
             }
             this.IsQueryPanelDisplayed = showQuery;
-            var selectedRowId = this.SelectedRowId;
             this.viewStateLock++;
-            this.FireBeforeViewStateChanged();
-            this.viewStateLock--;
+            try
+            {
+                this.FireBeforeViewStateChanged();
+            }
+            finally
+            {
+                this.viewStateLock--;
+            }
             this.SetActiveAccount(this.activeAccount, this.activeCategory, this.activePayee, this.activeSecurity, this.activeRental);
             string layout = "TheGrid_BankTransactionDetails";
             bool isBrokerage = false;
@@ -1578,27 +1579,44 @@ namespace Walkabout.Views
                 }
             }
 
+            var transactions = this.GetSelectedTransactions();
+
             switch (this.currentDisplayName)
             {
                 case TransactionViewName.Account:
-                   
                     break;
                 case TransactionViewName.ByPayee:
+                    caption = "Transactions by Payee";
                     if (this.activePayee != null)
                     {
+                        caption += " " + this.activePayee.Name;
                         layout = "TheGrid_TransactionFromDetails";
                     }
                     break;
                 case TransactionViewName.BySecurity:
+                    caption = "Investments";
                     if (this.activeSecurity != null)
                     {
+                        caption += " " + this.activeSecurity.Name;
                         layout = "TheGrid_BySecurity";
+                        // prime the current units columns.
+                        foreach (var t in transactions)
+                        {
+                            if (t.Investment != null)
+                            {
+                                t.Investment.CurrentUnits = t.Investment.Units;
+                                t.Investment.CurrentUnitPrice = t.Investment.UnitPrice;
+                            }
+                        }
                     }
                     break;
                 case TransactionViewName.ByCategory:
                 case TransactionViewName.ByCategoryCustom:
+
+                    caption = "Transactions by Category";
                     if (this.activeCategory != null)
                     {
+                        caption += " " + this.activeCategory.Name;
                         layout = "TheGrid_TransactionFromDetails";
                     }
                     break;
@@ -1607,17 +1625,25 @@ namespace Walkabout.Views
                     {
                         layout = "TheGrid_TransactionFromDetails";
                     }
+                    if (this.rentalContext != null)
+                    {
+                        caption = string.Format("{0} {1}", this.rentalContext.Building.Name, this.rentalContext.Year);
+                    }
                     break;
                 case TransactionViewName.Portfolio:
+                    caption = "Investment Portfolio";
                     layout = "InvestmentPortfolioView";
                     break;
                 case TransactionViewName.ByQuery:
+                    caption = "Transactions by Query";
                     layout = "TheGrid_TransactionFromDetails";
                     break;
                 case TransactionViewName.Custom:
+                    caption = "Custom";
                     layout = "TheGrid_TransactionFromDetails";
                     break;
                 case TransactionViewName.Transfers:
+                    caption = "Transfers";
                     layout = "TheGrid_TransactionFromDetails";
                     break;
                 default:
@@ -1627,7 +1653,54 @@ namespace Walkabout.Views
             this.SwitchLayout(layout);
             bool filterOnInvestmentInfo = isBrokerage;
             bool filterOnAccountName = (this.activeAccount == null);
-            var data = new TransactionCollection(this.myMoney, this.ActiveAccount, this.GetSelectedTransactions(), filterOnAccountName, filterOnInvestmentInfo, this.QuickFilter);
+            var data = new TransactionCollection(this.myMoney, this.ActiveAccount, transactions, filterOnAccountName, filterOnInvestmentInfo, this.QuickFilter);
+
+            switch (selection)
+            {
+                case TransactionSelection.Specific:
+                    if (selectedRowId < 0)
+                    {
+                        goto case TransactionSelection.Last;
+                    }
+                    break;
+                case TransactionSelection.First:
+                    if (data.Count > 0)
+                    {
+                        Transaction t = data[0] as Transaction;
+                        selectedRowId = t.Id;
+                    }
+                    break;
+                case TransactionSelection.Last:
+                    if (data.Count > 0)
+                    {
+                        Transaction t = data[data.Count - 1] as Transaction;
+                        selectedRowId = t.Id;
+                    }
+                    break;
+                case TransactionSelection.Current:
+                    if (selectedRowId < 0)
+                    {
+                        goto case TransactionSelection.Last;
+                    }
+                    else
+                    {
+                        bool exists = false;
+                        foreach (Transaction t in data)
+                        {
+                            if (t.Id == selectedRowId)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if (!exists)
+                        {
+                            goto case TransactionSelection.Last;
+                        }
+                    }
+                    break;
+            }
+
             this.Display(data, this.currentDisplayName, caption, selectedRowId);
             this.FireAfterViewStateChanged(selectedRowId);
             this.ShowBalance();
@@ -1635,6 +1708,23 @@ namespace Walkabout.Views
             {
                 this.ShowInvestmentPortfolio(this.activeAccount);
             }
+        }
+
+        private bool ContainsMultipleAccounts(IEnumerable<Transaction> transactions)
+        {
+            Account first = null;
+            foreach (Transaction t in transactions)
+            {
+                if (first == null)
+                {
+                    first = t.Account;
+                }
+                else if (first != t.Account)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool IsReconciling { get { return this.reconciling; } }
@@ -1876,113 +1966,27 @@ namespace Walkabout.Views
 
         internal void ViewTransactionsForSingleAccount(Account a, TransactionSelection selection, long selectedRowId)
         {
+            if (a == this.activeAccount && selection == TransactionSelection.Current && this.currentDisplayName == TransactionViewName.Account &&
+                this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
+            {
+                // already viewing this account.
+                return;
+            }
+
             if (a != null)
             {
-                if (a == this.activeAccount && selection == TransactionSelection.Current && this.currentDisplayName == TransactionViewName.Account &&
-                    this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
-                {
-                    // already viewing this account.
-                    return;
-                }
-
 #if PerformanceBlocks
                 using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
                 {
 #endif
                 this.Commit();
-                this.FireBeforeViewStateChanged();
+                this.FireBeforeViewStateChanged(); // Must come first.
 
                 this.selector = new TransactionAccountSelector(null, a.Name);
-                bool accountChanged = this.ActiveAccount != a;
-                long currentRowId = this.SelectedRowId;
-                if (accountChanged && this.TransactionFilter != TransactionFilter.All)
-                {
-                    // remove transaction filter, we are probably jumping across accounts, and the filter on the target account makes the 
-                    // desired transaction unreachable.
-                    this.SetTransactionFilterNoUpdate(TransactionFilter.All);
-                }
-                if (this.TransactionFilter != TransactionFilter.All)
-                {
-                    this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-                }
-
+                this.SetTransactionFilterNoUpdate(TransactionFilter.All);
                 this.SetActiveAccount(a, null, null, null, null);
-                string layout = this.TheActiveGrid.Name;
-                IList data = null;
+                this.UpdateView(selection, selectedRowId);
 
-                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
-                {
-                    if (this.InvestmentAccountTabs.SelectedIndex == PortfolioTab)
-                    {
-                        layout = "InvestmentPortfolioView";
-                        this.UpdatePortfolio(this.ActiveAccount);
-                    }
-                    else
-                    {
-                        layout = "TheGrid_InvestmentActivity";
-                        data = new TransactionCollection(this.myMoney, this.ActiveAccount, this.GetSelectedTransactions(), false, true, this.QuickFilter);
-                    }
-                }
-                else
-                {
-                    layout = "TheGrid_BankTransactionDetails";
-                    data = new TransactionCollection(this.myMoney, this.ActiveAccount, this.GetSelectedTransactions(), false, false, this.QuickFilter);
-                }
-
-                this.SwitchLayout(layout);
-
-                if (data != null)
-                {
-                    switch (selection)
-                    {
-                        case TransactionSelection.Specific:
-                            if (selectedRowId < 0)
-                            {
-                                goto case TransactionSelection.Last;
-                            }
-                            break;
-                        case TransactionSelection.First:
-                            if (data.Count > 0)
-                            {
-                                Transaction t = data[0] as Transaction;
-                                selectedRowId = t.Id;
-                            }
-                            break;
-                        case TransactionSelection.Last:
-                            if (data.Count > 0)
-                            {
-                                Transaction t = data[data.Count - 1] as Transaction;
-                                selectedRowId = t.Id;
-                            }
-                            break;
-                        case TransactionSelection.Current:
-                            if (currentRowId < 0)
-                            {
-                                goto case TransactionSelection.Last;
-                            }
-                            else
-                            {
-                                bool exists = false;
-                                foreach (Transaction t in data)
-                                {
-                                    if (t.Id == currentRowId)
-                                    {
-                                        exists = true;
-                                        selectedRowId = currentRowId;
-                                        break;
-                                    }
-                                }
-                                if (!exists)
-                                {
-                                    goto case TransactionSelection.Last;
-                                }
-                            }
-                            break;
-                    }
-                    this.Display(data, TransactionViewName.Account, a.Name, selectedRowId);
-                }
-
-                this.FireAfterViewStateChanged(selectedRowId == this.SelectedRowId ? this.SelectedRowId : -1);
 #if PerformanceBlocks
                 }
 #endif
@@ -1996,78 +2000,45 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-            this.FireBeforeViewStateChanged();
+            this.Commit();
+            this.FireBeforeViewStateChanged(); // Must come first.
 
             List<Transaction> newList = new List<Transaction>();
-            Account account = null;
-            bool multiple = false;
-            bool skipped = false;
-            if (toView != null)
+            Account firstAccount = null;
+            if (toView == null)
             {
-                foreach (Transaction t in toView)
+                toView = new List<Transaction>();
+            }
+            foreach (Transaction t in toView)
+            {
+                if (t.IsDeleted)
                 {
-                    if (t.IsDeleted)
-                    {
-                        skipped = true;
-                        continue;
-                    }
-                    newList.Add(t);
-                    if (account == null)
-                    {
-                        account = t.Account;
-                    }
-                    else if (account != t.Account)
-                    {
-                        multiple = true;
-                    }
+                    continue;
+                }
+                newList.Add(t);
+                if (firstAccount == null)
+                {
+                    firstAccount = t.Account;
                 }
             }
-            else
-            {
-                //???
-            }
 
+            bool multiple = this.ContainsMultipleAccounts(toView);
             this.selector = new TransactionFixedSelector(newList);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
 
             TransactionViewName viewName = TransactionViewName.Custom;
 
-            bool includeInvestmentInfo = false;
-
             this.quickFilter = filter;
 
-            this.SetTransactionFilterNoUpdate(TransactionFilter.Custom);
+            this.SetTransactionFilterNoUpdate(TransactionFilter.All);
             this.Commit();
-            string layout = this.TheActiveGrid.Name;
 
             if (!multiple)
             {
-                if (account != null && (account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement))
-                {
-                    includeInvestmentInfo = true;
-                    layout = "TheGrid_InvestmentActivity";
-                    //data = GetTransactionsIncluding(account, accountChanged, includeInvestmentInfo, -1);
-                }
-                else
-                {
-                    layout = "TheGrid_BankTransactionDetails";
-                    //data = GetTransactionsIncluding(account, accountChanged, includeInvestmentInfo, -1);
-                }
+                viewName = TransactionViewName.Account;
             }
-            else
-            {
-                account = null;
-                layout = "TheGrid_TransactionFromDetails";
-            }
-
-            this.SwitchLayout(layout);
-            this.SetActiveAccount(account, null, null, null, null);
-            IList data = new TransactionCollection(this.myMoney, account, this.GetSelectedTransactions(), true, includeInvestmentInfo, filter);
-            this.Display(data, viewName, account != null ? account.Name : "Transactions", this.SelectedRowId);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
+            this.currentDisplayName = viewName;
+            this.SetActiveAccount(firstAccount, null, null, null, null);
+            this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
 
 #if PerformanceBlocks
             }
@@ -2080,25 +2051,14 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-            string caption = "Payments";
+            this.Commit();
+            this.FireBeforeViewStateChanged(); // Must come first.
+            this.SetTransactionFilterNoUpdate(TransactionFilter.All);
             p = this.myMoney.Payees.FindPayee(p.Name, false);
-            IList<Transaction> transactions = new List<Transaction>();
-            if (p != null)
-            {
-                this.selector = new TransactionPayeeSelector(null, p.Name);
-                if (this.TransactionFilter != TransactionFilter.All)
-                {
-                    this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-                }
-                caption = "Payments to " + p.Name;
-                transactions = this.GetSelectedTransactions();
-            }
-            var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
-            this.FireBeforeViewStateChanged();
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
+            this.selector = new TransactionPayeeSelector(null, p?.Name);
+            this.currentDisplayName = TransactionViewName.ByPayee;
             this.SetActiveAccount(null, null, p, null, null);
-            this.Display(data, TransactionViewName.ByPayee, caption, selectedRowId);
-            this.FireAfterViewStateChanged(selectedRowId);
+            this.UpdateView(TransactionSelection.Last, selectedRowId);
 
 #if PerformanceBlocks
             }
@@ -2111,39 +2071,19 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-            IList<Transaction> transactions = new List<Transaction>();
             if (s != null)
             {
-                this.RefreshViewBySecurity(s, selectedRowId);
+                this.Commit();
+                this.FireBeforeViewStateChanged(); // Must come first.
+                this.currentDisplayName = TransactionViewName.BySecurity;
+                this.SetTransactionFilterNoUpdate(TransactionFilter.All);
+                this.SetActiveAccount(null, null, null, s, null);
+                this.selector = new TransactionSecuritySelector(null, s.Name);
+                this.UpdateView(TransactionSelection.Last, selectedRowId);
             }
-
-            this.FireBeforeViewStateChanged();
-            this.FireAfterViewStateChanged(selectedRowId);
 #if PerformanceBlocks
             }
 #endif
-        }
-
-        public void RefreshViewBySecurity(Security s, long selectedRowId)
-        {
-            this.SwitchLayout("TheGrid_BySecurity");
-            this.SetActiveAccount(null, null, null, s, null);
-            this.selector = new TransactionSecuritySelector(null, s.Name);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            var transactions = this.GetSelectedTransactions();
-            foreach (var t in transactions)
-            {
-                if (t.Investment != null)
-                {
-                    t.Investment.CurrentUnits = t.Investment.Units;
-                    t.Investment.CurrentUnitPrice = t.Investment.UnitPrice;
-                }
-            }
-            var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
-            this.Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);            
         }
 
         internal void ViewTransactionsForCategory(Category c, long selectedRowId)
@@ -2152,81 +2092,12 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-            string caption = "Transactions by Category";
+            this.Commit();
+            this.FireBeforeViewStateChanged(); // Must come first.
+            this.currentDisplayName = TransactionViewName.ByCategory;
             this.selector = new TransactionCategorySelector(null, c?.Name);
-            if (c != null)
-            {
-                caption += " " + c.Name;
-            }
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            this.FireBeforeViewStateChanged();
-
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
             this.SetActiveAccount(null, c, null, null, null);
-            var data = new TransactionCollection(this.myMoney, null, this.GetSelectedTransactions(), true, false, this.QuickFilter);
-            this.Display(data, TransactionViewName.ByCategory, caption, selectedRowId);
-            this.FireAfterViewStateChanged(selectedRowId);
-#if PerformanceBlocks
-            }
-#endif
-        }
-
-        internal void ViewTransactionsForCategory(Category c)
-        {
-#if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
-#endif
-            string caption = "Transactions by Category";
-            IList<Transaction> transactions = new List<Transaction>();
-            if (c != null)
-            {
-                caption += " " + c.Name;
-            }
-            this.selector = new TransactionCategorySelector(null, c?.Name);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            this.FireBeforeViewStateChanged();
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
-            this.SetActiveAccount(null, c, null, null, null);
-            var data = new TransactionCollection(this.myMoney, null, this.GetSelectedTransactions(), true, false, this.QuickFilter);
-            this.Display(data, TransactionViewName.ByCategoryCustom, caption, this.SelectedRowId);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
-
-#if PerformanceBlocks
-            }
-#endif
-        }
-
-        internal void ViewTransactionsForPayee(Payee p)
-        {
-#if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
-#endif
-            string caption = "Transactions by Payee";
-            if (p != null)
-            {
-                caption += " " + p.Name;
-            }
-
-            this.selector = new TransactionPayeeSelector(null, p?.Name);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            this.FireBeforeViewStateChanged();
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
-            this.SetActiveAccount(null, null, p, null, null);
-            var data = new TransactionCollection(this.myMoney, null, this.GetSelectedTransactions(), true, false, this.QuickFilter);
-            this.Display(data, TransactionViewName.ByCategoryCustom, caption, this.SelectedRowId);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
-
+            this.UpdateView(TransactionSelection.Last, selectedRowId);
 #if PerformanceBlocks
             }
 #endif
@@ -2238,33 +2109,16 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-            this.FireBeforeViewStateChanged();
+            this.Commit();
+            this.FireBeforeViewStateChanged(); // Must come first.
             this.SetActiveAccount(null, null, null, null, null);
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
+            this.currentDisplayName = TransactionViewName.ByQuery;
             this.selector = new TransactionQuerySelector(query);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            IList<Transaction> data = this.GetSelectedTransactions();
-            this.Display(new TransactionCollection(this.myMoney, null, data, true, false, this.QuickFilter),
-                TransactionViewName.ByQuery, string.Empty, this.SelectedRowId);
-            this.SelectedRowIndex = this.TheActiveGrid.Items.Count - 1;
-            this.FireAfterViewStateChanged(this.SelectedRowId);
+            this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
 
 #if PerformanceBlocks
             }
 #endif
-        }
-
-        internal void ViewInvestmentPortfolio()
-        {
-            // Show a special summary view of all investment positions.
-            this.FireBeforeViewStateChanged();
-            this.SwitchLayout("InvestmentPortfolioView");
-            this.SetActiveAccount(null, null, null, null, null);
-            this.ShowInvestmentPortfolio(null);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
         private PortfolioReport portfolioReport;
@@ -2335,17 +2189,12 @@ namespace Walkabout.Views
             {
 #endif
             this.FireBeforeViewStateChanged();
-            this.SwitchLayout("TheGrid_TransactionFromDetails");
             this.SetActiveAccount(null, null, null, null, contextToView.Building);
-
+            this.currentDisplayName = TransactionViewName.Rental;
             this.selector = new TransactionRentalSelector(null, contextToView);
-            if (this.TransactionFilter != TransactionFilter.All)
-            {
-                this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-            }
-            this.Display(new TransactionCollection(this.myMoney, null, this.GetSelectedTransactions(), true, false, this.QuickFilter),
-                TransactionViewName.Rental, string.Format("{0} {1}", contextToView.Building.Name, contextToView.Year), this.SelectedRowId);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
+            this.rentalContext = contextToView;
+            this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
+
 #if PerformanceBlocks
             }
 #endif
@@ -2353,7 +2202,12 @@ namespace Walkabout.Views
 
         internal IList<Transaction> GetSelectedTransactions()
         {
-            var result = this.selector.GetSelectedTransactions(this.GetSelectorContext());
+            var selector = this.selector;
+            if (this.TransactionFilter != TransactionFilter.All)
+            {
+                selector = new TransactionFilterSelector(selector, this.TransactionFilter);
+            }
+            var result = selector.GetSelectedTransactions(this.GetSelectorContext());
             if (result is IList<Transaction> list)
             {
                 return list;
@@ -3383,6 +3237,7 @@ namespace Walkabout.Views
         }
 
         private TransactionViewName currentDisplayName;
+        private RentalBuildingSingleYearSingleDepartment rentalContext;
 
         public TransactionViewName ActiveViewName
         {
@@ -3505,9 +3360,8 @@ namespace Walkabout.Views
             if (!this.refresh && this.myMoney != null)
             {
                 this.refresh = true;
-
-                this.requestedRowId = this.SelectedRowId;
-                this.UpdateView();
+                
+                this.UpdateView(TransactionSelection.Specific, this.SelectedRowId);
 
                 this.refresh = false;
             }

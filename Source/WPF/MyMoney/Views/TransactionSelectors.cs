@@ -95,7 +95,7 @@ namespace Walkabout.Views
         public override IEnumerable<Transaction> GetSelectedTransactions(TransactionSelectorContext context)
         {
             var money = context.Money;
-            var payee = money.Payees.FindPayee(this.PayeeName, false);
+            Payee payee = string.IsNullOrEmpty(this.PayeeName) ? null : money.Payees.FindPayee(this.PayeeName, false);
             if (payee != null)
             {
                 var data = (this.Previous == null) ? money.Transactions.GetTransactionsByPayee(payee, null) : this.Previous.GetSelectedTransactions(context);                

@@ -949,7 +949,7 @@ namespace Walkabout
                 else
                 {
                     TransactionsView view = this.TransactionView;
-                    view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
+                    view.ViewTransactionsForSingleAccount(a, TransactionSelection.Last, -1);
                     this.TrackSelectionChanges();
                 }
 
@@ -1730,7 +1730,7 @@ namespace Walkabout
                 var view = this.TransactionView;
                 if (view.CheckTransfers() && acct != null)
                 {
-                    view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
+                    view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Last, -1);
                 }
             }
             finally
@@ -2444,7 +2444,7 @@ namespace Walkabout
             var view = this.TransactionView;
             if (view.CheckTransfers() && acct != null)
             {
-                view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
+                view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Last, -1);
             }
             return total;
         }
@@ -2830,7 +2830,7 @@ namespace Walkabout
                 }
                 if (changed && view.ActiveSecurity == security)
                 {
-                    view.RefreshViewBySecurity(security, view.SelectedRowId);
+                    view.UpdateView(TransactionSelection.Current, view.SelectedRowId);
                 }
             }
 #if PerformanceBlocks
