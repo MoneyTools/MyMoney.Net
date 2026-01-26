@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Basics/Categories/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Categories - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Categories", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Currencies/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Currencies/" class="btn btn-xs btn-link">
+        Currencies
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Setup/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Setup/" class="btn btn-xs btn-link">
+        Setup
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="categories">Categories<a class="headerlink" href="#categories" title="Permanent link">#</a></h1>
+<p>Entering new categories is easy, simply type in the category name you want.  For example, I might enter "Food:Groceries" for this Safeway item:</p>
+<p><img alt="" src="../../Images/Categories.png" /></p>
+<p>The colon (:) separator denotes a sub-category, so I'm saying I want "<strong>Groceries</strong> " to be a sub-category of the top level "<strong>Food</strong> " category.   You can define any top level categories and sub-categories that you want, you can even have sub-sub categories if you really need them.</p>
+<p>The drop down is automatically filtered to show you matching categories and you can just type in any new category you want here and it will add a new category for you. </p>
+<p><img alt="" src="../../Images/Categories1.png" /></p>
+<p>When you enter a new category that has not been seen before the following dialog will appear:</p>
+<p><img alt="" src="../../Images/Categories2.png" /></p>
+<p>Most of these fields are optional, except the name and Type.  The Tax Category field is used by the <a href="../../Reports/TaxReport/">Tax Report</a> and is important if you want to export tax information to Turbo Tax.</p>
+<p>When you select the "CATEGORIES" panel on the left you will see all your categories in a Tree view where you can manage them (add, delete, rename, merge, etc).</p>
+<p><img alt="" src="../../Images/Categories3.png" /></p>
+<p>When you select a category from this Categories Panel it will instantly show you all transactions that are assigned that category together with a <a href="../../Charts/HistoryChart/">chart of historical</a> spending :</p>
+<p><img alt="" src="../../Images/Categories4.png" /></p>
+<p>You can also get to this view from any transaction using Right Click "View By Category".  Once you are in this view you can also select a transaction and get back to the account that transaction belongs in using "View By Account" or the back button.</p>
+<p>If the selected category matches a Split then the view will show that split as a read only fake transaction.</p>
+<p>The Categories Panel provides the following context menu items:</p>
+<p><strong>Properties</strong>  brings up the categories dialog for the selected category.</p>
+<p><strong>Add New Category</strong>  allows you to add a new top level or sub category which will then be inserted in the right place in the tree.</p>
+<p><strong>Rename</strong>  allows you to edit the category name, but won't let you specify an existing name here.  If you want to "merge" two categories use Drag/Drop - see below.</p>
+<p><strong>Delete</strong>  will pop up the rename category dialog if you have transactions using this category so that you can redirect those transactions to some other category.</p>
+<p>You can also Drag/Drop a category anywhere in this list to change it's parent category.</p>
+<p><strong>Reorganizing using Drag/Drop</strong>
+You can drag one category and drop it on another to merge or move a category in the hierarchy.  For example, You could move the category "Videos" by dragging it up to Movies and dropping it.</p>
+<p><img alt="" src="../../Images/Categories5.png" /></p>
+<p>When I do that  it will become a new child under Movies:</p>
+<p><img alt="" src="../../Images/Categories6.png" /></p>
+<p>If instead you hold the Control key while you drag you will see a different message showing that this will be a merge operation:</p>
+<p><img alt="" src="../../Images/Categories7.png" /></p>
+<p>When the "Merge" is complete all transactions that used "Fun:Videos" will now have the category "Fun:Movies" so you have one less subcategory under Fun:</p>
+<p><img alt="" src="../../Images/Categories8.png" /></p>
+<p>See also <a href="../AutoCategorization/">Auto Categorization</a></p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Currencies/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Currencies/" class="btn btn-xs btn-link">
+        Currencies
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Setup/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Setup/" class="btn btn-xs btn-link">
+        Setup
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

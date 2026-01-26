@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/CsvImport/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>CSV Importing - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "CSV Importing", url: "#_top", children: [
+              {title: "Multi-account .csv", url: "#multi-account-csv" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+
+    <h1 id="csv-importing">CSV Importing<a class="headerlink" href="#csv-importing" title="Permanent link">#</a></h1>
+<p>Some banks do not support OFX or QIF interchange formats (which really sucks), for example
+Discover card only provides a .csv download.</p>
+<p>To import CSV (comma separated value) data into Money you can right click the account
+in the Accounts View and select <code>Import Csv...</code>.  This will prompt for a local file containing
+the CSV data (usually these files contain a .csv file extension).</p>
+<p>Here's an example of what that .csv data might look like if you load it into Notepad:</p>
+<pre><code>Trans. Date,Post Date,Description,Amount,Category
+10/25/2022,10/26/2022,&quot;AMAZON.COM AMZN.COM/BILLWA1VK3XV7LNTQ&quot;,-9.04,&quot;Payments and Credits&quot;
+10/24/2022,10/24/2022,&quot;PRIME VIDEO *H86AC1J92 888-802-3080 WA36ZXXX7TXB9&quot;,2.51,&quot;Merchandise&quot;
+10/23/2022,10/23/2022,&quot;APPLE.COM/BILL 866-712-7753 CAMML0Z2HTZ5A0&quot;,5.42,&quot;Merchandise&quot;
+10/23/2022,10/23/2022,&quot;HLU*HULU 375513011660-U HULU.COM/BILLCAHLU*HULU 375513011660-U&quot;,16.56,&quot;Services&quot;
+10/21/2022,10/21/2022,&quot;PAYMENT - THANK YOU&quot;,-1607.22,&quot;Payments and Credits&quot;
+10/21/2022,10/21/2022,&quot;THE HOME DEPOT #4712 BOTHELL WA&quot;,13.21,&quot;Home Improvement&quot;
+10/02/2022,10/02/2022,&quot;STARBUCKS 800-782-7282 SEATTLE WA&quot;,50.00,&quot;Restaurants&quot;
+</code></pre>
+<p>When you select this file a dialog will appear where you can specify how to map the columns
+found in this file with the fields of the Money Transactions as follows:</p>
+<p><img alt="CsvImportMap" src="../../Images/CsvImportMap.png" /></p>
+<p>You should check negate CheckBox if your Credit Card Company returns withdrawals as positive numbers and deposits as negative numbers.</p>
+<p>This map will be saved in the same folder as your Money database under a new folder named <code>CsvMaps</code>
+so you will not have to keep re-entering this mapping information (unless the columns are changed by your bank).</p>
+<h2 id="multi-account-csv">Multi-account .csv<a class="headerlink" href="#multi-account-csv" title="Permanent link">#</a></h2>
+<p>Some financial institutions (like Fidelity) allow downloading all activity across all your Fidelity
+accounts as one .csv file where the file contains an "Account" and
+"Account Number" column. In this case use File/Import... and select the ".csv" file extension.
+You will see the Brokerage account fields added to the CSV import Field Map as follows:</p>
+<p><img alt="brokeragecsv" src="../../Images/CsvBrokerageImport.png" /></p>
+<p>This will create a map for all the accounts found in the .csv file.
+If you need to Negate some of them you can later edit the map for a single
+account. This seems to be needed on the Fidelity 401k accounts, which is odd.</p>
+<p>See also: <a href="../../Basics/Merging/">Merging</a> | <a href="../OnlineBanking/">Online Banking</a></p>
+
+  <br>
+    
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/OnlineSecurity/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Online Security - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Online Security", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../AccountAliases/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../AccountAliases/" class="btn btn-xs btn-link">
+        Account Aliases
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../OnlineBanking/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../OnlineBanking/" class="btn btn-xs btn-link">
+        Online Banking
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="online-security">Online Security<a class="headerlink" href="#online-security" title="Permanent link">#</a></h1>
+<p>All communication with your bank over the OFX protocol is protected by encryption using the <strong>Secure Sockets Layer</strong>  (SSL) over the standard web HTTPS protocol, which is the same level of protection you get when you logon to your bank using your web browser.  The connection to the bank is a direct connection with no other servers in between (unlink <a href="https://www.mint.com/terms">Mint</a> which uses one or more third party online services to gather your account information in the cloud).</p>
+<p>SSL encryption is hard to break, even if someone was spying on your network watching everything going over the wire, this is what they would see in a typical conversation between MyMoney and your bank.</p>
+<p><img alt="" src="../../Images/Online%20Security.png" /></p>
+<p>Decrypting this requires keys that a random spy will not have, which makes your data secure.</p>
+<p>Besides SSL and the normal account userid and password, OFX also defines additional protocols for additional credentials.  These are called Multi-Factor Authentication, AuthToken and ChangePassword .  All these add another layer of security which helps your bank be even more careful about granting online access to your bank accounts.</p>
+<p><strong>Additional Credentials</strong>
+When you first connect to your bank using the Download Accounts dialog your bank may send some additional fields that need to be filled in order to authenticate your connection.  These fields will show up on the Password Dialog, as shown below:</p>
+<p><img alt="" src="../../Images/Online%20Security1.png" /></p>
+<p><strong>Multi-Factor Authentication</strong>
+Your bank can also ask for additional information at any time in the future, just as a double check using the MFAChallenge protocol.  If this happens you will see the following dialog, with different questions depending on your bank.</p>
+<p><img alt="" src="../../Images/Online%20Security2.png" /></p>
+<p><strong>AuthToken</strong>
+Similarly, your bank may request an Authentication Token from you, providing information to you on how to get one.  This may involve visiting their web site or making a phone call.  Once you have the token you can enter it here and then your bank will grant you online access to your bank accounts.</p>
+<p><img alt="" src="../../Images/Online%20Security3.png" /></p>
+<p><strong>Change Password</strong>  
+Your bank may also request a password change.  If this happens you will see this dialog:</p>
+<p><img alt="" src="../../Images/Online%20Security4.png" /></p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../AccountAliases/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../AccountAliases/" class="btn btn-xs btn-link">
+        Account Aliases
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../OnlineBanking/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../OnlineBanking/" class="btn btn-xs btn-link">
+        Online Banking
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
