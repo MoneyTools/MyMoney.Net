@@ -149,6 +149,7 @@ namespace Walkabout.Views.Controls
 
             this.StatementDate = estdate;
 
+            this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(this.Transactions_Changed);
             this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(this.Transactions_Changed);
 
             this.interestCategory = (this.account.Type == AccountType.Brokerage) ?

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.65" date="1/25/2026">
+		- Bug: Fix reconcile view that was broken by the new TransactionSelector refactor.
+		- Bug: Fix calculator so it can parse no-op parens like "5*(20)".
+	</change>
 	<change version="2.1.0.64" date="1/2/2026">
 		- Feature #136: Losing the year filter when looking at the expense chart for a category.
 	</change>

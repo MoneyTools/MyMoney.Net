@@ -337,7 +337,7 @@ namespace Walkabout.Views
                         predicate = new Predicate<Transaction>((t) =>
                         {
                             return (t.Status == TransactionStatus.Reconciled) ||
-                                    t.IsReconciling || this.IsIncludedInCurrentStatement(t, statementDate);
+                                t.IsReconciling || this.IsIncludedInCurrentStatement(t, statementDate);
                         });
                     }
                     break;

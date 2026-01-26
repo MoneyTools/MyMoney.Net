@@ -75,6 +75,7 @@ namespace Walkabout.Controls
                                 this.openParens++;
                                 break;
                             case Token.Dollar:
+                                this.Shift(new Operation() { Token = Token.Dollar });
                                 this.state = 3;
                                 break;
                             default:
@@ -318,6 +319,7 @@ namespace Walkabout.Controls
 
         private void CloseParens()
         {
+            // This also handles the case where parens enclose a single number like 4*(25)=100.
             Operation right = this.Pop();
             Operation op = this.Pop();
             while (op.Token != Token.LeftParen)
@@ -341,6 +343,9 @@ namespace Walkabout.Controls
 
         private IEnumerable<Token> Tokenize(string expression)
         {
+            var info = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
+            var thousandsSeparator = info.CurrencyGroupSeparator[0];
+            var decimalSeparator = info.CurrencyDecimalSeparator[0];
             for (int i = 0, n = expression.Length; i < n; i++)
             {
                 char c = expression[i];
@@ -373,41 +378,17 @@ namespace Walkabout.Controls
                             yield return Token.RightParen;
                             break;
                         default:
-                            if (char.IsDigit(c) || c == '.')
+                            if (char.IsDigit(c) || c == decimalSeparator)
                             {
                                 this.number = 0;
-                                double decimalFactor = 0;
-
-                                while (char.IsDigit(c) || c == '.' || c == ',')
+                                int start = i;
+                                while (i < n && char.IsDigit(c) || c == decimalSeparator || c == thousandsSeparator)
                                 {
-                                    if (c == ',')
-                                    {
-                                        // ignore thousand separators.
-                                    }
-                                    else if (c == '.')
-                                    {
-                                        if (decimalFactor > 0)
-                                        {
-                                            throw new ArgumentException(string.Format("Invalid second decimal point in expression '{0}'", expression));
-                                        }
-                                        decimalFactor = 10;
-                                    }
-                                    else
-                                    {
-                                        int v = Convert.ToInt16(c) - Convert.ToInt16('0');
-                                        if (decimalFactor > 0)
-                                        {
-                                            this.number += v / decimalFactor;
-                                            decimalFactor *= 10;
-                                        }
-                                        else
-                                        {
-                                            this.number = (this.number * 10) + v;
-                                        }
-                                    }
                                     i++;
                                     c = i < n ? expression[i] : '\0';
                                 }
+                                var text = expression.Substring(start, i - start);
+                                this.number = Convert.ToDouble(text);
                                 i--;
                                 yield return Token.Number;
                             }

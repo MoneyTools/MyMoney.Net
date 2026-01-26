@@ -371,30 +371,32 @@ namespace Walkabout.Views
                     break;
             }
 
-            if (!this.programmaticFilterChange)
+            bool refresh = false;
+            if (this.activeAccount != null)
             {
-                if (this.activeAccount != null)
+                this.currentDisplayName = TransactionViewName.Account;
+            }
+            if (this.TransactionFilter != TransactionFilter.All)
+            {
+                if (this.selector is TransactionFilterSelector fs)
                 {
-                    this.currentDisplayName = TransactionViewName.Account;
+                    fs.Filter = this.TransactionFilter;
                 }
-                if (this.TransactionFilter != TransactionFilter.All)
+                else
                 {
-                    if (this.selector is TransactionFilterSelector fs)
-                    {
-                        fs.Filter = this.TransactionFilter;
-                    }
-                    else
-                    {
-                        this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
-                    }
-                    this.Refresh();
+                    this.selector = new TransactionFilterSelector(this.selector, this.TransactionFilter);
                 }
-                else if (this.selector is TransactionFilterSelector fs)
-                {
-                    // unwrap the TransactionFilterSelector since user went back to TransactionFilter.All.
-                    this.selector = this.selector.Previous;
-                    this.Refresh();
-                }
+                refresh = true;
+            }
+            else if (this.selector is TransactionFilterSelector fs)
+            {
+                // unwrap the TransactionFilterSelector since user went back to TransactionFilter.All.
+                this.selector = this.selector.Previous;
+                refresh = true;
+            }
+            if (!this.programmaticFilterChange && refresh)
+            {
+                this.Refresh();
             }
         }
 
@@ -1805,6 +1807,7 @@ namespace Walkabout.Views
         private void ShowReconciledState(DateTime statementDate)
         {
             this.SetReconciledState(true);
+            Transaction first = null;
             this.reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
 
             this.myMoney.Transactions.BeginUpdate(false);
@@ -1822,9 +1825,14 @@ namespace Walkabout.Views
                             {
                                 t.IsReconciling = true;
                                 this.reconcilingTransactions[t] = t.Status;
+                                if (first == null) first = t;
                             }
                         }
                     }
+                }
+                if (first != null)
+                {
+                    this.TheActiveGrid.SelectedItem = first;
                 }
             }
             finally
@@ -1852,7 +1860,7 @@ namespace Walkabout.Views
             if (this.ActiveAccount != null)
             {
                 // we normally scroll to the end, but this time we scroll to the top to show transactions most likely to be reconciled.
-                this.ViewTransactionsForSingleAccount(this.ActiveAccount, TransactionSelection.First, 0);
+                this.ViewTransactionsForSingleAccount(this.ActiveAccount, TransactionSelection.First, -1, TransactionFilter.Unreconciled);
             }
 
             this.ShowReconciledState(end);
@@ -1889,7 +1897,7 @@ namespace Walkabout.Views
                 var selected = this.TheActiveGrid.SelectedItem;
                 if (selected != null)
                 {
-                    this.TheActiveGrid.ScrollIntoView(selected);
+                    this.TheActiveGrid.AsyncScrollSelectedRowIntoView();
                 }
             }
         }
@@ -1964,7 +1972,7 @@ namespace Walkabout.Views
 
         #region VIEWS
 
-        internal void ViewTransactionsForSingleAccount(Account a, TransactionSelection selection, long selectedRowId)
+        internal void ViewTransactionsForSingleAccount(Account a, TransactionSelection selection, long selectedRowId, TransactionFilter filter = TransactionFilter.All)
         {
             if (a == this.activeAccount && selection == TransactionSelection.Current && this.currentDisplayName == TransactionViewName.Account &&
                 this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
@@ -1981,9 +1989,9 @@ namespace Walkabout.Views
 #endif
                 this.Commit();
                 this.FireBeforeViewStateChanged(); // Must come first.
-
+                this.currentDisplayName = TransactionViewName.Account;
                 this.selector = new TransactionAccountSelector(null, a.Name);
-                this.SetTransactionFilterNoUpdate(TransactionFilter.All);
+                this.SetTransactionFilterNoUpdate(filter);
                 this.SetActiveAccount(a, null, null, null, null);
                 this.UpdateView(selection, selectedRowId);
 
@@ -2004,7 +2012,7 @@ namespace Walkabout.Views
             this.FireBeforeViewStateChanged(); // Must come first.
 
             List<Transaction> newList = new List<Transaction>();
-            Account firstAccount = null;
+            Account lastAccount = null;
             if (toView == null)
             {
                 toView = new List<Transaction>();
@@ -2016,10 +2024,7 @@ namespace Walkabout.Views
                     continue;
                 }
                 newList.Add(t);
-                if (firstAccount == null)
-                {
-                    firstAccount = t.Account;
-                }
+                lastAccount = t.Account;
             }
 
             bool multiple = this.ContainsMultipleAccounts(toView);
@@ -2037,7 +2042,10 @@ namespace Walkabout.Views
                 viewName = TransactionViewName.Account;
             }
             this.currentDisplayName = viewName;
-            this.SetActiveAccount(firstAccount, null, null, null, null);
+            if (lastAccount != null)
+            {
+                this.SetActiveAccount(lastAccount, null, null, null, null);
+            }
             this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
 
 #if PerformanceBlocks
