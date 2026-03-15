@@ -195,9 +195,16 @@ namespace Walkabout.Importers
                         this.money.Transactions.Add(t);
                         found = t;
                     }
-                    else if (found.Status == TransactionStatus.None)
+                    else
                     {
-                        found.Status = TransactionStatus.Electronic;
+                        if (found.Status == TransactionStatus.None)
+                        {
+                            found.Status = TransactionStatus.Electronic;
+                        }
+                        if (this.account.Type == AccountType.Brokerage || this.account.Type == AccountType.Retirement)
+                        {
+                            this.AddInvestmentInfo(found, bag);
+                        }
                     }
                     found.IsDownloaded = true;
                     this.data.AddItem(found);
@@ -211,14 +218,13 @@ namespace Walkabout.Importers
 
         private void AddInvestmentInfo(Transaction t, TBag bag)
         {
-            var symbol = bag.Symbol;
-            if (!string.IsNullOrEmpty(symbol) || bag.Quantity != 0)
+            if (bag.Security != null)
             {
                 var i = t.GetOrCreateInvestment();
                 i.Security = bag.Security;
                 i.UnitPrice = bag.UnitPrice;
                 i.Units = bag.Quantity;
-                if (bag.Quantity == 0)
+                if (i.Units == 0)
                 {
                     // then could be dividends
                     string memo = (t.Memo + "").ToLowerInvariant();
@@ -234,7 +240,7 @@ namespace Walkabout.Importers
                 }
                 else
                 {
-                    if (bag.Quantity > 0)
+                    if (t.Amount < 0)
                     {
                         i.Type = bag.TradeType == "Shares" ? InvestmentType.Add : InvestmentType.Buy;
                     }
@@ -327,6 +333,17 @@ namespace Walkabout.Importers
                 col++;
             }
 
+            // Sometimes Fidelity skips providing both Quantity and UnitPrice.
+            if (t.Quantity == 0 && t.UnitPrice != 0 && t.Amount != 0)
+            {
+                // TODO: should subtract any commission or fees.
+                t.Quantity = Math.Abs(t.Amount) / t.UnitPrice;
+            }
+            else if (t.Quantity != 0 && t.UnitPrice == 0 && t.Amount != 0)
+            {
+                t.UnitPrice = Math.Abs(t.Amount) / t.Quantity;
+            }
+
             if (!string.IsNullOrEmpty(t.Symbol))
             {
                 Security s = this.money.Securities.FindSymbol(t.Symbol.Trim(), false);
@@ -344,6 +361,12 @@ namespace Walkabout.Importers
                     // then the payee is nicer if it just matches the security name.
                     t.Payee = this.money.Payees.FindPayee(s.Name, true);
                 }
+                t.Security = s;
+            }
+            else if (t.UnitPrice != 0)
+            {
+                // Sometimes the symbol is missing.
+                Security s = this.money.Securities.FindSecurity(t.Payee.Name, true);
                 t.Security = s;
             }
             this.typedData.Add(t);
