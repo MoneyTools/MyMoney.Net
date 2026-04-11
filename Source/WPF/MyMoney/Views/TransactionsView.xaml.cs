@@ -2042,10 +2042,11 @@ namespace Walkabout.Views
                 viewName = TransactionViewName.Account;
             }
             this.currentDisplayName = viewName;
-            if (lastAccount != null)
+            if (multiple)
             {
-                this.SetActiveAccount(lastAccount, null, null, null, null);
+                lastAccount = null;
             }
+            this.SetActiveAccount(lastAccount, null, null, null, null);
             this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
 
 #if PerformanceBlocks
@@ -3026,13 +3027,13 @@ namespace Walkabout.Views
                                     {
                                         rebalance = true;
                                     }
-                                    if (this.ActiveCategory != null && !this.ActiveCategory.Contains(t.Category))
+                                    if (t.Category != null && this.ActiveCategory != null && !this.ActiveCategory.Contains(t.Category))
                                     {
                                         // category has changed, and we are viewing by category, so remove it from this view
                                         // but don't let the TransactionCollection think this is a delete operation!
                                         quietDropTransaction = true;
                                     }
-                                    else if (this.ActivePayee != null && this.ActivePayee != t.Payee)
+                                    else if (t.Payee != null && this.ActivePayee != null && this.ActivePayee != t.Payee)
                                     {
                                         // account has changed, and we are viewing by payee, so remove it from this view
                                         // but don't let the TransactionCollection think this is a delete operation!
