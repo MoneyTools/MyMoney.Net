@@ -745,7 +745,7 @@ namespace Walkabout.Controls
 
 
         public void OnStartEdit(Control e)
-        {
+        {            
             e.Focus();
             if (e.IsFocused)
             {
@@ -763,7 +763,7 @@ namespace Walkabout.Controls
                 {
                     box.SelectAll();
                 }
-            }
+            } 
         }
 
 
@@ -808,11 +808,6 @@ namespace Walkabout.Controls
 
         private void OnStartEdit(DataGridColumn column, DataGridRow row, RoutedEventArgs args)
         {
-            IEditableCollectionView iecv = this.Items as IEditableCollectionView;
-            if (iecv != null)
-            {
-
-            }
             Control editor = this.GetCellEditor(column, row, args);
             if (editor != null)
             {

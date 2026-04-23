@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.68" date="4/11/2026">
+		- Bug: A click on sales tax does not always select the existing text.
+		- Bug: .csv importer should filter out any pending transactions with no posted date.
+	</change>
 	<change version="2.1.0.67" date="4/10/2026">
 		- Bug: Fix some transactions disappear when you edit them when transaction view is in multi-account mode.
 	</change>

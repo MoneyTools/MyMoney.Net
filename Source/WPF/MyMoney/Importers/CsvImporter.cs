@@ -369,7 +369,12 @@ namespace Walkabout.Importers
                 Security s = this.money.Securities.FindSecurity(t.Payee.Name, true);
                 t.Security = s;
             }
-            this.typedData.Add(t);
+            // sometimes the bank will list pending transactions with no posted date yet
+            // so our importer should skip those.
+            if (t.Date != DateTime.MinValue)
+            {
+                this.typedData.Add(t);
+            }
         }
 
         private void MapField(TBag t, CsvFieldMap field, string value)

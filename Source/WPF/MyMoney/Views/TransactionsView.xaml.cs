@@ -540,9 +540,10 @@ namespace Walkabout.Views
                 string editorName = "EditorFor" + fieldName;
                 foreach (var editor in editors)
                 {
-                    if (editor.Name == editorName)
+                    if (editor.Name == editorName || editor.Name == fieldName)
                     {
                         grid.OnStartEdit(editor);
+                        return;
                     }
                 }
             }
