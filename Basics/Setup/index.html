@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Basics/Setup/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Setup - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Setup", url: "#_top", children: [
+              {title: "Security", url: "#security" },
+              {title: "Welcome", url: "#welcome" },
+              {title: "Troubleshooting", url: "#troubleshooting" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Categories/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Categories/" class="btn btn-xs btn-link">
+        Categories
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../install/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../install/" class="btn btn-xs btn-link">
+        Install
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">#</a></h1>
+<p>When you first launch the app you will be greeted with a setup dialog where you can choose where to put your money database.</p>
+<p><img alt="" src="../../Images/Setup.png" /></p>
+<p>You should choose a folder that is otherwise empty because MyMoney.Net will create some more
+folders inside the location you choose to store <a href="../Attachments/">Attachments</a>,
+<a href="../Accounts/Statemnents.md">Statements</a>, <a href="./Accounts/OnlineBanking.md">Online Banking</a> Logs, and optional
+<a href="../../Accounts/OnlineService/">Online Services</a>.  If you move the database, you will want to
+move all this together and maintain the same folder hierarchy.</p>
+<p>The ellipsis button to the right of the filename allows you to choose an existing database and optionally change the file type from SqlLite (*.mmdb) to one of the following:</p>
+<p><img alt="" src="../../Images/DatabaseTypes.png" /></p>
+<p>The XML and Binary XML options are experimental and have not been fully tested.</p>
+<p>The database file is portable so you can move it using USB storage device, or store it on a folder that gets synchronized across your machines automatically. </p>
+<h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">#</a></h2>
+<p>MyMoney.NET on .NET 10.0 does not support adding a password to your <strong>SQL Lite</strong> databases, but you
+can set a password on the <strong>Binary XML</strong> files. This password is also saved in your local Windows
+Credential Store so you don't have to keep typing it in.  But this convenience could also help you
+forget the password.  If you open your Windows Credential Manager you will see an entry with a name
+starting with "MyMoney".</p>
+<p>Be sure to backup your password in your favorite Password Manager because if you forget it MyMoney
+provides no way to recover it.</p>
+<h2 id="welcome">Welcome<a class="headerlink" href="#welcome" title="Permanent link">#</a></h2>
+<p>Once you have completed your database setup you will be welcomed by the following screen. </p>
+<p><img alt="" src="../../Images/Welcome.png" /></p>
+<p>The first thing you will want to do is <a href="../../Accounts/SetupAccounts/">create your accounts</a>.</p>
+<p>On the left you see four expandable panels for managing <a href="../../Accounts/BankAccounts/">Bank Accounts</a>, <a href="../Categories/">Categories</a>, <a href="../Payees/">Payees</a> and <a href="../Securities/">Securities</a>.  In the main area on the right will be your banking transactions, and the bottom tabbed section will contain various <a href="../../Charts/">charts</a> and download status information. </p>
+<p>If you just want to play with the app to get a feel for it you can populate your new database with <a href="../SampleData/">Sample Data</a>.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">#</a></h2>
+<p>If you are opening an existing database using File.Open that had a password from an older version
+of MyMoney.Net you might see an error message like this, which is the result of a failed decryption. </p>
+<p><img alt="" src="../../Images/Setup1.png" /></p>
+<p>The new .NET 10.0 version of MyMoney.Net does not support passwords.  This means if you are upgrading
+to this new version you have to first remove the password from your database, then do the upgrade.
+If you forgot to do that then you can install this
+<a href="https://winget.run/pkg/LovettSoftware/MyMoney.Net">old version using winget</a> that does work with a password, remove the password, then re-install the new version.</p>
+<p>You can remove the password using the View "<a href="../Options/">Options</a>" menu item, clear the password,
+then hit Save.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Categories/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Categories/" class="btn btn-xs btn-link">
+        Categories
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../install/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../install/" class="btn btn-xs btn-link">
+        Install
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
