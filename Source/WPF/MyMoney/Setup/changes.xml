@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.69" date="7/13/2026">
+		- Feature: Add support for marketstack stock quote service.
+		- Move from Microsoft.VisualStudio.Diagnostics.PerformanceProvider to Walkabout.PerformanceProvider which uses GRPC to communicate with new PerformanceViewer.
+		- Optimize balance account to avoid slow transaction view refreshes.
+		- Simplify #if PerformanceBlocks
+	</change>
 	<change version="2.1.0.68" date="4/11/2026">
 		- Bug: A click on sales tax does not always select the existing text.
 		- Bug: .csv importer should filter out any pending transactions with no posted date.

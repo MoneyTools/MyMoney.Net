@@ -100,11 +100,11 @@ namespace Walkabout.StockQuotes
             int result = 0;
             if (this.Settings.ApiRequestsPerMonthLimit != 0 && this._callsThisMonth >= this.Settings.ApiRequestsPerMonthLimit)
             {
-                throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }
             else if (this.Settings.ApiRequestsPerDayLimit != 0 && this._callsToday >= this.Settings.ApiRequestsPerDayLimit)
             {
-                throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }
             else if (this.Settings.ApiRequestsPerMinuteLimit != 0 && this._callsThisMinute >= this.Settings.ApiRequestsPerMinuteLimit)
             {
@@ -149,6 +149,22 @@ namespace Walkabout.StockQuotes
                 Debug.WriteLine($"Error in {filename}: {ex}");
             }
             return new StockQuoteThrottle() { FileName = filename };
+        }
+
+        internal void TooManyRequests()
+        {
+            if (this.Settings.ApiRequestsPerMinuteLimit != 0)
+            {
+                this._callsThisMinute = this.Settings.ApiRequestsPerMinuteLimit;
+            }
+            else if (this.Settings.ApiRequestsPerDayLimit != 0)
+            {
+                this._callsToday = this.Settings.ApiRequestsPerDayLimit;
+            }
+            else if (this.Settings.ApiRequestsPerMonthLimit != 0)
+            {
+                this._callsThisMonth = this.Settings.ApiRequestsPerMonthLimit;
+            }
         }
     }
 

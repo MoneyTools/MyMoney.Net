@@ -11,7 +11,7 @@ using Walkabout.Data;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace Walkabout.Attachments
@@ -509,8 +509,7 @@ namespace Walkabout.Attachments
             Thread.Sleep(1000); // give app time to startup...
 
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.ScanAttachments))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.ScanAttachments)) ;
 #endif
             try
             {
@@ -547,9 +546,6 @@ namespace Walkabout.Attachments
             catch
             {
             }
-#if PerformanceBlocks
-            }
-#endif
             this.threadRunning = false;
             this.threadStopEvent.Set();
         }

@@ -38,7 +38,7 @@ using Walkabout.Utilities;
 using Walkabout.WpfConverters;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 
 #endif
 
@@ -410,8 +410,7 @@ namespace Walkabout.Views
         public TransactionsView()
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.TransactionViewInitialize))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.TransactionViewInitialize)) ;
 #endif
 
             this.InitializeComponent();
@@ -463,9 +462,6 @@ namespace Walkabout.Views
 
             this.viewStateLock--;
             Unloaded += this.OnTransactionViewUnloaded;
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private void OnCustomBeginEdit(object sender, DataGridCustomEditEventArgs e)
@@ -1520,6 +1516,9 @@ namespace Walkabout.Views
 
         public void UpdateView(TransactionSelection selection, long selectedRowId)
         {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateView));            
+#endif
             // Back/Forwards navigation has happened so we are restoring a new view state, which may also involve
             // switching the layout type, query panel, and transaction filter.
             bool showQuery = false;
@@ -1657,7 +1656,18 @@ namespace Walkabout.Views
             bool filterOnInvestmentInfo = isBrokerage;
             bool filterOnAccountName = (this.activeAccount == null);
             var data = new TransactionCollection(this.myMoney, this.ActiveAccount, transactions, filterOnAccountName, filterOnInvestmentInfo, this.QuickFilter);
+            selectedRowId = this.GetSelectedRowIndex(selection, selectedRowId, data);
+            this.Display(data, this.currentDisplayName, caption, selectedRowId);
+            this.FireAfterViewStateChanged(selectedRowId);
+            this.ShowBalance();
+            if (this.currentDisplayName == TransactionViewName.Portfolio) 
+            {
+                this.ShowInvestmentPortfolio(this.activeAccount);
+            }
+        }
 
+        private long GetSelectedRowIndex(TransactionSelection selection, long selectedRowId, TransactionCollection data)
+        {
             switch (selection)
             {
                 case TransactionSelection.Specific:
@@ -1703,13 +1713,23 @@ namespace Walkabout.Views
                     }
                     break;
             }
+            return selectedRowId;
+        }
 
-            this.Display(data, this.currentDisplayName, caption, selectedRowId);
-            this.FireAfterViewStateChanged(selectedRowId);
-            this.ShowBalance();
-            if (this.currentDisplayName == TransactionViewName.Portfolio) 
+        private void SelectRowIndex(long selectedRowId, IList data)
+        {
+            object selected = this.FindItemById(selectedRowId);
+            if (selected != null)
             {
-                this.ShowInvestmentPortfolio(this.activeAccount);
+                this.TheActiveGrid.SelectedItem = selected;
+            }
+            else if (selectedRowId == 0)
+            {
+                this.SelectedRowIndex = 0;
+            }
+            else if (data != null && data.Count > 0)
+            {
+                this.SelectedRowIndex = data.Count - 1;
             }
         }
 
@@ -1740,11 +1760,10 @@ namespace Walkabout.Views
         {
             this.reconciling = true;
             this.beforeState = this.ViewState;
-            this.SetTransactionFilterNoUpdate(TransactionFilter.Unreconciled);
             this.OneLineView = true;
             this.reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
-            // we normally scroll to the end, but this time we scroll to the top to show transactions most likely to be reconciled.
-            this.ViewTransactionsForSingleAccount(a, TransactionSelection.First, 0);
+            // This happens after we set the reconciliation date, which is important to ensure we show the right transactions.
+            // this.ViewTransactionsForSingleAccount(a, TransactionSelection.First, -1, TransactionFilter.Unreconciled);
         }
 
         public void OnEndReconcile(bool cancelled, bool hasStatement)
@@ -1975,18 +1994,24 @@ namespace Walkabout.Views
 
         internal void ViewTransactionsForSingleAccount(Account a, TransactionSelection selection, long selectedRowId, TransactionFilter filter = TransactionFilter.All)
         {
-            if (a == this.activeAccount && selection == TransactionSelection.Current && this.currentDisplayName == TransactionViewName.Account &&
+            if (a == this.activeAccount && this.currentDisplayName == TransactionViewName.Account &&
                 this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
             {
                 // already viewing this account.
+                this.TransactionFilter = filter;
+                var data = this.ViewModel;                
+                if (data != null)
+                {
+                    long rowId = this.GetSelectedRowIndex(selection, selectedRowId, data);
+                    this.SelectRowIndex(rowId, data);
+                }
                 return;
             }
 
             if (a != null)
             {
 #if PerformanceBlocks
-                using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-                {
+                using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions));
 #endif
                 this.Commit();
                 this.FireBeforeViewStateChanged(); // Must come first.
@@ -1995,10 +2020,6 @@ namespace Walkabout.Views
                 this.SetTransactionFilterNoUpdate(filter);
                 this.SetActiveAccount(a, null, null, null, null);
                 this.UpdateView(selection, selectedRowId);
-
-#if PerformanceBlocks
-                }
-#endif
             }
         }
 
@@ -2006,8 +2027,7 @@ namespace Walkabout.Views
         internal void ViewTransactions(IEnumerable<Transaction> toView, string filter = "")
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions)) ;
 #endif
             this.Commit();
             this.FireBeforeViewStateChanged(); // Must come first.
@@ -2049,17 +2069,12 @@ namespace Walkabout.Views
             }
             this.SetActiveAccount(lastAccount, null, null, null, null);
             this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
-
-#if PerformanceBlocks
-            }
-#endif
         }
 
         internal void ViewTransactionsForPayee(Payee p, long selectedRowId)
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions)) ;
 #endif
             this.Commit();
             this.FireBeforeViewStateChanged(); // Must come first.
@@ -2070,16 +2085,12 @@ namespace Walkabout.Views
             this.SetActiveAccount(null, null, p, null, null);
             this.UpdateView(TransactionSelection.Last, selectedRowId);
 
-#if PerformanceBlocks
-            }
-#endif
         }
 
         internal void ViewTransactionsForSecurity(Security s, long selectedRowId)
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions)) ;
 #endif
             if (s != null)
             {
@@ -2091,16 +2102,12 @@ namespace Walkabout.Views
                 this.selector = new TransactionSecuritySelector(null, s.Name);
                 this.UpdateView(TransactionSelection.Last, selectedRowId);
             }
-#if PerformanceBlocks
-            }
-#endif
         }
 
         internal void ViewTransactionsForCategory(Category c, long selectedRowId)
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions)) ;
 #endif
             this.Commit();
             this.FireBeforeViewStateChanged(); // Must come first.
@@ -2108,16 +2115,12 @@ namespace Walkabout.Views
             this.selector = new TransactionCategorySelector(null, c?.Name);
             this.SetActiveAccount(null, c, null, null, null);
             this.UpdateView(TransactionSelection.Last, selectedRowId);
-#if PerformanceBlocks
-            }
-#endif
         }
 
         internal void ViewTransactionsForAdvancedQuery(QueryRow[] query)
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions)) ;
 #endif
             this.Commit();
             this.FireBeforeViewStateChanged(); // Must come first.
@@ -2125,10 +2128,6 @@ namespace Walkabout.Views
             this.currentDisplayName = TransactionViewName.ByQuery;
             this.selector = new TransactionQuerySelector(query);
             this.UpdateView(TransactionSelection.Last, this.SelectedRowId);
-
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private PortfolioReport portfolioReport;
@@ -3267,22 +3266,9 @@ namespace Walkabout.Views
             this.Commit();
             this.Caption = caption;
 
-
             this.TheActiveGrid.SetItemsSource(data);
 
-            object selected = this.FindItemById(selectedRowId);
-            if (selected != null)
-            {
-                this.TheActiveGrid.SelectedItem = selected;
-            }
-            else if (selectedRowId == 0)
-            {
-                this.SelectedRowIndex = 0;
-            }
-            else if (data != null && data.Count > 0)
-            {
-                this.SelectedRowIndex = data.Count - 1;
-            }
+            this.SelectRowIndex(selectedRowId, data);
 
             this.TheActiveGrid.AsyncScrollSelectedRowIntoView();
 

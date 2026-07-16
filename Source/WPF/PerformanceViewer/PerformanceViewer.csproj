@@ -1,0 +1,28 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\PerformanceProvider\CategoryId.cs" Link="CategoryId.cs" />
+    <Compile Include="..\PerformanceProvider\ComponentId.cs" Link="ComponentId.cs" />
+    <Compile Include="..\PerformanceProvider\MeasurementId.cs" Link="MeasurementId.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
+    <PackageReference Include="Grpc.Core" Version="2.46.6" />
+    <PackageReference Include="Grpc.Tools" Version="2.58.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+   <PackageReference Include="Google.Protobuf" Version="3.23.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\Protos\performance.proto" GrpcServices="Server">
+      <Link>performance.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+</Project>

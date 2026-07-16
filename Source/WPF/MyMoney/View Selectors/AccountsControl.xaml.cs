@@ -20,7 +20,7 @@ using Walkabout.Importers;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace Walkabout.Views.Controls
@@ -296,7 +296,6 @@ namespace Walkabout.Views.Controls
 
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AccountsControlInitialize))
-            {
 #endif
             this.InitializeComponent();
 
@@ -315,9 +314,6 @@ namespace Walkabout.Views.Controls
 
             this.listBox1.ItemsSource = this.items;
             this.UpdateContextMenuView();
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)

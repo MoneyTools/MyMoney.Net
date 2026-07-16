@@ -14,7 +14,7 @@ using Walkabout.Charts;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace LovettSoftware.Charts
@@ -55,8 +55,7 @@ namespace LovettSoftware.Charts
         protected override void OnInitialized(EventArgs e)
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AreaChartInitialize))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AreaChartInitialize)) ;
 #endif
             base.OnInitialized(e);
 
@@ -66,9 +65,6 @@ namespace LovettSoftware.Charts
             this.nfi.CurrencyNegativePattern = 0;
             this.Background = Brushes.Transparent; // so mouseclicks work.
 
-#if PerformanceBlocks
-            }
-#endif
         }
 
         public ChartData Data

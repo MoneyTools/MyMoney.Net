@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using Walkabout.Data;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace Walkabout.Charts
@@ -29,8 +29,7 @@ namespace Walkabout.Charts
         public CategoryChart()
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoryChartInitialize))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoryChartInitialize)) ;
 #endif
             this.InitializeComponent();
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
@@ -45,9 +44,6 @@ namespace Walkabout.Charts
 
             this.Legend.Toggled += this.OnLegendToggled; 
             this.Legend.Selected += this.OnLegendSelected;
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private void OnLegendToggled(object sender, ChartDataValue e)

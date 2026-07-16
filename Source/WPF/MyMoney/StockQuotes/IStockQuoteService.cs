@@ -68,7 +68,7 @@ namespace Walkabout.StockQuotes
         /// history is showing the price for 1 share according to today's share count.
         /// </summary>
         /// <param name="symbol">The stock whose history is to be downloaded</param>
-        /// <returns>Returns true if the history was updated or false if history is not found</returns>
+        /// <returns>Returns true if the download was cancelled</returns>
         Task<bool> UpdateHistory(StockQuoteHistory history);
 
         /// <summary>
@@ -124,6 +124,9 @@ namespace Walkabout.StockQuotes
 
     public class DateRange: EventArgs
     {
+        public DateRange()
+        { }
+            
         public DateRange(DateTime start, DateTime end)
         {
             this.Start = start;
@@ -175,8 +178,54 @@ namespace Walkabout.StockQuotes
         public string Name { get; set; }
         public bool NotFound { get; set; }
         public DateTime LastUpdate { get; set; }
-        public DateTime? EarliestTime { get; set; }
-        public HashSet<DateTime> AdditionalClosures { get; set; }
+
+        private DateTime? _earliestTime;
+        public DateTime? EarliestTime
+        {
+            get
+            {
+                if (!_earliestTime.HasValue && this.History != null && this.History.Count > 0)
+                {
+                    _earliestTime = this.History[0].Date;
+                }
+                return _earliestTime;
+            }
+            set
+            {
+                _earliestTime = value;
+            }
+        }
+
+        private HashSet<DateRange> _missingRanges;
+        private HashSet<DateTime> _skipMissingDates;
+
+        public HashSet<DateRange> MissingRanges
+        {
+            get { return _missingRanges; }
+            set { _missingRanges = value; _skipMissingDates = null; }
+        }
+
+        [XmlIgnore]
+        private HashSet<DateTime> SkipMissingDates {
+            get
+            {
+                if (_skipMissingDates == null)
+                {
+                    _skipMissingDates = new HashSet<DateTime>();
+                    if (this.MissingRanges != null)
+                    {
+                        foreach (var range in this.MissingRanges)
+                        {
+                            for (DateTime d = range.Start; d <= range.End; d = d.AddDays(1))
+                            {
+                                _skipMissingDates.Add(d);
+                            }
+                        }
+                    }
+                }
+                return _skipMissingDates;
+            }
+        }
 
         /// <summary>
         /// The history of stock quotes, split adjusted, meaning it is showing what the
@@ -240,21 +289,16 @@ namespace Walkabout.StockQuotes
             foreach (var quote in quotes)
             {
                 var date = quote.Date;
-                while (start < date)
-                {
-                    if (this.IsMarketOpen(start))
-                    {
-                        // oh, then our stock quote service has missing data, so we need to record this so we
-                        // don't keep asking for it over and over.
-                        Debug.WriteLine($"Quote for {quote.Symbol} on {start.ToShortDateString()} is missing");
-                        
-                        // TBD: Need more investigation on whether this is service specific... for example, we know
-                        // already that Yahoo returns sparse data the further back you go, this doesn't mean a different
-                        // service can't fill in these blanks.
-                        // this.AdditionalClosures.Add(start);
-                    }
-                    start = this.GetNextMarketOpenDate(start);
-                }
+                //while (start < date)
+                //{
+                    //if (this.IsMarketOpen(start))
+                    //{
+                    //    // oh, then our stock quote service has missing data, so we need to record this so we
+                    //    // don't keep asking for it over and over.
+                    //    Debug.WriteLine($"Quote for {quote.Symbol} on {start.ToShortDateString()} is missing");                        
+                    //}
+                    // start = this.GetNextMarketOpenDate(start);
+                //}
                 this.MergeQuote(quote, ref pos);
                 start = this.GetNextMarketOpenDate(date);
             }
@@ -375,7 +419,7 @@ namespace Walkabout.StockQuotes
 
         internal bool IsMarketOpen(DateTime workDay)
         {
-            return this.holidays.IsWorkDay(workDay) && !KnownClosures.Contains(workDay) && !(this.AdditionalClosures?.Contains(workDay) == true);
+            return this.holidays.IsWorkDay(workDay) && !KnownClosures.Contains(workDay) && !this.SkipMissingDates.Contains(workDay);
         }
 
         internal DateTime GetPreviousMarketOpenDate(DateTime workDay)
@@ -398,13 +442,29 @@ namespace Walkabout.StockQuotes
             return workDay;
         }
 
+        internal void AddMissingDateRange(DateRange range)
+        {
+            if (!this.EarliestTime.HasValue)
+            {                
+                this.EarliestTime = range.End;
+            }
+            else
+            {
+                if (this.MissingRanges == null)
+                {
+                    this.MissingRanges = new HashSet<DateRange>();
+                }
+                this.MissingRanges.Add(range);
+            }
+        }
+
         /// <summary>
         /// Return the days that seem to be missing in our data.
         /// </summary>
         /// <param name="yearsToCheck">How far to go back in time to find missing data.</param>
         /// <returns></returns>
         internal IEnumerable<DateRange> GetMissingDataRanges(int yearsToCheck)
-        {
+        {           
             var workDay = this.GetPreviousMarketOpenDate(this.holidays.MostRecentWorkDay);
             DateTime stopDate = workDay.AddYears(-yearsToCheck);
             while (!this.IsMarketOpen(stopDate))
@@ -445,6 +505,7 @@ namespace Walkabout.StockQuotes
                         break;
                     }
                 }
+
 
                 if (workDay > stopDate)
                 {

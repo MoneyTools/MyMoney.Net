@@ -32,6 +32,20 @@ namespace Walkabout.StockQuotes
     }
 
     /// <summary>
+    /// Means the service is returning no data for the given date range.
+    /// </summary>
+    internal class StockQuoteNoDataException : Exception
+    {
+        public StockQuoteNoDataException(string msg, DateRange range) : base(msg) 
+        {
+            this.Range = range;
+        }
+
+        public DateRange Range;
+    }
+
+
+    /// <summary>
     /// This class implements throttling on the stock service API based on the given StockServiceSettings
     /// and calls the abstract DownloadThrottledQuoteAsync or DownloadThrottledQuoteHistoryAsync within those throttling limits.
     /// </summary>
@@ -227,7 +241,7 @@ namespace Walkabout.StockQuotes
                     }
                     else
                     {
-                        await this.ServiceCallErrorHandling(symbol, async () =>
+                        this._cancelled = !await this.ServiceCallErrorHandling(symbol, async () =>
                         {
                             // this service doesn't want too many calls per second.
                             var quote = await this.DownloadThrottledQuoteAsync(symbol);
@@ -307,7 +321,7 @@ namespace Walkabout.StockQuotes
             string symbol = history.Symbol;
             
             // this service doesn't want too many calls per second.
-            await this.ServiceCallErrorHandling(symbol, async () =>
+            bool cancelled = !await this.ServiceCallErrorHandling(symbol, async () =>
             {
                 updated = await this.DownloadThrottledQuoteHistoryAsync(history);
             });
@@ -318,7 +332,7 @@ namespace Walkabout.StockQuotes
 
             this.OnComplete(this.PendingCount == 0, null);
 
-            return updated;
+            return cancelled;
         }
 
         protected void CountCall()
@@ -388,6 +402,7 @@ namespace Walkabout.StockQuotes
                 {
                     this._throttle.CallsThisMinute = this.Settings.ApiRequestsPerMinuteLimit;
                 }
+                return false;
             }
             catch (StockQuoteNotFoundException)
             {
@@ -412,6 +427,11 @@ namespace Walkabout.StockQuotes
                 this.OnComplete(this.PendingCount == 0, message);
             }
             return true;
+        }
+
+        internal void TooManyRequests()
+        {
+            this._throttle.TooManyRequests();
         }
     }
 }

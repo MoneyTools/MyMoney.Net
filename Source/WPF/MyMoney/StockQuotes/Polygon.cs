@@ -190,10 +190,7 @@ namespace Walkabout.StockQuotes
                         {
                             // ensure it sleeps again.
                             Debug.WriteLine($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
-                            for (int i = 0; i < this.Settings.ApiRequestsPerMinuteLimit; i++)
-                            {
-                                this.CountCall();
-                            }
+                            this.TooManyRequests();
                         }
                         else
                         {

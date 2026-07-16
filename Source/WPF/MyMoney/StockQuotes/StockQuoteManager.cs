@@ -20,6 +20,10 @@ using Walkabout.Data;
 using Walkabout.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
+#if PerformanceBlocks
+using Walkabout.PerformanceProvider;
+#endif
+
 namespace Walkabout.StockQuotes
 {
     /// <summary>
@@ -132,6 +136,10 @@ namespace Walkabout.StockQuotes
             else if (TwelveData.IsMySettings(settings))
             {
                 service = new TwelveData(settings, this.LogPath);
+            }
+            else if (MarketStack.IsMySettings(settings))
+            {
+                service = new MarketStack(settings, this.LogPath);
             }
             return service;
         }
@@ -1072,8 +1080,7 @@ namespace Walkabout.StockQuotes
                 {
 
 #if PerformanceBlocks
-                    using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.DownloadStockQuoteHistory))
-                    {
+                    using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.DownloadStockQuoteHistory)) ;
 #endif
                     StockQuoteHistory history = null;
                     var info = this._downloadLog.GetInfo(symbol);
@@ -1090,7 +1097,12 @@ namespace Walkabout.StockQuotes
                     {
                         try
                         {
-                            await this._service.UpdateHistory(history);
+                            bool cancelled = await this._service.UpdateHistory(history);
+                            if (cancelled)
+                            {
+                                // need to bail since the service is not working.
+                                this._downloadingHistory = false;
+                            }
                         }
                         catch (StockQuoteNotFoundException)
                         {
@@ -1105,9 +1117,6 @@ namespace Walkabout.StockQuotes
                     {
                         this.OnHistoryAvailable(history);
                     }
-#if PerformanceBlocks
-                    }
-#endif
                 }
             }
             this._downloadingHistory = false;

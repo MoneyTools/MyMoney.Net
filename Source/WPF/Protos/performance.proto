@@ -1,0 +1,24 @@
+syntax = "proto3";
+option csharp_namespace = "Walkabout.PerformanceProvider.Grpc";
+import "google/protobuf/timestamp.proto";
+
+message PerformanceMessage {
+  string id = 1;
+  string sender = 2;
+  int32 eventId = 3;
+  int32 component = 4;
+  int32 category = 5;
+  int32 measurement = 6;
+  int64 ticks = 7;
+  uint64 size = 8;
+  double rate = 9;
+  google.protobuf.Timestamp timestamp = 10;
+}
+
+message Ack {
+  string message = 1;
+}
+
+service PerformanceService {
+  rpc SendPerformance (PerformanceMessage) returns (Ack);
+}

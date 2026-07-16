@@ -7,7 +7,7 @@ using Walkabout.Data;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace Walkabout.Views.Controls
@@ -75,8 +75,7 @@ namespace Walkabout.Views.Controls
         public SecuritiesControl()
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.SecuritiesControlInitialize))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.SecuritiesControlInitialize)) ;
 #endif
             this.InitializeComponent();
             MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
@@ -88,9 +87,6 @@ namespace Walkabout.Views.Controls
                 this.dragDropSupport.Disconnect();
                 this.MyMoney = null;
             };
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -13,7 +13,7 @@ using Walkabout.Dialogs;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 namespace Walkabout.Views.Controls
@@ -53,8 +53,7 @@ namespace Walkabout.Views.Controls
         public CategoriesControl()
         {
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoriesControlInitialize))
-            {
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoriesControlInitialize)) ;
 #endif
             this.InitializeComponent();
 
@@ -77,10 +76,6 @@ namespace Walkabout.Views.Controls
                 this.dragDropSupport.Disconnect();
                 this.MyMoney = null;
             };
-
-#if PerformanceBlocks
-            }
-#endif
         }
 
         #endregion

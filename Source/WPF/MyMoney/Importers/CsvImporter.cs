@@ -248,6 +248,11 @@ namespace Walkabout.Importers
                     {
                         i.Type = bag.TradeType == "Shares" ? InvestmentType.Remove : InvestmentType.Sell;
                     }
+                    if (i.Type == InvestmentType.Add || i.Type == InvestmentType.Remove)
+                    {
+                        // Then there should be no amount since this was not a purchase or sale.
+                        t.Amount = 0;
+                    }
                 }
             }
         }
@@ -333,6 +338,13 @@ namespace Walkabout.Importers
                 col++;
             }
 
+            // sometimes the bank will list pending transactions with no posted date yet
+            // so our importer should skip those.
+            if (t.Date == DateTime.MinValue)
+            {
+                return;
+            }
+
             // Sometimes Fidelity skips providing both Quantity and UnitPrice.
             if (t.Quantity == 0 && t.UnitPrice != 0 && t.Amount != 0)
             {
@@ -369,12 +381,8 @@ namespace Walkabout.Importers
                 Security s = this.money.Securities.FindSecurity(t.Payee.Name, true);
                 t.Security = s;
             }
-            // sometimes the bank will list pending transactions with no posted date yet
-            // so our importer should skip those.
-            if (t.Date != DateTime.MinValue)
-            {
-                this.typedData.Add(t);
-            }
+            
+            this.typedData.Add(t);            
         }
 
         private void MapField(TBag t, CsvFieldMap field, string value)
@@ -539,7 +547,7 @@ namespace Walkabout.Importers
                 if (i != null)
                 {
                     var s = i.Security;
-                    if (s != null && s.Symbol != bag.Symbol)
+                    if (s != null && s != bag.Security)
                     {
                         return false; // no match
                     }

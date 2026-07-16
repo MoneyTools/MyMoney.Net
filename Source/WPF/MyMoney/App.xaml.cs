@@ -13,7 +13,7 @@ using Walkabout.Utilities;
 using Walkabout.WpfConverters;
 
 #if PerformanceBlocks
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.PerformanceProvider;
 #endif
 
 [assembly: CLSCompliant(true)]
@@ -30,14 +30,18 @@ namespace Walkabout
         private ILogger rootLog;
         private Log appLog;
         private string logsLocation;
+#if PerformanceBlocks
+        private PerformanceClient perfClient;
+#endif
 
         private void MyApplicationStartup(object sender, StartupEventArgs e)
         {
             Settings settings = null;
 
 #if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AppInitialize))
-            {
+            this.perfClient = new PerformanceClient();
+            _ = this.perfClient.Start();
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AppInitialize)) ;
 #endif
             var path = Path.Combine(Path.GetTempPath(), "MyMoney");
             var logs = Path.Combine(path, "Logs");
@@ -85,9 +89,6 @@ namespace Walkabout
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnAppDomainUnhandledException);
             TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException1;
 
-#if PerformanceBlocks
-            }
-#endif
 
             // Lets run the application since there's no another instance running
             MainWindow mainWindow = new MainWindow(settings);
@@ -99,6 +100,9 @@ namespace Walkabout
             this.appLog?.Info($"App terminating with exit code {e.ApplicationExitCode}");
             this.appLog?.Dispose();
             this.rootLog?.Dispose();
+#if PerformanceBlocks
+            this.perfClient?.Dispose();
+#endif
             base.OnExit(e);
         }
 

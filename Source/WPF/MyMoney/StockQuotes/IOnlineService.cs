@@ -14,6 +14,7 @@ namespace Walkabout.StockQuotes
         {
             List<OnlineServiceSettings> result = new List<OnlineServiceSettings>();
             result.Add(TwelveData.GetDefaultSettings());
+            result.Add(MarketStack.GetDefaultSettings());
             result.Add(YahooFinance.GetDefaultSettings());
             result.Add(ExchangeRateService.GetDefaultSettings());
             return result;
