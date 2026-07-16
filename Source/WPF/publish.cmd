@@ -44,7 +44,9 @@ CleanupPublishFolder %VERSION% %ClickOnceBits%
 
 if "%WINGET%"=="0" goto :dorelease
 if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
-msbuild MyMoneyPackage.sln /t:Publish /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms=x64
+REM msbuild MyMoneyPackage.sln /t:Publish /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms=x64
+echo Load MyMoneyPackage.sln and build the "publish" build for Release/x64...
+pause
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle goto :noappx
 
 :dorelease
