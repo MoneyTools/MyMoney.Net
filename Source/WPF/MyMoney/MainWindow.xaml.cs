@@ -4857,7 +4857,7 @@ namespace Walkabout
                     // update the stock quote service to use it.
                     var settings = d.Settings;
                     this.settings.StockServiceSettings = settings;
-                    this.quotes.Settings = settings;
+                    this.quotes.ServiceSettings = settings;
                     this.quotes.UpdateQuotes();
                     this.UpdateCurrencyRates();                    
                 }

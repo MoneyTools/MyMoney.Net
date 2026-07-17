@@ -19,6 +19,8 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel;
+
 
 #if PerformanceBlocks
 using Walkabout.PerformanceProvider;
@@ -37,7 +39,7 @@ namespace Walkabout.StockQuotes
         private readonly HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
         private readonly IStatusService status;
         private readonly IServiceProvider provider;
-        private List<OnlineServiceSettings> _settings;
+        private List<OnlineServiceSettings> _serviceSettings;
         private List<IStockQuoteService> _services = new List<IStockQuoteService>();
         private readonly DownloadLog _downloadLog = new DownloadLog();
         private List<StockQuote> _batch = new List<StockQuote>();
@@ -46,12 +48,13 @@ namespace Walkabout.StockQuotes
         private readonly string _logPath;
         private bool _firstError = true;
         private UsHolidays holidays = new UsHolidays();
+        private bool _activeStockServiceChanged = false;
 
-        public StockQuoteManager(IServiceProvider provider, List<OnlineServiceSettings> settings, string logPath)
+        public StockQuoteManager(IServiceProvider provider, List<OnlineServiceSettings> serviceSettings, string logPath)
         {
             this._logPath = logPath;
             EnsurePathExists(logPath);
-            this.Settings = settings;
+            this.ServiceSettings = serviceSettings;
             this.provider = provider;
             this.myMoney = (MyMoney)provider.GetService(typeof(MyMoney));
             this.status = (IStatusService)provider.GetService(typeof(IStatusService));
@@ -78,27 +81,55 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        private void OnServiceSettingsChanged(List<OnlineServiceSettings> serviceSettings)
+        {
+            if (this._serviceSettings != null)
+            {
+                foreach (var ss in this._serviceSettings)
+                {
+                    ss.PropertyChanged -= this.OnServiceSettingsPropertyChanged;
+                }
+            }
+            this._serviceSettings = serviceSettings;
+            if (this._serviceSettings != null)
+            {
+                foreach (var ss in this._serviceSettings)
+                {
+                    ss.PropertyChanged += this.OnServiceSettingsPropertyChanged;
+                }
+            }
+        }
+
+        private void OnServiceSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // some actual value changed, so we may need to pass this along to the downloader.
+            if (e.PropertyName != "ServiceType" && e.PropertyName != "Name" && e.PropertyName != "Address")
+            {
+                this._activeStockServiceChanged = true;
+            }
+        }
+
         public DownloadLog DownloadLog
         {
             get => this._downloadLog;
         }
 
-        public List<OnlineServiceSettings> Settings
+        public List<OnlineServiceSettings> ServiceSettings
         {
             get
             {
-                return this._settings;
+                return this._serviceSettings;
             }
             set
             {
+                // The whole collection changed, so the active service may have also changed.
                 this.StopThread();
                 this.ResetServices();
-                this._settings = value;
+                this.OnServiceSettingsChanged(value);
                 if (!string.IsNullOrEmpty(this.LogPath))
                 {
                     this.UpdateServices();
                 }
-
             }
         }
 
@@ -146,18 +177,11 @@ namespace Walkabout.StockQuotes
 
         private void UpdateServices()
         {
-            foreach (var service in this._services)
-            {
-                service.DownloadError -= this.OnServiceDownloadError;
-                service.QuoteAvailable -= this.OnServiceQuoteAvailable;
-                service.Complete -= this.OnServiceQuotesComplete;
-                service.Suspended -= this.OnServiceSuspended;
-                service.SymbolNotFound -= this.OnSymbolNotFound;
-            }
+            this.ResetServices();
 
             this._services = new List<IStockQuoteService>();
 
-            foreach (var item in this._settings)
+            foreach (var item in this._serviceSettings)
             {
                 IStockQuoteService service = this.GetServiceForSettings(item);
                 if (service != null)
@@ -367,6 +391,8 @@ namespace Walkabout.StockQuotes
                 this._downloader.Status += this.OnDownloadStatus;
                 this._downloader.HistoryAvailable += this.OnHistoryAvailable;
             }
+            this._downloader.ActiveStockServiceChanged = this._activeStockServiceChanged;
+            this._activeStockServiceChanged = false; // It's a one time latch.
             return this._downloader;
         }
 
@@ -976,6 +1002,8 @@ namespace Walkabout.StockQuotes
             this._service = service;
             this._downloadLog = log;
         }
+        public bool ActiveStockServiceChanged { get; internal set; }
+
 
         public event EventHandler<string> Error;
         public event EventHandler<string> Status;
@@ -1089,12 +1117,18 @@ namespace Walkabout.StockQuotes
                     {
                         history = new StockQuoteHistory() { Symbol = symbol };
                     }
-                    if (!force && info != null && info.Downloaded.Date == DateTime.Today && history != null && !history.NeedsUpdating)
+                    if (!force && info != null && info.Downloaded.Date == DateTime.Today && history != null && !history.NeedsUpdating && !history.NotFound)
                     {
                         // already up to date
                     }
-                    else if (!history.NotFound)
+                    else if (!history.NotFound || this.ActiveStockServiceChanged)
                     {
+                        // If the ActiveStockServiceChanged then we need to reset NotFound since the new
+                        // service might now be able to find it.
+                        if (history.NotFound)
+                        {
+                            history.NotFound = false;
+                        }
                         try
                         {
                             bool cancelled = await this._service.UpdateHistory(history);

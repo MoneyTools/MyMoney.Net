@@ -80,7 +80,7 @@ namespace Walkabout.Dialogs
             {
                 bool found = false;
                 var item = list[i];
-                foreach (var c in this._stockQuotes.Settings)
+                foreach (var c in this._stockQuotes.ServiceSettings)
                 {
                     if (c.Name == item.Name || c.OldName == item.Name || c.Name == item.OldName)
                     {
