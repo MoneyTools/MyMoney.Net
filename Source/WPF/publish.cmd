@@ -6,6 +6,7 @@ set WINGET_SRC=D:\git\lovettchris\winget-pkgs
 set ClickOnceBits=%ROOT%MyMoney\bin\publish
 set PATH=%PATH%;%ROOT%\tools;%LOCALAPPDATA%\Microsoft\WindowsApps\
 set /p VERSION=<Version\VersionMaster.txt
+set MSIXBUNDLE=MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle
 
 call SetupWinget
 if '!WINGETVERSION!' == '' goto :eof
@@ -47,7 +48,7 @@ if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
 REM msbuild MyMoneyPackage.sln /t:Publish /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms=x64
 echo Load MyMoneyPackage.sln and build the "publish" build for Release/x64...
 pause
-if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle goto :noappx
+if not EXIST %MSIXBUNDLE% goto :noappx
 
 :dorelease
 if "%GITRELEASE%" == "0" goto :upload
@@ -56,7 +57,7 @@ git tag %VERSION%
 git push origin --tags
 
 echo Creating new release for version %VERSION%
-set MSIXBUNDLE=MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle
+
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
 if "%WINGET%"=="0" (
   gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
@@ -112,7 +113,7 @@ winget upgrade wingetcreate
 
 set TARGET=%WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net\%VERSION%
 if not exist %TARGET% mkdir %TARGET%
-copy /y WinGetTemplate\LovettSoftware*.yaml  %TARGET%
+copy /y %ROOT%WinGetTemplate\LovettSoftware*.yaml  %TARGET%
 wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/MoneyTools/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_x64.msixbundle
 if ERRORLEVEL 1 goto :eof
 
