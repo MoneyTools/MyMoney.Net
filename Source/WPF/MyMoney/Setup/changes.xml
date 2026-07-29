@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.70" date="7/28/2026">
+		- Feature: Add support for marketstack stock split service to automatically import stock split info
+	</change>
 	<change version="2.1.0.69" date="7/13/2026">
 		- Feature: Add support for marketstack stock quote service.
 		- Move from Microsoft.VisualStudio.Diagnostics.PerformanceProvider to Walkabout.PerformanceProvider which uses GRPC to communicate with new PerformanceViewer.

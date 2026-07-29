@@ -14,7 +14,6 @@
              d:DesignHeight="333" d:DesignWidth="685">
   <UserControl.Resources>
 
-
     <Style x:Key="MySecuritiesDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
       <Setter Property="ItemsSource" Value="{Binding}"/>
       <Setter Property="AutoGenerateColumns" Value="False"/>
@@ -100,7 +99,6 @@
       </Border>
     </DataTemplate>
 
-
     <DataTemplate x:Key="myTemplateSymbolEdit">
       <local:FilteringComboBox Style="{StaticResource GridComboStyle}" HorizontalAlignment="Stretch" x:Name="EditorForSymbol"
                       SelectedItem="{Binding Path=Symbol}" 
@@ -124,13 +122,11 @@
       </Border>
     </DataTemplate>
 
-
     <DataTemplate x:Key="myTemplateCusipEdit">
       <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
         <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
       </Border>
     </DataTemplate>
-
 
     <!-- SecurityType -->
     <DataTemplate x:Key="myTemplateSecurityType" >

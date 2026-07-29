@@ -192,7 +192,17 @@ namespace Walkabout.Views
             var security = money.Securities.FindSecurity(this.SecurityName, false);
             if (security != null)
             {
-                var data = (this.Previous == null) ? money.Transactions.GetTransactionsBySecurity(security, null) : this.Previous.GetSelectedTransactions(context);               
+                IEnumerable<Transaction> data = null;
+                if (this.Previous == null)
+                {
+                    var list = money.Transactions.GetTransactionsBySecurity(security, null);
+                    money.Transactions.UpdateStockUnitsAndRoutingPath(security, list);
+                    data = list;
+                }
+                else
+                {
+                    data = this.Previous.GetSelectedTransactions(context);
+                }                                 
                 foreach (var t in data)
                 {
                     if (t.Investment != null && t.Investment.Security == security)

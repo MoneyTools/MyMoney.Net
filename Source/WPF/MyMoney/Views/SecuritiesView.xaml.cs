@@ -659,7 +659,6 @@ namespace Walkabout.Views
             // Toggle the Detail Split View 
             if (id == this.splitVisibleRowId && this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
             {
-
                 // Done editing the split. must be executive after the any edit filed are committed
                 // so we run this on the ContextIdle
                 this.Dispatcher.BeginInvoke(new Action(() => this.RestoreSplitViewMode()), DispatcherPriority.ContextIdle);
@@ -670,6 +669,10 @@ namespace Walkabout.Views
                 this.SecuritiesDataGrid.RowDetailsTemplate = this.TryFindResource("StockSplitDetailView") as DataTemplate;
                 this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
                 this.splitVisibleRowId = id;
+                if (s != null)
+                {
+                    this.OnUpdateStockSplits(s);
+                }
             }
         }
 
@@ -771,6 +774,20 @@ namespace Walkabout.Views
                 if (service != null)
                 {
                     service.BeginDownloadHistory(t.Symbol, true);
+                }
+            }
+        }
+
+        private void OnUpdateStockSplits(Security security)
+        {            
+            var list = this.money.Transactions.GetTransactionsBySecurity(security, null);
+            if (list != null && list.Count > 0)
+            {
+                DateTime fromDate = list[0].Date.AddDays(-1);
+                StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
+                if (service != null)
+                {
+                    service.BeginUpdateStockSplits(security, fromDate);
                 }
             }
         }

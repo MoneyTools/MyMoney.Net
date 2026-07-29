@@ -88,11 +88,11 @@ namespace Walkabout.StockQuotes
                         StockQuote quote = this.ParseStockQuote(o);
                         if (quote == null || quote.Symbol == null)
                         {
-                            throw new StockQuoteNotFoundException("");
+                            throw new StockSymbolNotFoundException("");
                         }
                         else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            throw new StockQuoteNotFoundException(string.Format(Walkabout.Properties.Resources.DifferentSymbolReturned, symbol, quote.Symbol));
+                            throw new StockSymbolNotFoundException(string.Format(Walkabout.Properties.Resources.DifferentSymbolReturned, symbol, quote.Symbol));
                         }
                         else
                         {

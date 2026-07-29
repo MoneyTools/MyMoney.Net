@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using System.Xml;
 using System.Xml.Serialization;
+using Walkabout.Data;
 using Walkabout.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -70,6 +71,16 @@ namespace Walkabout.StockQuotes
         /// <param name="symbol">The stock whose history is to be downloaded</param>
         /// <returns>Returns true if the download was cancelled</returns>
         Task<bool> UpdateHistory(StockQuoteHistory history);
+
+        /// <summary>
+        /// Get an updated list of stock splits for the given security starting at the given date.
+        /// </summary>
+        /// <param name="security">the security to find splits for</param>
+        /// <param name="dateFrom">The date to start from</param>
+        /// <returns>The existing or updated list of stock splits</returns>
+        /// <exception cref="StockSymbolNotFoundException">If there is no online data for this security</exception>
+        /// <exception cref="Exception">If something else goes wrong</exception>
+        Task<IList<StockSplit>> UpdateStockSplits(Security security, DateTime dateFrom);
 
         /// <summary>
         /// Return a count of pending downloads.
@@ -178,6 +189,7 @@ namespace Walkabout.StockQuotes
         public string Name { get; set; }
         public bool NotFound { get; set; }
         public DateTime LastUpdate { get; set; }
+        public DateTime LastStockSplitUpdate { get; set; }
 
         private DateTime? _earliestTime;
         public DateTime? EarliestTime
@@ -259,6 +271,20 @@ namespace Walkabout.StockQuotes
                 }
                 var workDay = this.holidays.MostRecentWorkDay;
                 var daysBehind = (workDay - this.LastUpdate).TotalDays;
+                return daysBehind > 0;
+            }
+        }
+
+        public bool NeedsUpdatingStockSplits
+        {
+            get
+            {
+                if (this.LastStockSplitUpdate == DateTime.MinValue)
+                {
+                    return true;
+                }
+                var workDay = this.holidays.MostRecentWorkDay;
+                var daysBehind = (workDay - this.LastStockSplitUpdate).TotalDays;
                 return daysBehind > 0;
             }
         }

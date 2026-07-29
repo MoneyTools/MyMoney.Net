@@ -20,6 +20,8 @@ using Walkabout.Data;
 using Walkabout.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.ComponentModel;
+using ModernWpf.Controls.Primitives;
+
 
 
 #if PerformanceBlocks
@@ -369,6 +371,17 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        public void BeginUpdateStockSplits(Security security, DateTime fromDate)
+        {
+            IStockQuoteService service = this.GetQuoteService();
+            if (service != null)
+            {                
+                var downloader = this.GetStockSplitDownloader(service);
+                // update the latest stock splits
+                downloader.UpdateStockSplits(security, fromDate);
+            }
+        }
+
         private IStockQuoteService GetQuoteService()
         {
             IStockQuoteService result = null;
@@ -394,6 +407,17 @@ namespace Walkabout.StockQuotes
             this._downloader.ActiveStockServiceChanged = this._activeStockServiceChanged;
             this._activeStockServiceChanged = false; // It's a one time latch.
             return this._downloader;
+        }
+
+        StockSplitDownloader _splitDownloader;
+
+        private StockSplitDownloader GetStockSplitDownloader(IStockQuoteService service)
+        {
+            if (this._splitDownloader == null)
+            {
+                this._splitDownloader = new StockSplitDownloader(service, this._downloadLog);
+            }
+            return this._splitDownloader;
         }
 
         private void OnDownloadStatus(object sender, string message)
@@ -1002,8 +1026,8 @@ namespace Walkabout.StockQuotes
             this._service = service;
             this._downloadLog = log;
         }
-        public bool ActiveStockServiceChanged { get; internal set; }
 
+        public bool ActiveStockServiceChanged { get; internal set; }
 
         public event EventHandler<string> Error;
         public event EventHandler<string> Status;
@@ -1019,7 +1043,6 @@ namespace Walkabout.StockQuotes
                 HistoryAvailable(this, history);
             }
         }
-
 
         public async void BeginFetchHistory(List<string> batch, bool force)
         {
@@ -1138,7 +1161,7 @@ namespace Walkabout.StockQuotes
                                 this._downloadingHistory = false;
                             }
                         }
-                        catch (StockQuoteNotFoundException)
+                        catch (StockSymbolNotFoundException)
                         {
                             history.NotFound = true;
                         }
@@ -1186,6 +1209,81 @@ namespace Walkabout.StockQuotes
         {
             var history = await this._downloadLog.GetHistory(symbol);
             return history;
+        }
+    }
+
+    internal class StockSplitDownloader
+    {
+        // this class uses the optional UpdateStockSplits method.
+        private IStockQuoteService service;
+        private List<Tuple<Security, DateTime>> pending = new List<Tuple<Security, DateTime>>();
+        private Task backgroundTask;
+        private DownloadLog _downloadLog;
+
+        public StockSplitDownloader(IStockQuoteService service, DownloadLog downloadLog)
+        {
+            this.service = service;
+            this._downloadLog = downloadLog;
+        }
+
+        public void UpdateStockSplits(Security security, DateTime fromDate)
+        {
+            // Serialize these calls so we do only one at a time when the user expands all splits in the 
+            // SecuritiesView.
+            if (string.IsNullOrEmpty(security.Symbol))
+            {
+                return; // cannot fetch anything if we have no symbol!
+            }
+
+            lock (pending)
+            {
+                foreach (var s in pending)
+                {
+                    if (s.Item1 == security)
+                    {
+                        return;
+                    }
+                }
+                pending.Add(new Tuple<Security, DateTime>(security, fromDate));
+                if (backgroundTask == null)
+                {
+                    backgroundTask = Task.Run(this.ProcessPending);
+                }
+            }
+        }
+
+        private async Task ProcessPending()
+        {
+            while (pending.Count > 0)
+            {
+                Security security;
+                DateTime dateFrom;
+                lock (pending)
+                {
+                    (security, dateFrom) = pending[0];
+                    pending.RemoveAt(0);
+                }
+
+                try
+                {
+                    var log = await this._downloadLog.GetHistory(security.Symbol);
+                    if (log.NeedsUpdatingStockSplits)
+                    {
+                        var splits = await service.UpdateStockSplits(security, dateFrom);
+                        log.LastStockSplitUpdate = DateTime.Today;
+                        log.Save(this._downloadLog.Folder);
+                    }
+
+                    // The caller can watch for updates on StockSplits to get notified of 
+                    // if/when new stock split info is found.
+                } 
+                catch (Exception)
+                {
+                    // ignore for now, but should we add a security.NotFound flag so we don't
+                    // keep looking for this data?
+                }
+            }
+            backgroundTask = null;
         }
     }
 

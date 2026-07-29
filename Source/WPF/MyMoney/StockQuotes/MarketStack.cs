@@ -16,20 +16,23 @@ using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Configuration;
+using Walkabout.Data;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Walkabout.StockQuotes
 {
     /// <summary>
     /// This class encapsulates the REST API on the https://api.apilayer.net/marketstack/v2/ stock service.
+    /// See https://docs.apilayer.com/marketstack/docs/.
     /// </summary>
     internal class MarketStack : ThrottledStockQuoteService
     {
-        private static int MaxHistory = 5000;
         private static readonly string name = "MarketStack";
         private static readonly string baseAddress = "https://api.apilayer.net/marketstack/v2/";
         private const string stockQuoteUri = "https://api.apilayer.net/marketstack/v2/eod?symbols={0}&date_from={1}&date_to={2}&limit=1000&offset={3}&sort=ASC&access_key={4}";
-        private const string authorizationHeader = "apikey {0}";
+        private const string stockSplitsUri = "https://api.marketstack.com/v2/splits?access_key={0}&symbols={1}&date_from={2}&limit=1000&sort=ASC";
+        private bool stockSplitsForbidden; // api key is not sufficient
+        private bool stockQuotesForbidden; 
 
         public MarketStack(OnlineServiceSettings settings, string logPath) : base(settings, logPath)
         {
@@ -59,7 +62,7 @@ namespace Walkabout.StockQuotes
                 ApiRequestsPerDayLimit = 0,
                 ApiRequestsPerMonthLimit = 100,
                 HistoryEnabled = true,
-                SplitHistoryEnabled = true
+                SplitHistoryEnabled = false
             };
         }
 
@@ -108,16 +111,19 @@ namespace Walkabout.StockQuotes
                         {
                             Debug.WriteLine($"{this.FriendlyName} fetching {history.Symbol} from {range.Start} to {range.End}");
                             var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, range);
-                            history.UpdateHistory(quotes, range);
+                            if (quotes != null)
+                            {
+                                history.UpdateHistory(quotes, range);
+                            }
                         }
                     }
-                    catch (StockQuoteNotFoundException)
+                    catch (StockSymbolNotFoundException)
                     {
                         history.NotFound = true;
                     }
                     catch (StockQuoteNoDataException)
                     {
-                        history.AddMissingDateRange(range);                        
+                        history.AddMissingDateRange(range);
                     }
                 }
             }
@@ -128,9 +134,12 @@ namespace Walkabout.StockQuotes
                     var range = new DateRange(earliest, DateTime.Today);
                     Debug.WriteLine($"{this.FriendlyName} fetching {history.Symbol} from {range.Start} to {range.End}");
                     var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, range);
-                    history.UpdateHistory(quotes, range);
+                    if (quotes != null)
+                    {
+                        history.UpdateHistory(quotes, range);
+                    }
                 }
-                catch (StockQuoteNotFoundException)
+                catch (StockSymbolNotFoundException)
                 {
                     history.NotFound = true;
                 }
@@ -146,12 +155,16 @@ namespace Walkabout.StockQuotes
             // pagination block containing limit, offset, count and total so we know how many pages to get.
             // The API also returns a "pagination" object with "limit", "offset", "count" and "total"
             // properties so we can know how many pages to get.
+            if (this.stockQuotesForbidden)
+            {
+                return null;
+            }
 
             int offset = 0;
             bool hasMore = true;
             List<StockQuote> quotes = new List<StockQuote>();
             while (hasMore)
-            { 
+            {
                 var uri = string.Format(stockQuoteUri, symbol, range.Start.ToString("yyyy-MM-dd"), range.End.ToString("yyyy-MM-dd"), offset, this.Settings.ApiKey);
                 try
                 {
@@ -166,14 +179,19 @@ namespace Walkabout.StockQuotes
                         {
                             // ensure it sleeps again.
                             Debug.WriteLine($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
-                            this.TooManyRequests();                            
+                            this.TooManyRequests();
                         }
                         else if (msg.StatusCode == System.Net.HttpStatusCode.UnprocessableContent)
                         {
-                            throw new StockQuoteNotFoundException(symbol);
+                            throw new StockSymbolNotFoundException(symbol);
                         }
                         else
                         {
+                            if (msg.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                            {
+                                // api key is not sufficient.
+                                this.stockQuotesForbidden = true;
+                            }
                             // hmmm, service is down right now?
                             throw new Exception($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
                         }
@@ -190,7 +208,7 @@ namespace Walkabout.StockQuotes
                                 try
                                 {
                                     data = JsonConvert.DeserializeObject<MarketStackData>(json);
-                                } 
+                                }
                                 catch (Exception ex)
                                 {
                                     // hmmm, probably needs debugging.
@@ -201,7 +219,7 @@ namespace Walkabout.StockQuotes
                                     if (data.Data.Count == 0)
                                     {
                                         // no data?  Need to remember this so we don't keep asking!
-                                        throw new StockQuoteNoDataException(symbol, range);
+                                        throw new StockQuoteNoDataException(symbol);
                                     }
                                     foreach (var quote in data.Data)
                                     {
@@ -244,11 +262,136 @@ namespace Walkabout.StockQuotes
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error downloading symbol {symbol}: {ex.Message}");
+                    Debug.WriteLine($"Error downloading market data for symbol {symbol}: {ex.Message}");
                     throw;
                 }
             }
             return quotes;
+        }
+
+        /// <summary>
+        /// Get an updated list of stock splits for the given security starting at the given date.
+        /// </summary>
+        /// <param name="security">the security to find splits for</param>
+        /// <param name="dateFrom">The date to start from</param>
+        /// <returns>The existing or updated list of stock splits</returns>
+        /// <exception cref="StockSymbolNotFoundException">If there is no online data for this security</exception>
+        /// <exception cref="Exception">If something else goes wrong</exception>
+        public override async Task<IList<StockSplit>> UpdateStockSplits(Security security, DateTime dateFrom)
+        {
+            Securities container = security.Parent as Securities;
+            if (container == null)
+            {
+                throw new Exception("Security has no parent Securities container");
+            }
+            MyMoney money = container.Parent as MyMoney;
+            if (money == null)
+            {
+                throw new Exception("Could not find parent MyMoney object");
+            }
+
+            var splits = money.StockSplits; // get existing data.
+
+            var symbol = security.Symbol;
+            if (string.IsNullOrEmpty(symbol))
+            {
+                throw new Exception("Security has no ticker symbol");
+            }
+
+            var existing = splits.GetStockSplitsForSecurity(security);
+
+            if (stockSplitsForbidden)
+            {
+                return existing;
+            }
+
+            var uri = string.Format(stockSplitsUri, this.Settings.ApiKey, symbol, dateFrom.ToString("yyyy-MM-dd"));
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                var msg = await client.GetAsync(uri);
+                if (!msg.IsSuccessStatusCode)
+                {
+                    if (msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                    {
+                        // ensure it sleeps again.
+                        Debug.WriteLine($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
+                        this.TooManyRequests();
+                    }
+                    else if (msg.StatusCode == System.Net.HttpStatusCode.UnprocessableContent)
+                    {
+                        throw new StockSymbolNotFoundException(symbol);
+                    }
+                    else
+                    {
+                        if (msg.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                        {
+                            // api key is not sufficient.
+                            this.stockSplitsForbidden = true;
+                        }
+                        // hmmm, service is down right now?
+                        throw new Exception($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
+                    }
+                }
+                else
+                {
+                    this.CountCall();
+                    using (Stream stm = await msg.Content.ReadAsStreamAsync())
+                    {
+                        using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                        {
+                            MarketStackSplits data = null;
+                            string json = sr.ReadToEnd();
+                            try
+                            {
+                                data = JsonConvert.DeserializeObject<MarketStackSplits>(json);
+                            }
+                            catch (Exception ex)
+                            {
+                                // hmmm, probably needs debugging.
+                                Debug.WriteLine($"Error deserializing data for {symbol}: {ex.Message}");
+                            }
+                            if (data != null && data.Data != null)
+                            {
+                                if (data.Data.Count == 0)
+                                {
+                                    // no data?  Need to remember this so we don't keep asking!
+                                    throw new StockQuoteNoDataException(symbol);
+                                }
+                                using (var scope = splits.CreateUpdateScope());
+
+                                foreach (var quote in data.Data)
+                                {
+                                    foreach (var e in existing)
+                                    {
+                                        if (e.Date.Date == quote.Date.Date)
+                                        {
+                                            // then we already have it, make sure factor matches.
+                                        }
+                                        else
+                                        {
+                                            var s = new StockSplit();
+                                            s.Date = quote.Date.Date;
+                                            //s.Numerator = ???
+                                            splits.AddStockSplit(s);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error downloading stock splits for symbol {symbol}: {ex.Message}");
+                throw;
+            }
+
+            return splits.GetStockSplitsForSecurity(security);
         }
     }
 
@@ -294,5 +437,26 @@ namespace Walkabout.StockQuotes
         public MarketStackPagination Pagination { get; set; }
         [JsonProperty("data")]
         public List<MarketStackQuote> Data { get; set; }
+
+    }
+
+    public class MarketStackSplit
+    {
+        [JsonProperty("symbol")]
+        public string Symbol { get; set; }
+
+        [JsonProperty("date")]
+        public DateTime Date { get; set; }
+
+        [JsonProperty("split_factor")]
+        public decimal? SplitFactor{ get; set; }
+    }
+
+    public class MarketStackSplits
+    {
+        [JsonProperty("pagination")]
+        public MarketStackPagination Pagination { get; set; }
+        [JsonProperty("data")]
+        public List<MarketStackSplit> Data { get; set; }
     }
 }

@@ -34,6 +34,8 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="20"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -58,6 +60,10 @@
       <CheckBox x:Name="CheckBoxHistoryEnabled" Grid.Row="10" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=HistoryEnabled, Mode=TwoWay}" 
                 ToolTip="Indicates your API key supports the history API's from the selected service."/>
 
+      <TextBlock Text="Stock Split API is enabled:" Grid.Row="12" Grid.Column="0" Margin="5"/>
+      <CheckBox x:Name="CheckBoxStockSplitsEnabled" Grid.Row="12" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=SplitHistoryEnabled, Mode=TwoWay}" 
+                ToolTip="Indicates your API key supports the fetch stock split information."/>
+      
       <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="12" Grid.ColumnSpan="2"
                Text="" TextWrapping="Wrap"/>
 

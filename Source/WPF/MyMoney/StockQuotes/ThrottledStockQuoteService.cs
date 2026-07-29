@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Walkabout.Data;
 
 namespace Walkabout.StockQuotes
 {
@@ -26,22 +27,19 @@ namespace Walkabout.StockQuotes
     /// the ThrottledStockQuoteService that an stock symbol was not found, either it's invalid, or the service does not provide
     /// info on this symbol.
     /// </summary>
-    internal class StockQuoteNotFoundException : Exception
+    internal class StockSymbolNotFoundException : Exception
     {
-        public StockQuoteNotFoundException(string msg) : base(msg) { }
+        public StockSymbolNotFoundException(string msg) : base(msg) { }
     }
 
     /// <summary>
-    /// Means the service is returning no data for the given date range.
+    /// Means the service is returning no data.
     /// </summary>
     internal class StockQuoteNoDataException : Exception
     {
-        public StockQuoteNoDataException(string msg, DateRange range) : base(msg) 
+        public StockQuoteNoDataException(string msg) : base(msg) 
         {
-            this.Range = range;
         }
-
-        public DateRange Range;
     }
 
 
@@ -335,6 +333,25 @@ namespace Walkabout.StockQuotes
             return cancelled;
         }
 
+        /// <summary>
+        /// Get an updated list of stock splits for the given security starting at the given date.
+        /// </summary>
+        /// <param name="security">the security to find splits for</param>
+        /// <param name="dateFrom">The date to start from</param>
+        /// <returns>The existing or updated list of stock splits</returns>
+        /// <exception cref="StockSymbolNotFoundException">If there is no online data for this security</exception>
+        /// <exception cref="Exception">If something else goes wrong</exception>
+        public virtual async Task<IList<StockSplit>> UpdateStockSplits(Security security, DateTime dateFrom)
+        {
+            // You can only call this if the Settings
+            if (this.Settings.SplitHistoryEnabled)
+            {
+                throw new InvalidOperationException("SplitHistoryEnabled is false on the active OnlineServiceSettings");
+            }
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
         protected void CountCall()
         {
             this._throttle.RecordCall();
@@ -404,7 +421,7 @@ namespace Walkabout.StockQuotes
                 }
                 return false;
             }
-            catch (StockQuoteNotFoundException)
+            catch (StockSymbolNotFoundException)
             {
                 this.OnSymbolNotFound(symbol);
             }

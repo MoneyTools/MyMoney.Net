@@ -259,6 +259,31 @@ namespace Walkabout.Data
             get { return this.GetBatched().Read() > 0; }
         }
 
+        class MoneyChangeScope : IDisposable
+        {
+            PersistentContainer parent;
+
+            public MoneyChangeScope(PersistentContainer parent)
+            {
+                this.parent = parent;
+                parent.BeginUpdate(true);
+            }
+
+            public void Dispose()
+            {
+                if (this.parent != null)
+                {
+                    this.parent.EndUpdate();
+                    this.parent = null;
+                }
+            }
+        }
+
+        public IDisposable CreateUpdateScope()
+        {
+            return new MoneyChangeScope(this);
+        }
+
         public virtual void BeginUpdate(bool saveChangeHistory)
         {
             // batched updates
@@ -10210,8 +10235,6 @@ namespace Walkabout.Data
 
             MyMoney money = this.Parent as MyMoney;
 
-            var splits = money.StockSplits.GetStockSplitsForSecurity(s);
-
             foreach (Transaction t in this.GetAllTransactionsByDate())
             {
                 if (t.IsDeleted || t.Investment == null)
@@ -10231,9 +10254,15 @@ namespace Walkabout.Data
             }
 
             view.Sort(SortByDate);
+            return view;
+        }
 
+        public void UpdateStockUnitsAndRoutingPath(Security s, IList<Transaction> view)
+        { 
             decimal sortedRunningUnits = 0;
             decimal runningUnitPrice = 0;
+            MyMoney money = this.Parent as MyMoney;
+            var splits = money.StockSplits.GetStockSplitsForSecurity(s);
 
             foreach (Transaction t in view)
             {
@@ -10302,8 +10331,6 @@ namespace Walkabout.Data
                 }
                 t.RunningBalance = factor * t.RunningUnits * runningUnitPrice;
             }
-
-            return view;
         }
 
         public IList<Transaction> GetTransactionsByCategory(Category c, Predicate<Transaction> include)
@@ -14956,7 +14983,6 @@ namespace Walkabout.Data
         }
 
         #endregion
-
 
     }
 

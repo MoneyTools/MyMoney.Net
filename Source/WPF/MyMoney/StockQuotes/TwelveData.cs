@@ -60,7 +60,7 @@ namespace Walkabout.StockQuotes
                 ApiRequestsPerDayLimit = 800,
                 ApiRequestsPerMonthLimit = 0,
                 HistoryEnabled = true,
-                SplitHistoryEnabled = true
+                SplitHistoryEnabled = false
             };
         }
 
@@ -213,7 +213,7 @@ namespace Walkabout.StockQuotes
                     }
                     else if (code >= 400 && code < 500)
                     {
-                        throw new StockQuoteNotFoundException(msg);
+                        throw new StockSymbolNotFoundException(msg);
                     }
                     throw new Exception(msg);
                 }
@@ -329,7 +329,7 @@ namespace Walkabout.StockQuotes
                             history.UpdateHistory(quotes, range);
                         }
                     }
-                    catch (StockQuoteNotFoundException)
+                    catch (StockSymbolNotFoundException)
                     {
                         history.NotFound = true;
                     }
