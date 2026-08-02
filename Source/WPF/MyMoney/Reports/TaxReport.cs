@@ -13,6 +13,7 @@ using Walkabout.Importers;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -21,16 +22,33 @@ namespace Walkabout.Reports
     public class TaxReport : Report
     {
         private MyMoney money;
+        private DatabaseSettings databaseSettings;
         private DateTime startDate;
         private DateTime endDate;
         private bool consolidateOnDateSold;
         private bool investmentsOnly;
         private int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
+        private ReportsControl panel;
+        public static string ReportTypeInvestmentsOnly = "Investments Only";
+        public static string ReportTypeAllAccounts = "All Accounts";
 
-        public TaxReport()
+
+        public TaxReport(ReportsControl panel)
         {
+            this.panel = panel;
             this.SetStartDate(DateTime.Now.Year);
+            panel.HideReportDateRow();
+            panel.HideNormalizeCurrencyRow();
+            panel.ShowConsolidationRow();
+            panel.ConsolidationChanged += this.OnConsolidationChanged;
+            ComboBox box = panel.ShowReportTypeRow();
+            box.Items.Clear();
+            box.Items.Add(ReportTypeAllAccounts);
+            box.Items.Add(ReportTypeInvestmentsOnly);
+            box.SelectedIndex = 0;
+            panel.ReportTypeChanged += this.OnReportTypeChanged;
+            panel.FiscalYearChanged += this.OnFiscalYearChanged;
         }
 
         ~TaxReport()
@@ -38,18 +56,18 @@ namespace Walkabout.Reports
             Debug.WriteLine("TaxReport disposed!");
         }
 
-        public int FiscalYearStart
+        protected override void Dispose(bool disposing)
         {
-            get => this.fiscalYearStart;
-            set
-            {
-                this.fiscalYearStart = value;
-            }
+            panel.ConsolidationChanged -= this.OnConsolidationChanged;
+            panel.ReportTypeChanged -= this.OnReportTypeChanged;
+            panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            base.Dispose(disposing);
         }
 
         public override void OnSiteChanged()
         {
             this.money = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
         }
 
         class TaxReportState : IReportState
@@ -57,7 +75,7 @@ namespace Walkabout.Reports
             public int FiscalYearStart { get; set; }
             public bool InvestmentsOnly { get; set; }
             public bool ConsolidateOnDateSold { get; set; }
-            public int TaxYear { get; set; }
+            public int ReportYear { get; set; }
 
             public TaxReportState()
             {
@@ -76,7 +94,7 @@ namespace Walkabout.Reports
                 FiscalYearStart = this.fiscalYearStart,
                 InvestmentsOnly = this.investmentsOnly,
                 ConsolidateOnDateSold = this.consolidateOnDateSold,
-                TaxYear = this.startDate.Year
+                ReportYear = this.startDate.Year
             };
         }
 
@@ -84,10 +102,10 @@ namespace Walkabout.Reports
         {
             if (state is TaxReportState taxReportState)
             {
-                this.FiscalYearStart = taxReportState.FiscalYearStart;
+                this.fiscalYearStart = taxReportState.FiscalYearStart;
                 this.investmentsOnly = taxReportState.InvestmentsOnly;
                 this.consolidateOnDateSold = taxReportState.ConsolidateOnDateSold;
-                this.SetStartDate(taxReportState.TaxYear);
+                this.SetStartDate(taxReportState.ReportYear);
             }
         }
 
@@ -109,68 +127,13 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
-            writer.WriteHeading("Tax Report For ");
+            this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
+            writer.WriteHeading("Tax Report For Financial Year " + this.fiscalYearStart);
 
             var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            if (writer is FlowDocumentReportWriter fwriter)
-            {
-                Paragraph heading = heading = fwriter.CurrentParagraph;
-
-                ComboBox byYearCombo = new ComboBox();
-                byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                int selected = -1;
-                int index = 0;
-                for (int i = lastYear; i >= firstYear; i--)
-                {
-                    if (this.fiscalYearStart > 0 && i == this.endDate.Year)
-                    {
-                        selected = index;
-                    }
-                    else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
-                    {
-                        selected = index;
-                    }
-                    if (this.fiscalYearStart > 0)
-                    {
-                        byYearCombo.Items.Add("FY " + i);
-                    }
-                    else
-                    {
-                        byYearCombo.Items.Add(i.ToString());
-                    }
-                    index++;
-                }
-
-                if (selected != -1)
-                {
-                    byYearCombo.SelectedIndex = selected;
-                }
-                byYearCombo.SelectionChanged += this.OnYearChanged;
-                byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-                this.AddInline(heading, byYearCombo);
-
-
-                ComboBox consolidateCombo = new ComboBox();
-                consolidateCombo.Items.Add("Date Acquired");
-                consolidateCombo.Items.Add("Date Sold");
-                consolidateCombo.SelectedIndex = this.consolidateOnDateSold ? 1 : 0;
-                consolidateCombo.SelectionChanged += this.OnConsolidateComboSelectionChanged;
-
-                writer.WriteParagraph("Consolidate securities by: ");
-                Paragraph prompt = fwriter.CurrentParagraph;
-                prompt.Margin = new Thickness(0, 0, 0, 4);
-                this.AddInline(prompt, consolidateCombo);
-
-                CheckBox checkBox = new CheckBox();
-                checkBox.Content = "Investments Only";
-                checkBox.IsChecked = this.investmentsOnly;
-                checkBox.Checked += this.OnInvestmentsOnlyChanged;
-                checkBox.Unchecked += this.OnInvestmentsOnlyChanged;
-                writer.WriteParagraph("");
-                Paragraph checkBoxParagraph = fwriter.CurrentParagraph;
-                checkBoxParagraph.Inlines.Add(new InlineUIContainer(checkBox));
-            }
+            var box = panel.ShowFiscalYearRow();
+            this.AddFiscalYearItems(box, firstYear, lastYear);
 
             this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
@@ -230,31 +193,65 @@ namespace Walkabout.Reports
         }
 
 
-        private void Renerate()
+        private void Regenerate()
         {
             var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
             _ = view.Generate(this);
         }
 
-        private void OnInvestmentsOnlyChanged(object sender, RoutedEventArgs e)
+        private void OnReportTypeChanged(object sender, string e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            this.investmentsOnly = checkBox.IsChecked == true;
-            this.Renerate();
+            if (e == ReportTypeInvestmentsOnly)
+            {
+                this.investmentsOnly = true;
+            }
+            else
+            {
+                this.investmentsOnly = false;
+            }
+            this.Regenerate();
         }
 
-        private void OnConsolidateComboSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnConsolidationChanged(object sender, string consolidation)
         {
-            ComboBox box = (ComboBox)sender;
-            int index = box.SelectedIndex;
-            this.consolidateOnDateSold = index == 1;
-            this.Renerate();
+            this.consolidateOnDateSold = (consolidation == ReportsControl.ConsolidationDateSold);
+            this.Regenerate();
         }
 
-        private void OnYearChanged(object sender, SelectionChangedEventArgs e)
+        private void AddFiscalYearItems(ComboBox byYearCombo, int firstYear, int lastYear)
         {
-            ComboBox box = (ComboBox)sender;
-            string label = (string)box.SelectedItem;
+            int selected = -1;
+            int index = 0;
+            byYearCombo.Items.Clear();
+            for (int i = lastYear; i >= firstYear; i--)
+            {
+                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
+                {
+                    selected = index;
+                }
+                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                {
+                    selected = index;
+                }
+                if (this.fiscalYearStart > 0)
+                {
+                    byYearCombo.Items.Add("FY " + i);
+                }
+                else
+                {
+                    byYearCombo.Items.Add(i.ToString());
+                }
+                index++;
+            }
+
+            if (selected != -1)
+            {
+                byYearCombo.SelectedIndex = selected;
+            }
+        }
+
+        private void OnFiscalYearChanged(object sender, string label)
+        {
             if (label.StartsWith(FiscalPrefix))
             {
                 label = label.Substring(FiscalPrefix.Length);
@@ -262,7 +259,7 @@ namespace Walkabout.Reports
             if (int.TryParse(label, out int year))
             {
                 this.SetStartDate(year);
-                this.Renerate();
+                this.Regenerate();
             }
         }
 

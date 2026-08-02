@@ -14,6 +14,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -21,6 +22,7 @@ namespace Walkabout.Reports
     public class CashFlowReport : Report
     {
         private MyMoney myMoney;
+        private DatabaseSettings databaseSettings;
         private bool byYear;
         private int fiscalYearStart;
         private DateTime startDate;
@@ -28,9 +30,14 @@ namespace Walkabout.Reports
         private Dictionary<Category, CashFlowColumns> byCategory;
         private Dictionary<string, int> monthMap;
         private List<string> columns;
+        private ReportsControl panel;
 
-        public CashFlowReport()
+        public CashFlowReport(ReportsControl panel)
         {
+            this.panel = panel;
+            this.panel.ShowEndDateRow();
+            this.panel.ReportDateChanged += this.OnReportStartDateChanged;
+            this.panel.ReportEndDateChanged += this.OnReportEndDateChanged;
             this.startDate = new DateTime(DateTime.Now.Year, 1, 1);
             this.byYear = true;
             this.endDate = this.startDate.AddYears(1);
@@ -42,23 +49,17 @@ namespace Walkabout.Reports
             Debug.WriteLine("CashFlowReport disposed!");
         }
 
-        public int FiscalYearStart
+        protected override void Dispose(bool disposing)
         {
-            get => this.fiscalYearStart;
-            set
-            {
-                this.fiscalYearStart = value;
-                this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart + 1, 1);
-                if (this.startDate > DateTime.Today)
-                {
-                    this.startDate = this.startDate.AddYears(-1);
-                }
-            }
+            this.panel.ReportDateChanged -= this.OnReportStartDateChanged;
+            this.panel.ReportEndDateChanged -= this.OnReportEndDateChanged;
+            base.Dispose(disposing);
         }
 
         public override void OnSiteChanged()
         {
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
         }
 
         class CashFlowReportState : IReportState
@@ -91,12 +92,11 @@ namespace Walkabout.Reports
         {
             if (state is CashFlowReportState cashFlowReportState)
             {
-                this.FiscalYearStart = cashFlowReportState.FiscalYearStart;
+                this.fiscalYearStart = cashFlowReportState.FiscalYearStart;
                 this.startDate = cashFlowReportState.StartDate;
                 this.endDate = cashFlowReportState.EndDate;
             }
         }
-
 
         public override void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e)
         {
@@ -189,11 +189,37 @@ namespace Walkabout.Reports
             return c.Type == CategoryType.Investments;
         }
 
+        private void OnReportStartDateChanged(object sender, DateTime date)
+        {
+            this.startDate = date;
+            this.Regenerate();
+        }
+
+        private void OnReportEndDateChanged(object sender, DateTime date)
+        {
+            this.endDate = date;
+            this.Regenerate();
+        }
+
         public override Task Generate(IReportWriter writer)
         {
+            this.fiscalYearStart = this.databaseSettings.FiscalYearStart;           
+            this.panel.ReportDate = this.startDate;
+            this.panel.ReportEndDate = this.endDate;
+
             this.byCategory = new Dictionary<Category, CashFlowColumns>();
 
+            var fwriter = writer as FlowDocumentReportWriter;
+
+            if (fwriter != null)
+            {
+                writer.WriteParagraph("");
+                Paragraph heading = fwriter.CurrentParagraph;
+                this.AddInline(heading, this.CreateExportReportButton());
+            }
+
             writer.WriteHeading("Cash Flow Report ");
+            writer.WriteParagraph("from " + this.startDate.ToString("d") + " to " + this.endDate.ToString("d"));
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByTaxDate();
 
@@ -220,46 +246,45 @@ namespace Walkabout.Reports
                 start = end;
             }
 
-            if (writer is FlowDocumentReportWriter fwriter)
+            if (fwriter != null)
             {
                 Paragraph heading = fwriter.CurrentParagraph;
 
                 this.monthMap = new Dictionary<string, int>();
-                heading.Inlines.Add(" - from ");
+                // heading.Inlines.Add(" - from ");
 
-                var previousButton = new Button();
-                previousButton.Content = "\uE100";
-                previousButton.ToolTip = "Previous year";
-                previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
-                previousButton.Click += this.OnPreviousClick;
-                previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                this.AddInline(heading, previousButton);
+                //var previousButton = new Button();
+                //previousButton.Content = "\uE100";
+                //previousButton.ToolTip = "Previous year";
+                //previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
+                //previousButton.Click += this.OnPreviousClick;
+                //previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                //this.AddInline(heading, previousButton);
 
-                DatePicker fromPicker = new DatePicker();
-                System.Windows.Automation.AutomationProperties.SetName(fromPicker, "ReportDate");
-                fromPicker.DisplayDateStart = firstTransactionDate;
-                fromPicker.SelectedDate = this.startDate;
-                fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
-                this.AddInline(heading, fromPicker);
+                //DatePicker fromPicker = new DatePicker();
+                //System.Windows.Automation.AutomationProperties.SetName(fromPicker, "ReportDate");
+                //fromPicker.DisplayDateStart = firstTransactionDate;
+                //fromPicker.SelectedDate = this.startDate;
+                //fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                //fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
+                //this.AddInline(heading, fromPicker);
 
-                heading.Inlines.Add(" to ");
+                //heading.Inlines.Add(" to ");
 
-                DatePicker toPicker = new DatePicker();
-                toPicker.DisplayDateStart = firstTransactionDate;
-                toPicker.SelectedDate = this.endDate;
-                toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
-                this.AddInline(heading, toPicker);
+                //DatePicker toPicker = new DatePicker();
+                //toPicker.DisplayDateStart = firstTransactionDate;
+                //toPicker.SelectedDate = this.endDate;
+                //toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                //toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
+                //this.AddInline(heading, toPicker);
 
-                var nextButton = new Button();
-                nextButton.Content = "\uE101";
-                nextButton.ToolTip = "Next year";
-                nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
-                nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                nextButton.Click += this.OnNextClick;
-                this.AddInline(heading, nextButton);
-
+                //var nextButton = new Button();
+                //nextButton.Content = "\uE101";
+                //nextButton.ToolTip = "Next year";
+                //nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
+                //nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                //nextButton.Click += this.OnNextClick;
+                //this.AddInline(heading, nextButton);
 
                 ComboBox byYearMonthCombo = new ComboBox();
                 byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
@@ -269,8 +294,6 @@ namespace Walkabout.Reports
                 byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
 
                 this.AddInline(heading, byYearMonthCombo);
-
-                this.AddInline(heading, this.CreateExportReportButton());
             }
 
             this.WriteCurrencyHeading(writer, this.DefaultCurrency);
@@ -315,38 +338,19 @@ namespace Walkabout.Reports
             return Task.CompletedTask;
         }
 
-        private void OnNextClick(object sender, RoutedEventArgs e)
-        {
-            this.startDate = this.startDate.AddYears(1);
-            this.endDate = this.endDate.AddYears(1);
-            this.Regenerate();
-        }
+        //private void OnNextClick(object sender, RoutedEventArgs e)
+        //{
+        //    this.startDate = this.startDate.AddYears(1);
+        //    this.endDate = this.endDate.AddYears(1);
+        //    this.Regenerate();
+        //}
 
-        private void OnPreviousClick(object sender, RoutedEventArgs e)
-        {
-            this.startDate = this.startDate.AddYears(-1);
-            this.endDate = this.endDate.AddYears(-1);
-            this.Regenerate();
-        }
-
-
-        private void OnSelectedFromDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is DatePicker picker && picker.SelectedDate.HasValue)
-            {
-                this.startDate = picker.SelectedDate.Value;
-                this.Regenerate();
-            }
-        }
-
-        private void OnSelectedToDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is DatePicker picker && picker.SelectedDate.HasValue)
-            {
-                this.endDate = picker.SelectedDate.Value;
-                this.Regenerate();
-            }
-        }
+        //private void OnPreviousClick(object sender, RoutedEventArgs e)
+        //{
+        //    this.startDate = this.startDate.AddYears(-1);
+        //    this.endDate = this.endDate.AddYears(-1);
+        //    this.Regenerate();
+        //}
 
         private void OnByYearMonthChanged(object sender, SelectionChangedEventArgs e)
         {

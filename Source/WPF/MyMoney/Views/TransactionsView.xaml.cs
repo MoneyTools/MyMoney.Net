@@ -2158,11 +2158,10 @@ namespace Walkabout.Views
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
-            DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view)
+            DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;            
+            PortfolioReport report = new PortfolioReport(view, null, reportDate)
             {
                 ServiceProvider = this.ServiceProvider,
-                ReportDate = reportDate,
                 Account = account
             };
             report.DrillDown += this.OnReportDrillDown;
@@ -2181,10 +2180,9 @@ namespace Walkabout.Views
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view)
+            PortfolioReport report = new PortfolioReport(view, null, reportDate)
             {
                 ServiceProvider = this.ServiceProvider,
-                ReportDate = reportDate,
                 SelectedGroup = e
             };
             _ = view.Generate(report);

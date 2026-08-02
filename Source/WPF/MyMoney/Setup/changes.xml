@@ -2,6 +2,7 @@
 <changes>
 	<change version="2.1.0.70" date="7/28/2026">
 		- Feature: Add support for marketstack stock split service to automatically import stock split info
+		- Feature: Add new REPORTS panel on the left and move report configuration to this new panel.
 	</change>
 	<change version="2.1.0.69" date="7/13/2026">
 		- Feature: Add support for marketstack stock quote service.

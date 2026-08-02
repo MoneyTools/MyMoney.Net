@@ -75,6 +75,7 @@ namespace Walkabout
         private readonly PayeesControl payeesControl;
         private readonly SecuritiesControl securitiesControl;
         private RentsControl rentsControl;
+        private ReportsControl reportsControl;
 
         private string caption;
         private BalanceControl balanceControl;
@@ -159,7 +160,7 @@ namespace Walkabout
             //-----------------------------------------------------------------
             // STOCKS CONTROL
             this.securitiesControl = new SecuritiesControl();
-            this.securitiesControl.TabIndex = 4;
+            this.securitiesControl.TabIndex = 5;
             this.securitiesControl.Name = "SecuritiesControl";
             this.securitiesControl.MyMoney = this.myMoney;
 
@@ -2571,7 +2572,6 @@ namespace Walkabout
             this.BalanceAccount((Account)e.Item);
         }
 
-
         public void BalanceAccount(Account a)
         {
             this.HideQueryPanel();
@@ -2589,7 +2589,6 @@ namespace Walkabout
             this.balanceControl.Balanced += new EventHandler<BalanceEventArgs>(this.OnButtonBalanceDone);
             this.balanceControl.Focus();
             this.OnBalanceStatementDateChanged(this, EventArgs.Empty);
-
         }
 
         private void OnBalanceStatementDateChanged(object sender, EventArgs e)
@@ -2621,6 +2620,31 @@ namespace Walkabout
                 this.toolBox.Selected = this.accountsControl;
 
                 this.TransactionView.OnEndReconcile(!balanced, hasStatement);
+            }
+        }
+
+        #endregion
+
+        #region Reports Panel
+
+        private ReportsControl ShowReportsPanel()
+        {
+            this.HideReportsPanel();
+            this.reportsControl = new ReportsControl();
+            this.reportsControl.TabIndex = 4;
+            this.reportsControl.Name = "ReportsControl";
+            this.toolBox.Add("REPORTS", "ReportsControl", this.reportsControl);
+            this.toolBox.Selected = this.reportsControl;
+            return this.reportsControl;
+        }
+
+        private void HideReportsPanel()
+        {
+            if (this.reportsControl != null)
+            {
+                this.toolBox.Remove(this.reportsControl);
+                this.reportsControl = null;
+                this.toolBox.Selected = this.accountsControl;
             }
         }
         #endregion
@@ -3651,7 +3675,8 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
             HelpService.SetHelpKeyword(view, "Reports/NetworthReport/");
-            NetWorthReport report = new NetWorthReport(view) { ServiceProvider = this };
+            var panel = this.ShowReportsPanel();
+            NetWorthReport report = new NetWorthReport(view, panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3673,7 +3698,8 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "AccountSummaryReport");
             HelpService.SetHelpKeyword(view, "Reports/AccountSummaryReport/");
-            AccountSummaryReport report = new AccountSummaryReport(view) { ServiceProvider = this };
+            var panel = this.ShowReportsPanel();
+            AccountSummaryReport report = new AccountSummaryReport(view, panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3711,10 +3737,10 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view)
+            var panel = this.ShowReportsPanel();
+            PortfolioReport report = new PortfolioReport(view, panel, DateTime.Now)
             {
-                ServiceProvider = this,
-                ReportDate = DateTime.Now
+                ServiceProvider = this
             };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
@@ -3727,10 +3753,10 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view)
+            var panel = this.ShowReportsPanel();
+            PortfolioReport report = new PortfolioReport(view, panel, e.Date)
             {
                 ServiceProvider = this,
-                ReportDate = e.Date,
                 SelectedGroup = e
             };
             this.OnReportCreated(this, report);
@@ -3744,10 +3770,10 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view)
+            var panel = this.ShowReportsPanel();
+            PortfolioReport report = new PortfolioReport(view, panel, e.Date)
             {
                 ServiceProvider = this,
-                ReportDate = e.Date,
                 AccountGroup = e
             };
             this.OnReportCreated(this, report);
@@ -3760,7 +3786,8 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
             HelpService.SetHelpKeyword(view, "Reports/TaxReport/");
-            TaxReport report = new TaxReport() { FiscalYearStart = this.databaseSettings.FiscalYearStart, ServiceProvider = this };
+            var panel = this.ShowReportsPanel();
+            TaxReport report = new TaxReport(panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3771,7 +3798,8 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
             HelpService.SetHelpKeyword(view, "Reports/W2Report/");
-            W2Report report = new W2Report() { ServiceProvider = this, FiscalYearStart = this.databaseSettings.FiscalYearStart };
+            var panel = this.ShowReportsPanel();
+            W2Report report = new W2Report(panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3787,7 +3815,8 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
-            CashFlowReport report = new CashFlowReport() { ServiceProvider = this, FiscalYearStart = this.databaseSettings.FiscalYearStart };
+            var panel = this.ShowReportsPanel();
+            CashFlowReport report = new CashFlowReport(panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }

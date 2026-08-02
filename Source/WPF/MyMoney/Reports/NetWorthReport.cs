@@ -33,20 +33,26 @@ namespace Walkabout.Reports
         private readonly Random rand = new Random(Environment.TickCount);
         private readonly byte minRandColor, maxRandColor;
         private DateTime reportDate;
+        private string normalizedCurrency;
         private StockQuoteCache cache;
         private bool generating;
         private FlowDocumentView view;
         private AnimatingBarChart historicalChart;
+        private ReportsControl panel;
 
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
-        public NetWorthReport(FlowDocumentView view)
+        public NetWorthReport(FlowDocumentView view, ReportsControl panel)
         {
             this.view = view;
             this.reportDate = DateTime.Today;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
+            panel.ReportDate = this.reportDate;
+            this.panel = panel;
+            this.panel.ReportDateChanged += this.OnReportDateChanged;
+            panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
         ~NetWorthReport()
@@ -57,7 +63,21 @@ namespace Walkabout.Reports
         protected override void Dispose(bool disposing)
         {
             this.historicalChart = null;
+            this.panel.ReportDateChanged -= this.OnReportDateChanged;
+            this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
             base.Dispose(disposing);
+        }
+
+        private void OnNormalizedCurrencyChanged(object sender, string e)
+        {
+            this.normalizedCurrency = e;
+            this.Regenerate();
+        }
+
+        private void OnReportDateChanged(object sender, DateTime e)
+        {
+            this.reportDate = e;
+            this.Regenerate();
         }
 
         public override void OnSiteChanged()
@@ -69,10 +89,12 @@ namespace Walkabout.Reports
         class NetworthReportState : IReportState
         {
             public DateTime ReportDate { get; set; }
+            public string NormalizedCurrency { get; set; }
 
-            public NetworthReportState(DateTime reportDate)
+            public NetworthReportState(DateTime reportDate, string normalizedCurrency)
             {
                 this.ReportDate = reportDate;
+                this.NormalizedCurrency = normalizedCurrency;
             }
 
             public Type GetReportType()
@@ -83,7 +105,7 @@ namespace Walkabout.Reports
 
         public override IReportState GetState()
         {
-            return new NetworthReportState(reportDate);
+            return new NetworthReportState(this.reportDate, this.normalizedCurrency);
         }
 
         public override void ApplyState(IReportState state)
@@ -97,27 +119,16 @@ namespace Walkabout.Reports
         public override async Task Generate(IReportWriter writer)
         {
             this.generating = true;
+
+            this.SetDefaultCurrency(writer, this.normalizedCurrency);
+
             // the lock locks out any change to the cache from background downloading of stock quotes
             // while we are generating this report.
             using (var cacheLock = this.cache.BeginLock())
             {
                 try
                 {
-                    writer.WriteHeading("Net Worth Statement");
-
-                    if (writer is FlowDocumentReportWriter fwriter)
-                    {
-                        Paragraph heading = fwriter.CurrentParagraph;
-                        DatePicker picker = new DatePicker();
-                        // byYearCombo.SelectionChanged += OnYearChanged;
-                        System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
-                        picker.Margin = new Thickness(10, 0, 0, 0);
-                        picker.SelectedDate = this.reportDate;
-                        picker.DisplayDate = this.reportDate;
-                        picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-                        this.AddInline(heading, picker);
-                    }
-
+                    writer.WriteHeading("Net Worth Statement as of " + this.reportDate.ToString("D"));
 
                     this.WriteCurrencyHeading(writer, this.DefaultCurrency);
                     var series = new ChartDataSeries() { Name = "Net Worth" };
@@ -392,13 +403,8 @@ namespace Walkabout.Reports
                 }
                 decimal cashBalance = cashBalances[date];
                 decimal loanBalance = this.GetTotalLoansBalance(date);
-                var portfolioBalance = await this.CalculatePortfolioBalance(date);
-                decimal portfolio = 0;
-                if (portfolioBalance.HasValue)
-                {
-                    portfolio = (decimal)portfolioBalance.Value;
-                }
-                var networth = cashBalance + loanBalance + portfolio;
+                decimal portfolio = await this.CalculatePortfolioBalance(date);
+                var networth = this.GetNormalizedAmount(cashBalance + loanBalance + portfolio);
                 Debug.WriteLine($"Networth on {date.ToShortDateString()} is {networth:C0}");
                 lock (series.Values)
                 {
@@ -408,10 +414,10 @@ namespace Walkabout.Reports
             }
         }
 
-        internal async Task<decimal?> CalculatePortfolioBalance(DateTime date)
+        internal async Task<decimal> CalculatePortfolioBalance(DateTime date)
         {
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
-            decimal? total = null;
+            decimal total = 0;
             foreach (var accountHolding in calc.GetAccountHoldings())
             {
                 var pending = accountHolding.GetPendingSales().Count();
@@ -423,14 +429,10 @@ namespace Walkabout.Reports
                 foreach (var holding in accountHolding.GetHoldings())
                 {
                     var price = await this.cache.GetSecurityMarketPrice(date, holding.Security);
-                    if (total == null)
-                    {
-                        total = 0;
-                    }
                     total += holding.FuturesFactor * holding.UnitsRemaining * price;
                 }
             }
-            return total;
+            return this.GetNormalizedAmount(total);
         }
 
         private decimal WriteAssetAccountRows(IReportWriter writer, IList<ChartDataValue> data)
@@ -487,24 +489,11 @@ namespace Walkabout.Reports
                     var loan = this.myMoney.GetOrCreateLoanAccount(a);
                     if (loan != null)
                     {
-                        balance += loan.ComputeLoanAccountBalance(date);
+                        balance += a.GetNormalizedAmount(loan.ComputeLoanAccountBalance(date));
                     }
                 }
             }
-            return balance;
-        }
-
-        private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!this.generating)
-            {
-                DatePicker picker = (DatePicker)sender;
-                if (picker.SelectedDate.HasValue)
-                {
-                    this.reportDate = picker.SelectedDate.Value.Date;
-                    this.Regenerate();
-                }
-            }
+            return this.GetNormalizedAmount(balance);
         }
 
         private async void Regenerate()

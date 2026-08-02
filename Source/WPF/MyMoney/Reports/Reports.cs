@@ -23,6 +23,7 @@ namespace Walkabout.Reports
         private CultureInfo currencyCulture;
         private IServiceProvider serviceProvider;
         private bool disposedValue;
+        private MyMoney myMoney;
 
         public IServiceProvider ServiceProvider
         {
@@ -30,11 +31,15 @@ namespace Walkabout.Reports
             set
             {
                 serviceProvider = value;
+                this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
                 this.OnSiteChanged();
             }
         }
 
-        public virtual void OnSiteChanged() { }
+        public virtual void OnSiteChanged() {
+        }
+
+        public MyMoney MyMoney => this.myMoney;
 
         public abstract IReportState GetState();
 
@@ -121,6 +126,25 @@ namespace Walkabout.Reports
                 if (value != null)
                 {
                     this.currencyCulture = Currency.GetCultureForCurrency(value.Symbol);
+                }
+            }
+        }
+
+        public void SetDefaultCurrency(IReportWriter writer, string normalizedCurrency)
+        {
+            Currency currency = null;
+            if (!string.IsNullOrEmpty(normalizedCurrency))
+            {
+                currency = this.myMoney.Currencies.FindCurrency(normalizedCurrency);
+                if (currency == null)
+                {
+                    writer.WriteParagraph(string.Format("Currency {0} not found, please add it using View/Currencies",
+                        normalizedCurrency.ToString()),
+                        FontStyles.Normal, FontWeights.Normal, System.Windows.Media.Brushes.Salmon);
+                }
+                else
+                {
+                    this.DefaultCurrency = currency;
                 }
             }
         }

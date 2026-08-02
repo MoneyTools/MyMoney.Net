@@ -13,6 +13,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.StockQuotes;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -24,22 +25,48 @@ namespace Walkabout.Reports
         private bool generating;
         private StockQuoteCache cache;
         private string normalizeCurrency;
+        private ReportsControl panel;
 
         /// <summary>
         /// Create new AccountSummaryReport
         /// </summary>
-        public AccountSummaryReport(FlowDocumentView view)
+        public AccountSummaryReport(FlowDocumentView view, ReportsControl panel)
         {
             this.view = view;
             this.reportDate = DateTime.Today;
+            this.panel = panel;
+            panel.ReportDate = this.reportDate;
+            panel.ReportDateChanged += this.OnReportDateChanged;
+            panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
+        private void OnReportDateChanged(object sender, DateTime e)
+        {
+            this.reportDate = e;
+            this.Regenerate();
+        }
+
+        private void OnNormalizedCurrencyChanged(object sender, string e)
+        {
+            this.normalizeCurrency = e;
+            this.Regenerate();
+        }
 
         public event EventHandler<Account> SelectAccount;
 
         ~AccountSummaryReport()
         {
             Debug.WriteLine("AccountSummaryReport disposed!");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                panel.ReportDateChanged -= this.OnReportDateChanged;
+                panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
+            }
+            base.Dispose(disposing);
         }
 
         public DateTime ReportDate
@@ -112,47 +139,10 @@ namespace Walkabout.Reports
 
             this.commonSymbol = null;
             var calc = new CostBasisCalculator(this.myMoney, this.reportDate);
-            writer.WriteHeading("Account Summary by Date: ");
+            writer.WriteHeading("Account Summary as of " + this.reportDate.ToString("D"));
 
-            if (writer is FlowDocumentReportWriter fwriter)
-            {
-                Paragraph heading = fwriter.CurrentParagraph;
-                DatePicker picker = new DatePicker();
-                System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
-                picker.Margin = new Thickness(10, 0, 0, 0);
-                picker.SelectedDate = this.reportDate;
-                picker.DisplayDate = this.reportDate;
-                picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-                this.AddInline(heading, picker);
-
-                writer.WriteHeading("Normalize to currency: ");
-                heading = fwriter.CurrentParagraph;
-                ComboBox dropDown = new ComboBox();
-                dropDown.Items.Add("");
-                foreach (var value in Enum.GetValues(typeof(CurrencyCode)))
-                {
-                    dropDown.Items.Add(value.ToString());
-                }
-                System.Windows.Automation.AutomationProperties.SetName(dropDown, "CurrencyType");
-                dropDown.Margin = new Thickness(10, 0, 0, 0);
-                dropDown.SelectionChanged += this.Currency_SelectionChanged;
-                if (!string.IsNullOrEmpty(this.normalizeCurrency))
-                {
-                    dropDown.SelectedItem = this.normalizeCurrency;
-                }
-                this.AddInline(heading, dropDown);
-            }
-
-            Currency currency = null;
-            if (!string.IsNullOrEmpty(this.normalizeCurrency))
-            {
-                currency = this.myMoney.Currencies.FindCurrency(this.normalizeCurrency);
-                if (currency == null)
-                {
-                    writer.WriteParagraph(string.Format("Currency {0} not found, please add it using View/Currencies", this.normalizeCurrency),
-                        FontStyles.Normal, FontWeights.Normal, System.Windows.Media.Brushes.Salmon);
-                }
-            }
+            this.SetDefaultCurrency(writer, this.normalizeCurrency);
+            Currency currency = this.DefaultCurrency;
 
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -293,31 +283,6 @@ namespace Walkabout.Reports
             await this.view.Generate(this);
         }
 
-        private void Currency_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!this.generating)
-            {
-                ComboBox dropDown = (ComboBox)sender;
-                if (dropDown.SelectedItem != null)
-                {
-                    this.normalizeCurrency = dropDown.SelectedItem.ToString();
-                    this.Regenerate();
-                }
-            }
-        }
-
-        private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!this.generating)
-            {
-                DatePicker picker = (DatePicker)sender;
-                if (picker.SelectedDate.HasValue)
-                {
-                    this.reportDate = picker.SelectedDate.Value.Date;
-                    this.Regenerate();
-                }
-            }
-        }
 
     }
 }

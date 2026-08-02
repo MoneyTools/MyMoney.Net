@@ -16,6 +16,7 @@ using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -35,20 +36,37 @@ namespace Walkabout.Reports
         private readonly Random rand = new Random(Environment.TickCount);
         private bool generating;
         private FlowDocumentView view;
+        private ReportsControl panel;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
         /// <summary>
         /// Create new PortfolioReport
         /// </summary>
-        public PortfolioReport(FlowDocumentView view)
+        public PortfolioReport(FlowDocumentView view, ReportsControl panel, DateTime reportDate)
         {
             this.view = view;
+            this.panel = panel;
+            this.reportDate = reportDate;
+            if (this.panel != null)
+            {
+                this.panel.ReportDate = reportDate;
+                this.panel.ReportDateChanged += this.OnReportDateChanged;
+            }
         }
 
         ~PortfolioReport()
         {
             Debug.WriteLine("PortfolioReport disposed!");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (this.panel != null)
+            {
+                this.panel.ReportDateChanged -= this.OnReportDateChanged;
+            }
+            base.Dispose(disposing);
         }
 
 
@@ -73,7 +91,7 @@ namespace Walkabout.Reports
         public DateTime ReportDate
         {
             get => reportDate;
-            set => reportDate = value;
+            set { reportDate = value; this.panel.ReportDate = value; } 
         }
 
         public override void OnSiteChanged()
@@ -248,11 +266,15 @@ namespace Walkabout.Reports
             else
             {
                 heading = "Investment Portfolio Summary";
+                if (this.panel != null)
+                {
+                    heading += " on " + this.panel.ReportDate.ToString("D");
+                }
             }
 
             writer.WriteHeading(heading);
 
-            if (this.flowwriter != null)
+            if (this.flowwriter != null && this.panel == null)
             {
                 Paragraph pheading = this.flowwriter.CurrentParagraph;
 
@@ -395,19 +417,27 @@ namespace Walkabout.Reports
                 if (picker.SelectedDate.HasValue)
                 {
                     var newDate = picker.SelectedDate.Value;
-                    if (newDate != this.reportDate)
+                    this.OnReportDateChanged(sender, newDate);
+                }
+            }
+        }
+
+        private void OnReportDateChanged(object sender, DateTime newDate)
+        {
+            if (!this.generating)
+            {
+                if (newDate != this.reportDate)
+                {
+                    this.reportDate = newDate;
+                    if (this.selectedGroup != null)
                     {
-                        this.reportDate = newDate;
-                        if (this.selectedGroup != null)
-                        {
-                            this.selectedGroup.Date = newDate;
-                        }
-                        if (this.accountGroup != null)
-                        {
-                            this.accountGroup.Date = newDate;
-                        }
-                        this.Regenerate();
+                        this.selectedGroup.Date = newDate;
                     }
+                    if (this.accountGroup != null)
+                    {
+                        this.accountGroup.Date = newDate;
+                    }
+                    this.Regenerate();
                 }
             }
         }

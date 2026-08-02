@@ -11,6 +11,7 @@ using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.Reports;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Taxes
 {
@@ -19,6 +20,7 @@ namespace Walkabout.Taxes
     public class W2Report : Report
     {
         private MyMoney myMoney;
+        private DatabaseSettings databaseSettings;
         private DateTime startDate;
         private DateTime endDate;
         private Point downPos;
@@ -27,9 +29,14 @@ namespace Walkabout.Taxes
         private TaxCategoryCollection taxCategories;
         private Dictionary<Category, List<Transaction>> transactionsByCategory;
         private const string FiscalPrefix = "FY ";
+        private ReportsControl panel;
 
-        public W2Report()
+        public W2Report(ReportsControl panel)
         {
+            this.panel = panel;
+            panel.HideReportDateRow();
+            panel.HideNormalizeCurrencyRow();
+            panel.FiscalYearChanged += this.OnFiscalYearChanged;
         }
 
         ~W2Report()
@@ -37,14 +44,10 @@ namespace Walkabout.Taxes
             Debug.WriteLine("W2Report disposed!");
         }
 
-        public int FiscalYearStart
+        protected override void Dispose(bool disposing)
         {
-            get => this.fiscalYearStart;
-            set
-            {
-                this.fiscalYearStart = value;
-
-            }
+            panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            base.Dispose(disposing);
         }
 
         public override void OnSiteChanged()
@@ -52,12 +55,13 @@ namespace Walkabout.Taxes
             this.taxCategories = new TaxCategoryCollection();
             this.transactionsByCategory = null;
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
         }
 
         class W2ReportState : IReportState
         {
             public int FiscalYearStart { get; set; }
-            public DateTime StartDate { get; set; }
+            public int Year { get; set; }
 
             public W2ReportState()
             {
@@ -74,7 +78,7 @@ namespace Walkabout.Taxes
             return new W2ReportState()
             {
                 FiscalYearStart = this.fiscalYearStart,
-                StartDate = this.startDate,
+                Year = this.startDate.Year,
             };
         }
 
@@ -82,27 +86,23 @@ namespace Walkabout.Taxes
         {
             if (state is W2ReportState taxReportState)
             {
-                this.FiscalYearStart = taxReportState.FiscalYearStart;
-                this.SetStartDate(taxReportState.StartDate);
+                this.fiscalYearStart = taxReportState.FiscalYearStart;
+                this.SetStartDate(taxReportState.Year);
             }
         }
 
-        private void SetStartDate(DateTime date)
+        private void SetStartDate(int year)
         {
+            this.startDate = new DateTime(year, this.fiscalYearStart + 1, 1);
             if (this.fiscalYearStart > 0)
             {
-                if (date.Month >= this.fiscalYearStart + 1)
-                {
-                    this.startDate = new DateTime(date.Year, this.fiscalYearStart + 1, 1);
-                }
-                else
-                {
-                    this.startDate = new DateTime(date.Year - 1, this.fiscalYearStart + 1, 1);
-                }
+                // Note: "FY2020" means July 2019 to July 2020, in other words
+                // it is the end date that represents the year.
+                this.startDate = this.startDate.AddYears(-1);
             }
-            else
+            if (this.startDate > DateTime.Today)
             {
-                this.startDate = new DateTime(date.Year, 1, 1);
+                this.startDate = this.startDate.AddYears(-1);
             }
             this.endDate = this.startDate.AddYears(1);
         }
@@ -179,8 +179,8 @@ namespace Walkabout.Taxes
 
         public override Task Generate(IReportWriter writer)
         {
+            this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
             this.transactionsByCategory = new Dictionary<Category, List<Transaction>>();
-            writer.WriteHeading("Select year for report: ");
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
 
@@ -188,46 +188,12 @@ namespace Walkabout.Taxes
 
             if (this.startDate == DateTime.MinValue)
             {
-                this.SetStartDate(new DateTime(lastYear, 1, 1));
+                this.SetStartDate(lastYear);
             }
+            writer.WriteHeading("W2 Tax Report For Financial Year " + this.startDate.Year);
 
-            if (writer is FlowDocumentReportWriter fwriter)
-            {
-                Paragraph heading = fwriter.CurrentParagraph;
-
-                ComboBox byYearCombo = new ComboBox();
-                byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-                int selected = -1;
-                int index = 0;
-                for (int i = lastYear; i >= firstYear; i--)
-                {
-                    if (this.fiscalYearStart > 0 && i == this.endDate.Year)
-                    {
-                        selected = index;
-                    }
-                    else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
-                    {
-                        selected = index;
-                    }
-                    if (this.fiscalYearStart > 0)
-                    {
-                        byYearCombo.Items.Add("FY " + i);
-                    }
-                    else
-                    {
-                        byYearCombo.Items.Add(i.ToString());
-                    }
-                    index++;
-                }
-
-                if (selected != -1)
-                {
-                    byYearCombo.SelectedIndex = selected;
-                }
-                byYearCombo.SelectionChanged += this.OnYearChanged;
-                byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-                this.AddInline(heading, byYearCombo);
-            }
+            var box = panel.ShowFiscalYearRow();
+            this.AddFiscalYearItems(box, firstYear, lastYear);
 
             this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
@@ -248,6 +214,51 @@ namespace Walkabout.Taxes
             this.WriteTrailer(writer, DateTime.Today);
 
             return Task.CompletedTask;
+        }
+
+        private void AddFiscalYearItems(ComboBox byYearCombo, int firstYear, int lastYear)
+        {
+            int selected = -1;
+            int index = 0;
+            byYearCombo.Items.Clear();
+            for (int i = lastYear; i >= firstYear; i--)
+            {
+                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
+                {
+                    selected = index;
+                }
+                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                {
+                    selected = index;
+                }
+                if (this.fiscalYearStart > 0)
+                {
+                    byYearCombo.Items.Add("FY " + i);
+                }
+                else
+                {
+                    byYearCombo.Items.Add(i.ToString());
+                }
+                index++;
+            }
+
+            if (selected != -1)
+            {
+                byYearCombo.SelectedIndex = selected;
+            }
+        }
+
+        private void OnFiscalYearChanged(object sender, string label)
+        {
+            if (label.StartsWith(FiscalPrefix))
+            {
+                label = label.Substring(FiscalPrefix.Length);
+            }
+            if (int.TryParse(label, out int year))
+            {
+                this.SetStartDate(year);
+                this.Regenerate();
+            }
         }
 
         private bool GenerateForm(TaxForm form, IReportWriter writer, ICollection<Transaction> transactions)
@@ -396,26 +407,6 @@ namespace Walkabout.Taxes
             else
             {
                 writer.WriteParagraph(c.Name);
-            }
-        }
-
-        private void OnYearChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox box = (ComboBox)sender;
-            string label = (string)box.SelectedItem;
-            if (label.StartsWith(FiscalPrefix))
-            {
-                label = label.Substring(FiscalPrefix.Length);
-            }
-            if (int.TryParse(label, out int year))
-            {
-                var start = new DateTime(year, this.fiscalYearStart + 1, 1);
-                if (this.fiscalYearStart > 0)
-                {
-                    start = start.AddYears(-1);
-                }
-                this.SetStartDate(start);
-                this.Regenerate();
             }
         }
 
