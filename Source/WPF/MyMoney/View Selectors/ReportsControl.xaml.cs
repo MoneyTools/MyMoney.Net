@@ -38,6 +38,7 @@ namespace Walkabout.Views.Controls
             this.ReportTypeRow.Visibility = Visibility.Collapsed;
             this.FiscalYearRow.Visibility = Visibility.Collapsed;
             this.ReportEndDateRow.Visibility = Visibility.Collapsed;
+            this.ReportIntervalRow.Visibility = Visibility.Collapsed;
         }
 
         public static string ConsolidationDateAcquired = "Date Acquired";
@@ -157,6 +158,29 @@ namespace Walkabout.Views.Controls
             {
                 DateTime newDate = (DateTime)e.AddedItems[0];
                 ReportEndDateChanged(this, newDate);
+            }
+        }
+
+        public ComboBox ShowReportInterval()
+        {
+            this.ReportIntervalRow.Visibility = Visibility.Visible;
+            return this.ReportIntervalPicker;
+        }
+
+        public string ReportInterval
+        {
+            get { return this.ReportIntervalPicker.SelectedItem as string; }
+            set { ReportIntervalPicker.SelectedItem = value; }
+        }
+
+        public event EventHandler<string > ReportIntervalChanged;
+
+        private void OnReportIntervalChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ReportIntervalChanged != null && e.AddedItems != null && e.AddedItems.Count > 0)
+            {
+                string newValue = (string)e.AddedItems[0];
+                ReportIntervalChanged(this, newValue);
             }
         }
     }

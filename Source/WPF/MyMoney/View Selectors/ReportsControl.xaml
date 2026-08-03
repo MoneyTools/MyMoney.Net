@@ -105,11 +105,22 @@
 
       <Border x:Name="ReportTypeRow" Style="{StaticResource Rows}">
         <StackPanel>
-          <TextBlock Text="ReportType:" />
+          <TextBlock Text="Report Type:" />
           <Border Style="{StaticResource ValueAreaBorder}">
             <ComboBox x:Name="ReportTypePicker" HorizontalAlignment="Stretch"
                          ToolTip="Select the type of report"
                         SelectionChanged="OnReportTypeChanged"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="ReportIntervalRow" Style="{StaticResource Rows}">
+        <StackPanel>
+          <TextBlock Text="Report Interval:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <ComboBox x:Name="ReportIntervalPicker" HorizontalAlignment="Stretch"
+                         ToolTip="Select the aggregation interval"
+                        SelectionChanged="OnReportIntervalChanged"/>
           </Border>
         </StackPanel>
       </Border>
