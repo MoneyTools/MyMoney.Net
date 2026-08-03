@@ -221,9 +221,15 @@ namespace LovettSoftware.Charts
             this.actions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(10));
         }
 
+        Size previousBounds;
+
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            this.OnDelayedUpdate();
+            if (this.previousBounds != arrangeBounds)
+            {
+                this.previousBounds = arrangeBounds;
+                this.OnDelayedUpdate();
+            }
             return base.ArrangeOverride(arrangeBounds);
         }
 

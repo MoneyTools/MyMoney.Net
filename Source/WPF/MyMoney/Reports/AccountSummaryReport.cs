@@ -283,6 +283,5 @@ namespace Walkabout.Reports
             await this.view.Generate(this);
         }
 
-
     }
 }

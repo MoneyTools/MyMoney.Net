@@ -235,9 +235,7 @@ namespace Walkabout.Reports
 
             this.byCategory = new Dictionary<Category, CashFlowColumns>();
 
-            var fwriter = writer as FlowDocumentReportWriter;
-
-            if (fwriter != null)
+            if (writer is FlowDocumentReportWriter fwriter)
             {
                 writer.WriteParagraph("");
                 Paragraph heading = fwriter.CurrentParagraph;

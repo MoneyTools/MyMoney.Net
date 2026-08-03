@@ -248,7 +248,6 @@ namespace Walkabout.Reports
                     bool hasNoneType = r.Item2;
 
                     // liabilities are not included in the pie chart because that would be confusing.
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a.Type == AccountType.Credit);
                     WriteHeader(writer, "Liabilities");
 
                     Predicate<Account> creditAccountFilter = (a) => a.Type == AccountType.Credit;

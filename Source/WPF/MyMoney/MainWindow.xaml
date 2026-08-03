@@ -73,6 +73,7 @@
     <CommandBinding Command="p:AppCommands.CommandReportUnaccepted" Executed="OnCommandReportUnaccepted"/>
     <CommandBinding Command="p:AppCommands.CommandFutureBills" Executed="OnCommandFutureBills"/>
     <CommandBinding Command="p:AppCommands.CommandAccountSummary" Executed="OnCommandAccountSummary"/>
+    <CommandBinding Command="p:AppCommands.CommandRetirementPlan" Executed="OnCommandRetirementPlan"/>
 
 
     <!-- QUERY -->
@@ -204,6 +205,7 @@
             <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
             <MenuItem x:Name="MenuFutureBills" Header="Future _Bills" Command="p:AppCommands.CommandFutureBills"/>
             <MenuItem x:Name="MenuAccountSummary" Header="Account _Summary" Command="p:AppCommands.CommandAccountSummary"/>
+            <MenuItem x:Name="MenuRetirementPlan" Header="_Retirement Plan" Command="p:AppCommands.CommandRetirementPlan"/>
             
           </MenuItem>
 

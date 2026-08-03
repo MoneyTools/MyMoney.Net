@@ -36,6 +36,7 @@ namespace Walkabout.Commands
         public static readonly RoutedUICommand CommandReportUnaccepted;
         public static readonly RoutedUICommand CommandFutureBills;
         public static readonly RoutedUICommand CommandAccountSummary;
+        public static readonly RoutedUICommand CommandRetirementPlan;
 
         // QUERY
         public static readonly RoutedUICommand CommandQueryShowForm;
@@ -108,6 +109,7 @@ namespace Walkabout.Commands
             CommandReportUnaccepted = new RoutedUICommand("Report Unaccepted", "ReportUnaccepted", typeof(AppCommands));
             CommandFutureBills = new RoutedUICommand("Report Future Bills", "ReportFutureBills", typeof(AppCommands));
             CommandAccountSummary = new RoutedUICommand("Report Account Summary", "ReportAccountSummary", typeof(AppCommands));
+            CommandRetirementPlan = new RoutedUICommand("Report Retirement Plan", "ReportRetirementPlan", typeof(AppCommands));
 
             // QUERY
             CommandQueryShowForm = new RoutedUICommand("Query Show Query Form", "QueryShowQueryForm", typeof(AppCommands));

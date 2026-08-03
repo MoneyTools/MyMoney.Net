@@ -76,6 +76,7 @@ namespace Walkabout
         private readonly SecuritiesControl securitiesControl;
         private RentsControl rentsControl;
         private ReportsControl reportsControl;
+        private RetirementControl retirementControl;
 
         private string caption;
         private BalanceControl balanceControl;
@@ -2630,6 +2631,7 @@ namespace Walkabout
         private ReportsControl ShowReportsPanel()
         {
             this.HideReportsPanel();
+            this.HideRetirementPanel();
             this.reportsControl = new ReportsControl();
             this.reportsControl.TabIndex = 4;
             this.reportsControl.Name = "ReportsControl";
@@ -2644,6 +2646,28 @@ namespace Walkabout
             {
                 this.toolBox.Remove(this.reportsControl);
                 this.reportsControl = null;
+                this.toolBox.Selected = this.accountsControl;
+            }
+        }
+
+        private RetirementControl ShowRetirementPanel()
+        {
+            this.HideReportsPanel();
+            this.HideRetirementPanel();
+            this.retirementControl = new RetirementControl();
+            this.retirementControl.TabIndex = 5;
+            this.retirementControl.Name = "RetirementControl";
+            this.toolBox.Add("RETIREMENT", "RetirementControl", this.retirementControl);
+            this.toolBox.Selected = this.retirementControl;
+            return this.retirementControl;
+        }
+
+        private void HideRetirementPanel()
+        {
+            if (this.retirementControl != null)
+            {
+                this.toolBox.Remove(this.retirementControl);
+                this.retirementControl = null;
                 this.toolBox.Selected = this.accountsControl;
             }
         }
@@ -2741,6 +2765,15 @@ namespace Walkabout
                     this.accountsControl.SelectedAccount = otherPossibleView.AccountSelected;
                     this.toolBox.Selected = this.accountsControl;
                 }
+            }
+
+            if (this.toolBox.Selected != this.retirementControl)
+            {
+                this.HideRetirementPanel();
+            }
+            if (this.toolBox.Selected != this.reportsControl)
+            {
+                this.HideReportsPanel();
             }
 
             this.viewStateChanging = null;
@@ -3700,6 +3733,18 @@ namespace Walkabout
             HelpService.SetHelpKeyword(view, "Reports/AccountSummaryReport/");
             var panel = this.ShowReportsPanel();
             AccountSummaryReport report = new AccountSummaryReport(view, panel) { ServiceProvider = this };
+            this.OnReportCreated(this, report);
+            this.GenerateReport(report);
+        }
+
+        private void OnCommandRetirementPlan(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.SaveViewStateOfCurrentView();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "RetirementPlanReport");
+            HelpService.SetHelpKeyword(view, "Reports/RetirementPlan/");
+            RetirementControl panel = this.ShowRetirementPanel();
+            RetirementPlanReport report = new RetirementPlanReport(view, panel) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
