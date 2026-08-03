@@ -32,16 +32,19 @@ namespace Walkabout.Reports
         private int graduationAge = 100;        
         private StockQuoteCache cache;
 
-        public RetirementPlanReport(FlowDocumentView view, RetirementControl panel)
+        public RetirementPlanReport(FlowDocumentView view)
         {
             this.view = view;
-            this.panel = panel;
-            this.reportDate = DateTime.Today;
-            this.panel.RateOfReturn = this.investmentRateOfReturn;
-            this.panel.InflationRate = this.inflationRate;
-            this.panel.DesiredIncome = this.desiredAnnualIncome;
-            this.panel.GraduationAge = this.graduationAge;
-            this.panel.CurrentAge = this.currentAge;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.UnRegister();
+            base.Dispose(disposing);
+        }
+
+        private void Register()
+        {
             this.panel.RateOfReturnChanged += this.OnRateOfReturnChanged;
             this.panel.InflationRateChanged += this.OnInflationRateChanged;
             this.panel.DesiredIncomeChanged += this.OnDesiredIncomeChanged;
@@ -49,14 +52,16 @@ namespace Walkabout.Reports
             this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
         }
 
-        protected override void Dispose(bool disposing)
+        private void UnRegister()
         {
-            this.panel.RateOfReturnChanged -= this.OnRateOfReturnChanged;
-            this.panel.InflationRateChanged -= this.OnInflationRateChanged;
-            this.panel.DesiredIncomeChanged -= this.OnDesiredIncomeChanged;
-            this.panel.GraduationAgeChanged -= this.OnGraduationAgeChanged;
-            this.panel.CurrentAgeChanged -= this.OnCurrentAgeChanged;
-            base.Dispose(disposing);
+            if (this.panel != null)
+            {
+                this.panel.RateOfReturnChanged -= this.OnRateOfReturnChanged;
+                this.panel.InflationRateChanged -= this.OnInflationRateChanged;
+                this.panel.DesiredIncomeChanged -= this.OnDesiredIncomeChanged;
+                this.panel.GraduationAgeChanged -= this.OnGraduationAgeChanged;
+                this.panel.CurrentAgeChanged -= this.OnCurrentAgeChanged;
+            }
         }
 
         private void OnDesiredIncomeChanged(object sender, decimal e)
@@ -93,6 +98,21 @@ namespace Walkabout.Reports
         {
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
+
+            // this makes the retirement control visible in the report view.
+            var panel = (RetirementControl)this.ServiceProvider.GetService(typeof(RetirementControl));
+            this.UnRegister();
+            this.panel = panel;
+
+            this.panel = panel;
+            this.reportDate = DateTime.Today;
+            this.panel.RateOfReturn = this.investmentRateOfReturn;
+            this.panel.InflationRate = this.inflationRate;
+            this.panel.DesiredIncome = this.desiredAnnualIncome;
+            this.panel.GraduationAge = this.graduationAge;
+            this.panel.CurrentAge = this.currentAge;
+            this.UnRegister();
+            this.Register();
         }
 
         public override async Task Generate(IReportWriter writer)
@@ -255,6 +275,16 @@ namespace Walkabout.Reports
             {
                 this.reportDate = s.ReportDate;
                 this.normalizedCurrency = s.NormalizedCurrency;
+                if (this.panel != null)
+                {
+                    this.UnRegister();
+                    this.panel.RateOfReturn = this.investmentRateOfReturn;
+                    this.panel.InflationRate = this.inflationRate;
+                    this.panel.DesiredIncome = this.desiredAnnualIncome;
+                    this.panel.CurrentAge = this.currentAge;
+                    this.panel.GraduationAge = this.graduationAge;
+                    this.Register();
+                }
             }
         }
 
@@ -263,7 +293,13 @@ namespace Walkabout.Reports
             return new RetirementPlanState()
             {
                 ReportDate = this.reportDate,
-                NormalizedCurrency = this.normalizedCurrency
+                NormalizedCurrency = this.normalizedCurrency,
+                InvestmentRateOfReturn = this.investmentRateOfReturn,
+                InflationRate = this.inflationRate,
+                DoRothConverstion = this.DoRothConverstion,
+                DesiredAnnualIncome = this.desiredAnnualIncome,
+                CurrentAge = this.currentAge,
+                GraduationAge = this.graduationAge
             };
         }
 
@@ -271,6 +307,14 @@ namespace Walkabout.Reports
         {
             public DateTime ReportDate { get; set; }
             public string NormalizedCurrency { get; set; }
+
+            public decimal InvestmentRateOfReturn { get; set; }
+            public decimal InflationRate { get; set; }
+            public bool DoRothConverstion { get; set; }
+            public decimal DesiredAnnualIncome { get; set; }
+            public int CurrentAge { get; set; }
+            public int GraduationAge { get; set; }
+
 
             public string Name => "RetirementPlan";
 
@@ -280,7 +324,7 @@ namespace Walkabout.Reports
 
             public Type GetReportType()
             {
-                return typeof(RetirementPlanState);
+                return typeof(RetirementPlanReport);
             }
         }
 

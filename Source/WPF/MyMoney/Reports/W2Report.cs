@@ -31,12 +31,8 @@ namespace Walkabout.Taxes
         private const string FiscalPrefix = "FY ";
         private ReportsControl panel;
 
-        public W2Report(ReportsControl panel)
+        public W2Report()
         {
-            this.panel = panel;
-            panel.HideReportDateRow();
-            panel.HideNormalizeCurrencyRow();
-            panel.FiscalYearChanged += this.OnFiscalYearChanged;
         }
 
         ~W2Report()
@@ -46,8 +42,21 @@ namespace Walkabout.Taxes
 
         protected override void Dispose(bool disposing)
         {
-            panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            this.Unregister();
             base.Dispose(disposing);
+        }
+
+        private void Unregister()
+        {
+            if (this.panel != null)
+            {
+                this.panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            }
+        }
+
+        private void Register()
+        {
+            this.panel.FiscalYearChanged += this.OnFiscalYearChanged;
         }
 
         public override void OnSiteChanged()
@@ -56,6 +65,15 @@ namespace Walkabout.Taxes
             this.transactionsByCategory = null;
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
+            this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
+            // this also makes the panel visible.
+            this.Unregister();
+            var panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            this.panel = panel;
+            panel.HideReportDateRow();
+            panel.HideNormalizeCurrencyRow();
+            this.Unregister();
+            this.Register();
         }
 
         class W2ReportState : IReportState

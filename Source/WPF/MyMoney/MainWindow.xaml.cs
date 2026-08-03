@@ -3557,6 +3557,14 @@ namespace Walkabout
                 TabItem item = this.ShowDownloadTab();
                 return item.Content as DownloadControl;
             }
+            else if (service == typeof(ReportsControl))
+            {
+                return this.ShowReportsPanel();
+            }
+            else if (service == typeof(RetirementControl))
+            {
+                return this.ShowRetirementPanel();
+            }
             return null;
         }
 
@@ -3708,8 +3716,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
             HelpService.SetHelpKeyword(view, "Reports/NetworthReport/");
-            var panel = this.ShowReportsPanel();
-            NetWorthReport report = new NetWorthReport(view, panel) { ServiceProvider = this };
+            NetWorthReport report = new NetWorthReport(view) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3731,8 +3738,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "AccountSummaryReport");
             HelpService.SetHelpKeyword(view, "Reports/AccountSummaryReport/");
-            var panel = this.ShowReportsPanel();
-            AccountSummaryReport report = new AccountSummaryReport(view, panel) { ServiceProvider = this };
+            AccountSummaryReport report = new AccountSummaryReport(view) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3743,8 +3749,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "RetirementPlanReport");
             HelpService.SetHelpKeyword(view, "Reports/RetirementPlan/");
-            RetirementControl panel = this.ShowRetirementPanel();
-            RetirementPlanReport report = new RetirementPlanReport(view, panel) { ServiceProvider = this };
+            RetirementPlanReport report = new RetirementPlanReport(view) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3782,8 +3787,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            var panel = this.ShowReportsPanel();
-            PortfolioReport report = new PortfolioReport(view, panel, DateTime.Now)
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this
             };
@@ -3798,11 +3802,11 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            var panel = this.ShowReportsPanel();
-            PortfolioReport report = new PortfolioReport(view, panel, e.Date)
+            PortfolioReport report = new PortfolioReport(view)
             {
+                ReportDate = e.Date,
+                SelectedGroup = e,
                 ServiceProvider = this,
-                SelectedGroup = e
             };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
@@ -3814,9 +3818,8 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            var panel = this.ShowReportsPanel();
-            PortfolioReport report = new PortfolioReport(view, panel, e.Date)
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");            
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this,
                 AccountGroup = e
@@ -3831,8 +3834,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
             HelpService.SetHelpKeyword(view, "Reports/TaxReport/");
-            var panel = this.ShowReportsPanel();
-            TaxReport report = new TaxReport(panel) { ServiceProvider = this };
+            TaxReport report = new TaxReport() { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3842,9 +3844,8 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
-            HelpService.SetHelpKeyword(view, "Reports/W2Report/");
-            var panel = this.ShowReportsPanel();
-            W2Report report = new W2Report(panel) { ServiceProvider = this };
+            HelpService.SetHelpKeyword(view, "Reports/W2Report/");            
+            W2Report report = new W2Report() { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
@@ -3860,8 +3861,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
-            var panel = this.ShowReportsPanel();
-            CashFlowReport report = new CashFlowReport(panel) { ServiceProvider = this };
+            CashFlowReport report = new CashFlowReport() { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }

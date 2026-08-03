@@ -43,16 +43,9 @@ namespace Walkabout.Reports
         /// <summary>
         /// Create new PortfolioReport
         /// </summary>
-        public PortfolioReport(FlowDocumentView view, ReportsControl panel, DateTime reportDate)
+        public PortfolioReport(FlowDocumentView view)
         {
             this.view = view;
-            this.panel = panel;
-            this.reportDate = reportDate;
-            if (this.panel != null)
-            {
-                this.panel.ReportDate = reportDate;
-                this.panel.ReportDateChanged += this.OnReportDateChanged;
-            }
         }
 
         ~PortfolioReport()
@@ -64,9 +57,22 @@ namespace Walkabout.Reports
         {
             if (this.panel != null)
             {
-                this.panel.ReportDateChanged -= this.OnReportDateChanged;
+                this.Unregister();
             }
             base.Dispose(disposing);
+        }
+
+        private void Unregister()
+        {
+            if (this.panel != null)
+            {
+                this.panel.ReportDateChanged -= this.OnReportDateChanged;
+            }
+        }
+
+        private void Register()
+        {
+            this.panel.ReportDateChanged += this.OnReportDateChanged;
         }
 
 
@@ -98,6 +104,12 @@ namespace Walkabout.Reports
         {
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            this.Unregister();
+            // this also makes the panel visible!
+            this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            this.panel.ReportDate = this.reportDate;
+            this.Unregister();
+            this.Register();
         }
 
         class PortfolioReportState : IReportState
@@ -136,6 +148,12 @@ namespace Walkabout.Reports
                 this.account = taxReportState.Account;
                 this.accountGroup = taxReportState.AccountGroup;
                 this.selectedGroup = taxReportState.SelectedGroup;
+                if (this.panel != null)
+                {
+                    this.Unregister();
+                    this.panel.ReportDate = this.reportDate;
+                    this.Register();
+                }
             }
         }
 

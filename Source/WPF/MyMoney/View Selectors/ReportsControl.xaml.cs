@@ -121,6 +121,12 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public string FiscalYear
+        {
+            get => this.FiscalYearPicker.SelectedItem as string;
+            set => this.FiscalYearPicker.SelectedItem = value;
+        }
+
         public ComboBox ShowFiscalYearRow()
         {
             this.FiscalYearRow.Visibility = Visibility.Visible;

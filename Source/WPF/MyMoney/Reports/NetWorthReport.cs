@@ -43,16 +43,12 @@ namespace Walkabout.Reports
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
-        public NetWorthReport(FlowDocumentView view, ReportsControl panel)
+        public NetWorthReport(FlowDocumentView view)
         {
             this.view = view;
             this.reportDate = DateTime.Today;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
-            panel.ReportDate = this.reportDate;
-            this.panel = panel;
-            this.panel.ReportDateChanged += this.OnReportDateChanged;
-            panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
         ~NetWorthReport()
@@ -63,9 +59,24 @@ namespace Walkabout.Reports
         protected override void Dispose(bool disposing)
         {
             this.historicalChart = null;
+            this.Unregister();
+            base.Dispose(disposing);
+        }
+
+        private void Unregister()
+        {
+            if (this.panel == null)
+            {
+                return;
+            }
             this.panel.ReportDateChanged -= this.OnReportDateChanged;
             this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
-            base.Dispose(disposing);
+        }
+
+        private void Register()
+        {
+            this.panel.ReportDateChanged += this.OnReportDateChanged;
+            this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
         private void OnNormalizedCurrencyChanged(object sender, string e)
@@ -84,6 +95,11 @@ namespace Walkabout.Reports
         {
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
+            // this also makes the panel visible!
+            this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            panel.ReportDate = this.reportDate;
+            this.Unregister();
+            this.Register();
         }
 
         class NetworthReportState : IReportState
@@ -113,6 +129,14 @@ namespace Walkabout.Reports
             if (state is NetworthReportState networthReportState)
             {
                 this.reportDate = networthReportState.ReportDate;
+                this.normalizedCurrency = networthReportState.NormalizedCurrency;
+                if (this.panel != null)
+                {
+                    this.Unregister();
+                    this.panel.NormalizedCurrency = this.normalizedCurrency;
+                    this.panel.ReportDate = this.reportDate;
+                    this.Register();
+                }
             }
         }
 

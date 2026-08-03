@@ -34,21 +34,8 @@ namespace Walkabout.Reports
         public static string ReportTypeAllAccounts = "All Accounts";
 
 
-        public TaxReport(ReportsControl panel)
+        public TaxReport()
         {
-            this.panel = panel;
-            this.SetStartDate(DateTime.Now.Year);
-            panel.HideReportDateRow();
-            panel.HideNormalizeCurrencyRow();
-            panel.ShowConsolidationRow();
-            panel.ConsolidationChanged += this.OnConsolidationChanged;
-            ComboBox box = panel.ShowReportTypeRow();
-            box.Items.Clear();
-            box.Items.Add(ReportTypeAllAccounts);
-            box.Items.Add(ReportTypeInvestmentsOnly);
-            box.SelectedIndex = 0;
-            panel.ReportTypeChanged += this.OnReportTypeChanged;
-            panel.FiscalYearChanged += this.OnFiscalYearChanged;
         }
 
         ~TaxReport()
@@ -58,16 +45,47 @@ namespace Walkabout.Reports
 
         protected override void Dispose(bool disposing)
         {
-            panel.ConsolidationChanged -= this.OnConsolidationChanged;
-            panel.ReportTypeChanged -= this.OnReportTypeChanged;
-            panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            this.Unregister();
             base.Dispose(disposing);
+        }
+
+        private void Register()
+        {
+            panel.ConsolidationChanged += this.OnConsolidationChanged;
+            panel.ReportTypeChanged += this.OnReportTypeChanged;
+            panel.FiscalYearChanged += this.OnFiscalYearChanged;
+        }
+
+        private void Unregister()
+        {
+            if (this.panel != null)
+            {
+                panel.ConsolidationChanged -= this.OnConsolidationChanged;
+                panel.ReportTypeChanged -= this.OnReportTypeChanged;
+                panel.FiscalYearChanged -= this.OnFiscalYearChanged;
+            }
         }
 
         public override void OnSiteChanged()
         {
             this.money = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
+            this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
+            this.SetStartDate(DateTime.Now.Year);
+            // this also makes the panel visible!
+            this.Unregister();
+            var panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            this.panel = panel;
+            panel.HideReportDateRow();
+            panel.HideNormalizeCurrencyRow();
+            panel.ShowConsolidationRow();
+            ComboBox box = panel.ShowReportTypeRow();
+            box.Items.Clear();
+            box.Items.Add(ReportTypeAllAccounts);
+            box.Items.Add(ReportTypeInvestmentsOnly);
+            box.SelectedIndex = 0;
+            this.Unregister();
+            this.Register();
         }
 
         class TaxReportState : IReportState
@@ -106,6 +124,16 @@ namespace Walkabout.Reports
                 this.investmentsOnly = taxReportState.InvestmentsOnly;
                 this.consolidateOnDateSold = taxReportState.ConsolidateOnDateSold;
                 this.SetStartDate(taxReportState.ReportYear);
+                if (this.panel != null)
+                {
+                    this.Unregister();
+                    ComboBox box = panel.ShowReportTypeRow();
+                    box.Items.Clear();
+                    box.Items.Add(ReportTypeAllAccounts);
+                    box.Items.Add(ReportTypeInvestmentsOnly);
+                    box.SelectedIndex = this.consolidateOnDateSold ? 0 : 1;
+                    this.Register();
+                }
             }
         }
 
@@ -128,7 +156,7 @@ namespace Walkabout.Reports
         public override Task Generate(IReportWriter writer)
         {
             this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
-            writer.WriteHeading("Tax Report For Financial Year " + this.fiscalYearStart);
+            writer.WriteHeading("Tax Report For Financial Year " + this.startDate.Year);
 
             var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
@@ -252,13 +280,14 @@ namespace Walkabout.Reports
 
         private void OnFiscalYearChanged(object sender, string label)
         {
+            string year = label;
             if (label.StartsWith(FiscalPrefix))
             {
-                label = label.Substring(FiscalPrefix.Length);
+                year = label.Substring(FiscalPrefix.Length);
             }
-            if (int.TryParse(label, out int year))
+            if (int.TryParse(year, out int x))
             {
-                this.SetStartDate(year);
+                this.SetStartDate(x);
                 this.Regenerate();
             }
         }

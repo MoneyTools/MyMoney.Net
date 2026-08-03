@@ -30,14 +30,10 @@ namespace Walkabout.Reports
         /// <summary>
         /// Create new AccountSummaryReport
         /// </summary>
-        public AccountSummaryReport(FlowDocumentView view, ReportsControl panel)
+        public AccountSummaryReport(FlowDocumentView view)
         {
             this.view = view;
             this.reportDate = DateTime.Today;
-            this.panel = panel;
-            panel.ReportDate = this.reportDate;
-            panel.ReportDateChanged += this.OnReportDateChanged;
-            panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
         private void OnReportDateChanged(object sender, DateTime e)
@@ -63,10 +59,24 @@ namespace Walkabout.Reports
         {
             if (disposing)
             {
-                panel.ReportDateChanged -= this.OnReportDateChanged;
-                panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
+                this.Unregister();
             }
             base.Dispose(disposing);
+        }
+
+        private void Unregister()
+        {
+            if (this.panel != null)
+            {
+                this.panel.ReportDateChanged -= this.OnReportDateChanged;
+                this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
+            }
+        }
+
+        private void Register()
+        {
+            this.panel.ReportDateChanged += this.OnReportDateChanged;
+            this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
         public DateTime ReportDate
@@ -79,6 +89,12 @@ namespace Walkabout.Reports
         {
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            // this also makes the panel visible!
+            this.Unregister();
+            this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            panel.ReportDate = this.reportDate;
+            this.Unregister();
+            this.Register();
         }
 
         class AccountSummaryReportState : IReportState
@@ -111,6 +127,13 @@ namespace Walkabout.Reports
             {
                 this.reportDate = reportState.ReportDate;
                 this.normalizeCurrency = reportState.NormalizeCurrency;
+                if (this.panel != null)
+                {
+                    this.Unregister();
+                    this.panel.ReportDate = this.reportDate;
+                    this.panel.NormalizedCurrency = this.normalizeCurrency;
+                    this.Register();
+                }
             }
         }
 

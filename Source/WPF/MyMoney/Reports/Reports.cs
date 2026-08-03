@@ -119,13 +119,13 @@ namespace Walkabout.Reports
 
         public Currency DefaultCurrency
         {
-            get => this.currency;
+            get => this.currency ?? this.myMoney.Currencies.DefaultCurrency;
             set
             {
-                this.currency = value;
-                if (value != null)
+                this.currency = value ?? this.myMoney.Currencies.DefaultCurrency;
+                if (this.currency != null)
                 {
-                    this.currencyCulture = Currency.GetCultureForCurrency(value.Symbol);
+                    this.currencyCulture = Currency.GetCultureForCurrency(this.currency.Symbol);
                 }
             }
         }
@@ -146,6 +146,10 @@ namespace Walkabout.Reports
                 {
                     this.DefaultCurrency = currency;
                 }
+            } 
+            else if (this.myMoney != null)
+            {
+                this.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
             }
         }
 

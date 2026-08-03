@@ -32,25 +32,12 @@ namespace Walkabout.Reports
         private ReportsControl panel;
         private string normalizedCurrency;
 
-        public CashFlowReport(ReportsControl panel)
+        public CashFlowReport()
         {
-            this.panel = panel;
-            this.panel.ShowEndDateRow();
             this.startDate = new DateTime(DateTime.Now.Year, 1, 1);
-            this.byYear = true;
             this.endDate = this.startDate.AddYears(1);
             this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
-
-            var box = panel.ShowReportInterval();
-            box.Items.Clear();
-            box.Items.Add(ByYears);
-            box.Items.Add(ByMonth);
-            box.SelectedIndex = 0;
-
-            this.panel.ReportDateChanged += this.OnReportStartDateChanged;
-            this.panel.ReportEndDateChanged += this.OnReportEndDateChanged;
-            this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
-            this.panel.ReportIntervalChanged += this.OnReportIntervalChanged;
+            this.byYear = true;
         }
 
         private static string ByYears = "By Years";
@@ -63,17 +50,49 @@ namespace Walkabout.Reports
 
         protected override void Dispose(bool disposing)
         {
+            this.Unregister();
+            base.Dispose(disposing);
+        }
+
+        private void Unregister()
+        {
+            if (this.panel == null)
+            {
+                return;
+            }
             this.panel.ReportDateChanged -= this.OnReportStartDateChanged;
             this.panel.ReportEndDateChanged -= this.OnReportEndDateChanged;
             this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
             this.panel.ReportIntervalChanged -= this.OnReportIntervalChanged;
-            base.Dispose(disposing);
         }
+
+        private void Register()
+        {
+            this.panel.ReportDateChanged += this.OnReportStartDateChanged;
+            this.panel.ReportEndDateChanged += this.OnReportEndDateChanged;
+            this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
+            this.panel.ReportIntervalChanged += this.OnReportIntervalChanged;
+        }
+
 
         public override void OnSiteChanged()
         {
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.databaseSettings = (DatabaseSettings)this.ServiceProvider.GetService(typeof(DatabaseSettings));
+            // this also makes the panel visible.
+            this.Unregister();
+            var panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            this.panel = panel;
+            this.panel.ShowEndDateRow();
+
+            var box = panel.ShowReportInterval();
+            box.Items.Clear();
+            box.Items.Add(ByYears);
+            box.Items.Add(ByMonth);
+            box.SelectedIndex = 0;
+
+            this.Unregister();
+            this.Register();
         }
 
         class CashFlowReportState : IReportState
@@ -112,6 +131,15 @@ namespace Walkabout.Reports
                 this.startDate = cashFlowReportState.StartDate;
                 this.endDate = cashFlowReportState.EndDate;
                 this.byYear = cashFlowReportState.ByYear;
+                if (this.panel != null)
+                {
+                    this.Unregister();
+                    this.panel.ReportDate = this.startDate;
+                    this.panel.ReportEndDate = this.endDate;
+                    var box = panel.ShowReportInterval();
+                    box.SelectedIndex = this.byYear ? 0 : 1;
+                    this.Register();
+                }
             }
         }
 
