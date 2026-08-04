@@ -793,16 +793,17 @@ namespace Walkabout.Views
         }
 
         private void OnUpdateStockSplits(Security security)
-        {            
+        {
+            DateTime fromDate = new DateTime(1985, 1, 1);
             var list = this.money.Transactions.GetTransactionsBySecurity(security, null);
             if (list != null && list.Count > 0)
             {
-                DateTime fromDate = list[0].Date.AddDays(-1);
-                StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
-                if (service != null)
-                {
-                    service.BeginUpdateStockSplits(security, fromDate);
-                }
+                fromDate = list[0].Date.AddDays(-1);
+            }
+            StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
+            if (service != null)
+            {
+                service.BeginUpdateStockSplits(security, fromDate);
             }
         }
 

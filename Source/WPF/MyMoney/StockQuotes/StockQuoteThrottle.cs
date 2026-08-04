@@ -59,7 +59,7 @@ namespace Walkabout.StockQuotes
             lock (this._sync)
             {
                 var now = DateTime.Now;
-                if (!(now.Year == this._lastCall.Year && now.Month == this._lastCall.Month))
+                if (now.Year > this._lastCall.Year || now.Month > this._lastCall.Month)
                 {
                     this._callsThisMonth = 0;
                     this._callsToday = 0;
@@ -100,11 +100,17 @@ namespace Walkabout.StockQuotes
             int result = 0;
             if (this.Settings.ApiRequestsPerMonthLimit != 0 && this._callsThisMonth >= this.Settings.ApiRequestsPerMonthLimit)
             {
-                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceMonthlyQuotaExceeded)
+                {
+                    MonthlyLimitReached = true
+                };
             }
             else if (this.Settings.ApiRequestsPerDayLimit != 0 && this._callsToday >= this.Settings.ApiRequestsPerDayLimit)
             {
-                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                throw new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceDailyQuotaExceeded)
+                {
+                    DailyLimitReached = true
+                };
             }
             else if (this.Settings.ApiRequestsPerMinuteLimit != 0 && this._callsThisMinute >= this.Settings.ApiRequestsPerMinuteLimit)
             {

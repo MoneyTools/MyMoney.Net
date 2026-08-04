@@ -73,6 +73,7 @@ namespace Walkabout.StockQuotes
         {
             string uri = string.Format(earliestTimeUri, symbol);
             string authorization = string.Format(authorizationHeader, this.Settings.ApiKey);
+            await this.ThrottleSleep();
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", authorization);
             client.Timeout = TimeSpan.FromSeconds(30);
@@ -136,6 +137,7 @@ namespace Walkabout.StockQuotes
             Debug.WriteLine($"TwelveData: DownloadThrottledQuoteAsync {symbol} from {start} to {end}");
             string uri = string.Format(stockQuoteUri, symbol, startString, endString);
             string authorization = string.Format(authorizationHeader, this.Settings.ApiKey);
+            await this.ThrottleSleep();
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", authorization);
             client.Timeout = TimeSpan.FromSeconds(60);
@@ -196,18 +198,27 @@ namespace Walkabout.StockQuotes
                     if (code == 429)
                     {
                         // throttle limit reached.
-                        var ex = new StockQuoteThrottledException(msg);
+                        Exception ex = null;
                         if (msg.Contains("minute"))
                         {
-                            ex.MinuteLimitReached = true;
+                            // Should not happen since we called this.ThrottleSleep()?
+                            ex = new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceQuotaExceeded + ": " + msg) {
+                                MinuteLimitReached = true
+                            };
                         }
                         else if (msg.Contains("day"))
                         {
-                            ex.DailyLimitReached = true;
+                            ex = new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceDailyQuotaExceeded + ": " + msg)
+                            {
+                                DailyLimitReached = true
+                            };
                         }
                         else if (msg.Contains("month"))
                         {
-                            ex.MonthlyLimitReached = true;
+                            ex = new StockQuoteThrottledException(Walkabout.Properties.Resources.StockServiceMonthlyQuotaExceeded + ": " + msg)
+                            {
+                                MonthlyLimitReached = true
+                            };
                         }
                         throw ex;
                     }

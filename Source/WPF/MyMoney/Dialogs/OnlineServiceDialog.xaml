@@ -64,10 +64,10 @@
       <CheckBox x:Name="CheckBoxStockSplitsEnabled" Grid.Row="12" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=SplitHistoryEnabled, Mode=TwoWay}" 
                 ToolTip="Indicates your API key supports the fetch stock split information."/>
       
-      <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="12" Grid.ColumnSpan="2"
+      <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="14" Grid.ColumnSpan="2"
                Text="" TextWrapping="Wrap"/>
 
-      <Grid Grid.Row="13" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
+      <Grid Grid.Row="15" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="Auto"/>

@@ -286,8 +286,14 @@
   <data name="MoneyFileFilter" xml:space="preserve">
     <value>Money Files (*.db)|*.db</value>
   </data>
+  <data name="StockServiceMonthlyQuotaExceeded" xml:space="preserve">
+    <value>Monthly stock quote service quota has been exceeded.</value>
+  </data>
+  <data name="StockServiceDailyQuotaExceeded" xml:space="preserve">
+    <value>Daily stock quote service quota has been exceeded.</value>
+  </data>
   <data name="StockServiceQuotaExceeded" xml:space="preserve">
-    <value>Stock quote service quota has been exceeded, try again tomorrow.</value>
+    <value>Stock quote service quota has been exceeded, try again later.</value>
   </data>
   <data name="FetchedStockQuotes" xml:space="preserve">
     <value>Fetched stock quotes {0}</value>

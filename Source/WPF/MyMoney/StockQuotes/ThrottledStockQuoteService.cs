@@ -410,10 +410,12 @@ namespace Walkabout.StockQuotes
                 if (te.MonthlyLimitReached)
                 {
                     this._throttle.CallsThisMonth = this.Settings.ApiRequestsPerMonthLimit;
+                    this.OnError(te.Message);
                 }
                 else if (te.DailyLimitReached)
                 {
                     this._throttle.CallsToday = this.Settings.ApiRequestsPerDayLimit;
+                    this.OnError(te.Message);
                 }
                 else
                 {

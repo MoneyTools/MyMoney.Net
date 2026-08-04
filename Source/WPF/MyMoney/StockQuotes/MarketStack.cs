@@ -18,9 +18,9 @@ namespace Walkabout.StockQuotes
     internal class MarketStack : ThrottledStockQuoteService
     {
         private static readonly string name = "MarketStack";
-        private static readonly string baseAddress = "https://api.marketstack.com/v2/";
-        private const string stockQuoteUri = "https://api.marketstack.com/v2/eod?symbols={0}&date_from={1}&date_to={2}&limit=1000&offset={3}&sort=ASC&access_key={4}";
-        private const string stockSplitsUri = "https://api.marketstack.com/v2/splits?access_key={0}&symbols={1}&date_from={2}&limit=1000&sort=ASC";
+        private static readonly string baseAddress = "https://api.apilayer.net/marketstack/v2/";
+        private const string stockQuoteUri = "https://api.apilayer.net/marketstack/v2/eod?access_key={0}&symbols={1}&date_from={2}&date_to={3}&limit=1000&offset={4}&sort=ASC";
+        private const string stockSplitsUri = "https://api.apilayer.net/marketstack/v2/splits?access_key={0}&symbols={1}&date_from={2}&limit=1000&sort=ASC";
         private bool stockSplitsForbidden; // api key is not sufficient
         private bool stockQuotesForbidden;
 
@@ -155,11 +155,12 @@ namespace Walkabout.StockQuotes
             List<StockQuote> quotes = new List<StockQuote>();
             while (hasMore)
             {
-                var uri = string.Format(stockQuoteUri, symbol, range.Start.ToString("yyyy-MM-dd"), range.End.ToString("yyyy-MM-dd"), offset, this.Settings.ApiKey);
+                var uri = string.Format(stockQuoteUri, this.Settings.ApiKey, symbol, range.Start.ToString("yyyy-MM-dd"), range.End.ToString("yyyy-MM-dd"), offset);
                 try
                 {
+                    await this.ThrottleSleep();
                     HttpClient client = new HttpClient();
-                    client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                    //client.DefaultRequestHeaders.Add("User-Agent", userAgent);
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
                     client.Timeout = TimeSpan.FromSeconds(30);
                     var msg = await client.GetAsync(uri);

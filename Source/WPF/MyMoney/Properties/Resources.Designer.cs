@@ -349,7 +349,25 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stock quote service quota has been exceeded, try again tomorrow..
+        ///   Looks up a localized string similar to Daily stock quote service quota has been exceeded..
+        /// </summary>
+        internal static string StockServiceDailyQuotaExceeded {
+            get {
+                return ResourceManager.GetString("StockServiceDailyQuotaExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monthly stock quote service quota has been exceeded..
+        /// </summary>
+        internal static string StockServiceMonthlyQuotaExceeded {
+            get {
+                return ResourceManager.GetString("StockServiceMonthlyQuotaExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock quote service quota has been exceeded, try again later..
         /// </summary>
         internal static string StockServiceQuotaExceeded {
             get {
