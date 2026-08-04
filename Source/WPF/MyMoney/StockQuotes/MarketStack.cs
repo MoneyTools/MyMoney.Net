@@ -1,8 +1,5 @@
-﻿using ModernWpf.Controls;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,14 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Interop;
-using System.Xml;
-using System.Xml.Serialization;
-using Walkabout.Configuration;
 using Walkabout.Data;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Walkabout.StockQuotes
 {
@@ -28,11 +18,11 @@ namespace Walkabout.StockQuotes
     internal class MarketStack : ThrottledStockQuoteService
     {
         private static readonly string name = "MarketStack";
-        private static readonly string baseAddress = "https://api.apilayer.net/marketstack/v2/";
-        private const string stockQuoteUri = "https://api.apilayer.net/marketstack/v2/eod?symbols={0}&date_from={1}&date_to={2}&limit=1000&offset={3}&sort=ASC&access_key={4}";
+        private static readonly string baseAddress = "https://api.marketstack.com/v2/";
+        private const string stockQuoteUri = "https://api.marketstack.com/v2/eod?symbols={0}&date_from={1}&date_to={2}&limit=1000&offset={3}&sort=ASC&access_key={4}";
         private const string stockSplitsUri = "https://api.marketstack.com/v2/splits?access_key={0}&symbols={1}&date_from={2}&limit=1000&sort=ASC";
         private bool stockSplitsForbidden; // api key is not sufficient
-        private bool stockQuotesForbidden; 
+        private bool stockQuotesForbidden;
 
         public MarketStack(OnlineServiceSettings settings, string logPath) : base(settings, logPath)
         {
@@ -149,7 +139,7 @@ namespace Walkabout.StockQuotes
 
         private async Task<List<StockQuote>> DownloadTimeSeriesAsync(string symbol, DateRange range)
         {
-            // Use https://api.apilayer.net/marketstack/v2/eod with date_from and date_to in format yyyy-mm-dd
+            // Use https://api.marketstack.com/v2/eod with date_from and date_to in format yyyy-mm-dd
             // with limit=1000 and sort=ASC and symbols=symbol and page through as many pages needed to get
             // all the data. The API returns a JSON object with a "data" array containing the quotes and a 
             // pagination block containing limit, offset, count and total so we know how many pages to get.
@@ -309,7 +299,7 @@ namespace Walkabout.StockQuotes
             try
             {
                 HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                //client.DefaultRequestHeaders.Add("User-Agent", userAgent);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.Timeout = TimeSpan.FromSeconds(30);
                 var msg = await client.GetAsync(uri);
@@ -361,23 +351,62 @@ namespace Walkabout.StockQuotes
                                     // no data?  Need to remember this so we don't keep asking!
                                     throw new StockQuoteNoDataException(symbol);
                                 }
-                                using (var scope = splits.CreateUpdateScope());
+                                using (var scope = splits.CreateUpdateScope()) ;
+
+                                var earliestSplit = data.Data[0].Date;
 
                                 foreach (var quote in data.Data)
                                 {
-                                    foreach (var e in existing)
+                                    if (quote.SplitFactor.HasValue)
                                     {
-                                        if (e.Date.Date == quote.Date.Date)
+                                        var (numerator, denominator) = FractionHelper.ToFraction(quote.SplitFactor.Value);
+                                        var found = false;
+                                        foreach (var e in existing)
                                         {
-                                            // then we already have it, make sure factor matches.
+                                            if (e.Date.Date == quote.Date.Date)
+                                            {
+                                                // then we already have it, make sure factor matches.
+                                                // double check the numbers match!
+                                                found = true;
+                                                if (e.Numerator != numerator || e.Denominator != denominator)
+                                                {
+                                                    Debug.WriteLine($"Correcting {symbol} split on {e.Date.Date} ");
+                                                    Debug.WriteLine($"Old split data is {e.Numerator} / {e.Denominator} ");
+                                                    Debug.WriteLine($"New split data is {numerator} / {denominator} ");
+                                                    e.Numerator = numerator;
+                                                    e.Denominator = denominator;
+                                                }
+                                                break;
+                                            }
                                         }
-                                        else
+                                        if (!found)
                                         {
                                             var s = new StockSplit();
                                             s.Date = quote.Date.Date;
-                                            //s.Numerator = ???
+                                            s.Numerator = numerator;
+                                            s.Denominator = denominator;
+                                            s.Security = security;
                                             splits.AddStockSplit(s);
                                         }
+                                    }
+                                }
+
+                                // Remove existing splits that were not found in the given list.
+                                foreach (var e in existing.ToArray())
+                                {
+                                    bool found = false;
+                                    foreach (var quote in data.Data)
+                                    {
+                                        if (quote.Date.Date == e.Date.Date)
+                                        {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found)
+                                    {
+                                        Debug.WriteLine($"Removing incorrect {symbol} split on {e.Date.Date}");
+                                        splits.Remove(e);
                                     }
                                 }
                             }
@@ -392,6 +421,41 @@ namespace Walkabout.StockQuotes
             }
 
             return splits.GetStockSplitsForSecurity(security);
+        }
+
+        public static class FractionHelper
+        {
+            public static (long Numerator, long Denominator) ToFraction(decimal value)
+            {
+                int[] bits = decimal.GetBits(value);
+
+                int scale = (bits[3] >> 16) & 0x7F;
+                long denominator = 1;
+
+                for (int i = 0; i < scale; i++)
+                    denominator *= 10;
+
+                long numerator =
+                    ((long)(uint)bits[2] << 32) |
+                    (uint)bits[0];
+
+                numerator += ((long)(uint)bits[1] << 32);
+
+                long gcd = Gcd(Math.Abs(numerator), denominator);
+
+                return (numerator / gcd, denominator / gcd);
+            }
+
+            private static long Gcd(long a, long b)
+            {
+                while (b != 0)
+                {
+                    long t = b;
+                    b = a % b;
+                    a = t;
+                }
+                return a;
+            }
         }
     }
 

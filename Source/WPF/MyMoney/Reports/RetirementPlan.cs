@@ -27,9 +27,9 @@ namespace Walkabout.Reports
         private bool DoRothConverstion = false;
         private string normalizedCurrency;
         private DateTime reportDate;
-        private decimal desiredAnnualIncome = 300000;
+        private decimal desiredAnnualIncome = 200000;
         private int currentAge = 60;
-        private int graduationAge = 100;        
+        private int graduationAge = 95;        
         private StockQuoteCache cache;
 
         public RetirementPlanReport(FlowDocumentView view)

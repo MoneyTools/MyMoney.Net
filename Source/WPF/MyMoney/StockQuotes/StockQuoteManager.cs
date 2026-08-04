@@ -1269,6 +1269,11 @@ namespace Walkabout.StockQuotes
                     var log = await this._downloadLog.GetHistory(security.Symbol);
                     if (log.NeedsUpdatingStockSplits)
                     {
+                        var earliestDate = new DateTime(1985, 1, 1);
+                        if (dateFrom > earliestDate)
+                        {
+                            dateFrom = earliestDate;
+                        }
                         var splits = await service.UpdateStockSplits(security, dateFrom);
                         log.LastStockSplitUpdate = DateTime.Today;
                         log.Save(this._downloadLog.Folder);

@@ -474,33 +474,47 @@ namespace Walkabout.Views
             {
                 if (this.money != null)
                 {
-                    this.money.Securities.Changed -= this.OnSecuritiesChanged;
+                    this.money.Changed -= this.OnMoneyChanged;
                 }
                 this.money = value;
                 if (this.money != null)
                 {
-                    this.money.Securities.Changed += this.OnSecuritiesChanged;
+                    this.money.Changed += this.OnMoneyChanged;
                 }
                 this.ShowSecurities();
             }
-
         }
 
-        private void OnSecuritiesChanged(object sender, ChangeEventArgs e)
+        private void OnMoneyChanged(object sender, ChangeEventArgs e)
         {
             bool symbolChanged = false;
+            bool splitsChanged = false;
             for (var a = e; a != null; a = a.Next)
             {
                 if (a.Item is Security && a.Name == "Symbol")
                 {
                     symbolChanged = true;
-                    break;
+                }
+                else if (a.Item is StockSplits || a.Item is StockSplit)
+                {
+                    splitsChanged = true;
                 }
             }
             if (symbolChanged)
             {
                 actions.StartDelayedAction("UpdateAllSymbols", this.UpdateAllSymbols, TimeSpan.FromMilliseconds(100));
             }
+            if (splitsChanged)
+            {
+                actions.StartDelayedAction("UpdateSplits", this.UpdateSplits, TimeSpan.FromMilliseconds(100));
+            }
+        }
+
+        private void UpdateSplits()
+        {
+            // Rebind the StockSplits incase they changed.
+            Security s = this.SecuritiesDataGrid.SelectedItem as Security;
+            s.OnChanged("StockSplits");
         }
 
         public void ActivateView()
