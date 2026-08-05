@@ -1254,6 +1254,8 @@ namespace Walkabout.StockQuotes
 
         private async Task ProcessPending()
         {
+            // Give ui thread time to schedule all the pending requests before we get going.
+            await Task.Delay(100);
             while (pending.Count > 0)
             {
                 Security security;
@@ -1267,7 +1269,7 @@ namespace Walkabout.StockQuotes
                 try
                 {
                     var log = await this._downloadLog.GetHistory(security.Symbol);
-                    if (log.NeedsUpdatingStockSplits)
+                    if (log != null && log.NeedsUpdatingStockSplits)
                     {
                         var earliestDate = new DateTime(1985, 1, 1);
                         if (dateFrom > earliestDate)

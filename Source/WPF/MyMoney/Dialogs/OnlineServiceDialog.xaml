@@ -36,6 +36,8 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="20"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -43,31 +45,35 @@
       <TextBlock Text="Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
       <ComboBox x:Name="ComboServiceName" Grid.Row="0" Grid.Column="1" MinWidth="200" SelectionChanged="OnServiceSelected"/>
 
-      <TextBlock Text="API Key:" Grid.Row="2" Grid.Column="0" Margin="5" ToolTip="Clear the API key to disable using this service."/>
-      <c:PasswordControl Grid.Row="2" Grid.Column="1" MinWidth="200" x:Name="PasswordBoxApiKey" PasswordChanged="OnPasswordChanged" Margin="5"
-                         LostFocus="OnPasswordLostFocus"/>
+      <TextBlock Text="Address:" Grid.Row="2" Grid.Column="0" Margin="5" />
+      <TextBox x:Name="AddressTextBlock" Grid.Row="2" Grid.Column="1" IsReadOnly="True" MinWidth="200"  Text="{Binding Path=Address}" BorderThickness="0"
+               ToolTip="The URL of the service we plan to use."/>
 
-      <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="4" Grid.Column="0" Margin="5"/>
-      <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="4" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>
+      <TextBlock Text="API Key:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+      <c:PasswordControl Grid.Row="4" Grid.Column="1" MinWidth="200" x:Name="PasswordBoxApiKey" PasswordChanged="OnPasswordChanged"
+                         LostFocus="OnPasswordLostFocus"  ToolTip="Clear the API key to disable using this service."/>
 
-      <TextBlock Text="Limit on Requests Per Day:" Grid.Row="6" Grid.Column="0" Margin="5"/>
-      <TextBox x:Name="TextBoxRequestsPerDayLimit" Grid.Row="6" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerDayLimit, Mode=TwoWay}"/>
+      <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="6" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="6" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>
 
-      <TextBlock Text="Limit on Requests Per Month:" Grid.Row="8" Grid.Column="0" Margin="5"/>
-      <TextBox x:Name="TextBoxRequestsPerMonthLimit" Grid.Row="8" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMonthLimit, Mode=TwoWay}"/>
+      <TextBlock Text="Limit on Requests Per Day:" Grid.Row="8" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerDayLimit" Grid.Row="8" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerDayLimit, Mode=TwoWay}"/>
 
-      <TextBlock Text="History API is enabled:" Grid.Row="10" Grid.Column="0" Margin="5"/>
-      <CheckBox x:Name="CheckBoxHistoryEnabled" Grid.Row="10" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=HistoryEnabled, Mode=TwoWay}" 
+      <TextBlock Text="Limit on Requests Per Month:" Grid.Row="10" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerMonthLimit" Grid.Row="10" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMonthLimit, Mode=TwoWay}"/>
+
+      <TextBlock Text="History API is enabled:" Grid.Row="12" Grid.Column="0" Margin="5"/>
+      <CheckBox x:Name="CheckBoxHistoryEnabled" Grid.Row="12" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=HistoryEnabled, Mode=TwoWay}" 
                 ToolTip="Indicates your API key supports the history API's from the selected service."/>
 
-      <TextBlock Text="Stock Split API is enabled:" Grid.Row="12" Grid.Column="0" Margin="5"/>
-      <CheckBox x:Name="CheckBoxStockSplitsEnabled" Grid.Row="12" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=SplitHistoryEnabled, Mode=TwoWay}" 
+      <TextBlock Text="Stock Split API is enabled:" Grid.Row="14" Grid.Column="0" Margin="5"/>
+      <CheckBox x:Name="CheckBoxStockSplitsEnabled" Grid.Row="14" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=SplitHistoryEnabled, Mode=TwoWay}" 
                 ToolTip="Indicates your API key supports the fetch stock split information."/>
       
-      <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="14" Grid.ColumnSpan="2"
+      <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="16" Grid.ColumnSpan="2"
                Text="" TextWrapping="Wrap"/>
 
-      <Grid Grid.Row="15" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
+      <Grid Grid.Row="17" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="Auto"/>

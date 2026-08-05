@@ -3804,9 +3804,9 @@ namespace Walkabout
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             PortfolioReport report = new PortfolioReport(view)
             {
-                ReportDate = e.Date,
-                SelectedGroup = e,
                 ServiceProvider = this,
+                SelectedGroup = e,
+                ReportDate = e.Date,
             };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
@@ -3822,7 +3822,7 @@ namespace Walkabout
             PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this,
-                AccountGroup = e
+                AccountGroup = e,
             };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);

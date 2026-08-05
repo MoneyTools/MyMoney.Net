@@ -50,37 +50,15 @@
 
       <Border Style="{StaticResource Rows}" >
         <StackPanel>
-          <TextBlock Text="Inflation Rate:" />
+          <TextBlock Text="Current Age:"/>
           <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="InflationRateText" HorizontalAlignment="Stretch"
-                        ToolTip="Enter the estimated average inflation rate to apply to your desired income"
-                        Committed="OnInflationRateChanged"/>
+            <c:HandyTextBox x:Name="CurrentAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter your current age"
+                        Committed="OnCurrentAgeChanged"/>
           </Border>
         </StackPanel>
       </Border>
 
-      <Border Style="{StaticResource Rows}" >
-        <StackPanel>
-          <TextBlock Text="Rate of Return:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="RateOfReturnText" HorizontalAlignment="Stretch"
-                        ToolTip="Enter the estimated average rate of return on your investments"
-                        Committed="OnRateOfReturnChanged"/>
-          </Border>
-        </StackPanel>
-      </Border>
-
-      <Border Style="{StaticResource Rows}" >
-        <StackPanel>
-          <TextBlock Text="Desired Income:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="DesiredIncomeText" HorizontalAlignment="Stretch"
-                        ToolTip="Enter your desired income"
-                        Committed="OnDesiredIncomeChanged"/>
-          </Border>
-        </StackPanel>
-      </Border>
-      
       <Border Style="{StaticResource Rows}" >
         <Grid>
           <Grid.ColumnDefinitions>
@@ -92,23 +70,74 @@
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
-          <TextBlock Text="Current Age:" Grid.Column="0" Grid.Row="0" />
-
+          <TextBlock Text="Retirement Age:" Grid.Column="0" Grid.Row="0" />
           <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="CurrentAgeText" HorizontalAlignment="Stretch"
-                        ToolTip="Enter your current age"
-                        Committed="OnCurrentAgeChanged"/>
+            <c:HandyTextBox x:Name="RetirementAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter desired retirement age"
+                        Committed="OnRetirementAgeChanged"/>
           </Border>
 
           <TextBlock Text="Graduation Age:" Grid.Column="1" Grid.Row="0" />
 
           <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="GraduationAgeText" HorizontalAlignment="Stretch"
+            <c:HandyTextBox x:Name="GraduationAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the age you plan to reach"
                         Committed="OnGraduationAgeChanged"/>
           </Border>
         </Grid>
       </Border>
+      <Border Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Inflation Rate:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="InflationRateText" HorizontalAlignment="Stretch"
+                        ToolTip="Enter the estimated average inflation rate to apply to your desired income"
+                        Committed="OnInflationRateChanged" Style="{StaticResource NumericTextBoxStyle}"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Rate of Return:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="RateOfReturnText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the estimated average rate of return on your investments"
+                        Committed="OnRateOfReturnChanged"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Desired Income:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="DesiredIncomeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter your desired income"
+                        Committed="OnDesiredIncomeChanged"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="TaxDeferredRow" Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Tax Deferred Strategy:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <ComboBox x:Name="TaxDeferredStrategyCombo" HorizontalAlignment="Stretch" 
+                        ToolTip="Enter your strategy for tax deferred accounts"
+                      SelectionChanged="OnTaxDeferredStrategyChanged"
+                        />
+          </Border>
+
+          <TextBlock Text="Years to implement strategy:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="TaxDeferredStrategyYearsText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the number of years to implement this strategy"
+                        Committed="OnTaxDeferredStrategyYearsChanged"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
     </StackPanel>
   </ScrollViewer>
 </UserControl>

@@ -345,13 +345,8 @@ namespace Walkabout.StockQuotes
                                 // hmmm, probably needs debugging.
                                 Debug.WriteLine($"Error deserializing data for {symbol}: {ex.Message}");
                             }
-                            if (data != null && data.Data != null)
+                            if (data != null && data.Data != null && data.Data.Count > 0)
                             {
-                                if (data.Data.Count == 0)
-                                {
-                                    // no data?  Need to remember this so we don't keep asking!
-                                    throw new StockQuoteNoDataException(symbol);
-                                }
                                 using (var scope = splits.CreateUpdateScope()) ;
 
                                 var earliestSplit = data.Data[0].Date;

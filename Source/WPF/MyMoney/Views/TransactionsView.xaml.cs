@@ -36,6 +36,8 @@ using Walkabout.Reports;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 using Walkabout.WpfConverters;
+using System.Threading.Tasks;
+
 
 #if PerformanceBlocks
 using Walkabout.PerformanceProvider;
@@ -1568,7 +1570,7 @@ namespace Walkabout.Views
                     if (this.InvestmentAccountTabs.SelectedIndex == PortfolioTab)
                     {
                         layout = "InvestmentPortfolioView";
-                        this.UpdatePortfolio(this.ActiveAccount);
+                        this.currentDisplayName = TransactionViewName.Portfolio;
                     }
                     else
                     {
@@ -1662,7 +1664,7 @@ namespace Walkabout.Views
             this.ShowBalance();
             if (this.currentDisplayName == TransactionViewName.Portfolio) 
             {
-                this.ShowInvestmentPortfolio(this.activeAccount);
+                this.GenerateInvestmentPortfolio(this.activeAccount);
             }
         }
 
@@ -2131,6 +2133,7 @@ namespace Walkabout.Views
         }
 
         private PortfolioReport portfolioReport;
+        private bool generatingPortfolioReport;
 
         internal DateTime GetReconciledExclusiveEndDate()
         {
@@ -2142,14 +2145,27 @@ namespace Walkabout.Views
             return DateTime.Now;
         }
 
-        internal void ShowInvestmentPortfolio(Account account)
+        internal async void GenerateInvestmentPortfolio(Account account)
         {
-            this.FireBeforeViewStateChanged();
-            this.UpdatePortfolio(account);
-            this.FireAfterViewStateChanged(this.SelectedRowId);
+            if (!generatingPortfolioReport)
+            {
+                generatingPortfolioReport = true;
+                try
+                {
+                    this.FireBeforeViewStateChanged();
+                    this.CreatePortfolioReport(account);
+                    this.FireAfterViewStateChanged(this.SelectedRowId);
+                    FlowDocumentView view = this.InvestmentPortfolioView;
+                    await view.Generate(this.portfolioReport);
+                } 
+                finally
+                {
+                    generatingPortfolioReport = false;
+                }
+            }
         }
 
-        private async void UpdatePortfolio(Account account)
+        private void CreatePortfolioReport(Account account)
         {
             this.currentDisplayName = TransactionViewName.Portfolio;
             this.layout = "InvestmentPortfolioView";
@@ -2161,13 +2177,12 @@ namespace Walkabout.Views
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;            
             PortfolioReport report = new PortfolioReport(view)
             {
-                ReportDate = reportDate,
                 ServiceProvider = this.ServiceProvider,
+                ReportDate = reportDate,
                 Account = account
             };
             report.DrillDown += this.OnReportDrillDown;
             this.portfolioReport = report;
-            await view.Generate(report);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
@@ -2183,8 +2198,8 @@ namespace Walkabout.Views
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view)
             {
-                ReportDate = reportDate,
                 ServiceProvider = this.ServiceProvider,
+                ReportDate = reportDate,
                 SelectedGroup = e
             };
             _ = view.Generate(report);
@@ -3293,12 +3308,13 @@ namespace Walkabout.Views
         }
 
         private void OnInvestmentAccountTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        {            
             this.quickFilterValueChanging = true; // don't clear the filter on tab switches.
             this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Current, 0);
             this.ShowBalance();
             this.quickFilterValueChanging = false;
             this.TheActiveGrid.Focus();
+
             // Must update this field After we fire FireBeforeViewStateChanged.
             this.selectedTab = this.InvestmentAccountTabs.SelectedIndex;
         }

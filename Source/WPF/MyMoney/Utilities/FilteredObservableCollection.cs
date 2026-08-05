@@ -50,11 +50,6 @@ namespace Walkabout.Utilities
             QuickFilterParser<T> parser = new QuickFilterParser<T>();
             Filter<T> expr = parser.Parse(filter);
 
-            if (expr != null)
-            {
-                string dgml = expr.ToXml();
-                Debug.WriteLine(dgml);
-            }
             // Only include the items that match the filter expression.
             Stopwatch timer = new Stopwatch();
             timer.Start();

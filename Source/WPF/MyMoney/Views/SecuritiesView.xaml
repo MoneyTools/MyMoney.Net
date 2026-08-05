@@ -78,7 +78,7 @@
     <!-- Pattern -->
     <DataTemplate x:Key="myTemplateName">
       <!-- the border makes the whole column hittable -->
-      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0" MinHeight="20">
         <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
       </Border>
     </DataTemplate>
@@ -318,13 +318,13 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="{x:Type ToggleButton}">
-            <Grid SnapsToDevicePixels="True">
+            <Grid SnapsToDevicePixels="True" Background="Transparent">
 
-              <Path   Name="ThePath" Stroke="#A6A6A6" Fill="Transparent"
-                      Data="M0,0 L4,4 0,8z" StrokeThickness="1"
+              <Path   Name="ThePath" Stroke="#A6A6A6"  
+                      Data="M0,0 L5,5 0,10z" StrokeThickness="1"
                       StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round">
                 <Path.RenderTransform>
-                  <RotateTransform x:Name="ThePathRotation" CenterX="0" CenterY="8" Angle="0"/>
+                  <RotateTransform x:Name="ThePathRotation" CenterX="5" CenterY="5" Angle="0"/>
                 </Path.RenderTransform>
               </Path>
 
@@ -332,15 +332,6 @@
             </Grid>
             <ControlTemplate.Triggers>
               <Trigger Property="IsFocused" Value="True"/>
-              <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
-                <Setter Property="Stroke" Value="#1CC4F7" TargetName="ThePath"/>
-                <Setter Property="Effect" TargetName="ThePath" >
-                  <Setter.Value>
-                    <DropShadowEffect ShadowDepth="1" />
-                  </Setter.Value>
-                </Setter>
-              </Trigger>
               <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Fill" Value="#595959" TargetName="ThePath"/>
                 <Setter Property="Stroke" Value="#262626" TargetName="ThePath"/>
@@ -350,11 +341,19 @@
                 <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
               </Trigger>
               <Trigger Property="IsEnabled" Value="False"/>
-
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
+                <Setter Property="Stroke" Value="#1CC4F7" TargetName="ThePath"/>
+                <Setter Property="Effect" TargetName="ThePath" >
+                  <Setter.Value>
+                    <DropShadowEffect ShadowDepth="1" />
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
               <EventTrigger RoutedEvent="Checked">
                 <BeginStoryboard>
                   <Storyboard >
-                    <DoubleAnimation Duration="0:0:0.2" To="45" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
+                    <DoubleAnimation Duration="0:0:0.2" To="90" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
                   </Storyboard>
                 </BeginStoryboard>
               </EventTrigger>
@@ -376,8 +375,8 @@
 
     <DataTemplate x:Key="myTemplateSplitButton">
 
-      <ToggleButton Width="12" Height="10" Style="{StaticResource StockSplitButtonStyle}" Tag="{Binding .}"
-              PreviewMouseLeftButtonDown="OnButtonSplitClicked" VerticalAlignment="Top" Margin="2"
+      <ToggleButton Width="12" Height="12" Style="{StaticResource StockSplitButtonStyle}" Tag="{Binding .}" 
+              PreviewMouseLeftButtonDown="OnButtonSplitClicked" VerticalAlignment="Top" Margin="3"
                     IsChecked="{Binding Path=IsExpanded, Mode=TwoWay}"/>
 
     </DataTemplate>
@@ -480,6 +479,7 @@
     <CommandBinding Command="views:SecuritiesView.CommandToggleAllSplits" Executed="OnCommandToggleAllSplits" CanExecute="CanExecute_ToggleAllSplits"/>
     <CommandBinding Command="views:SecuritiesView.CommandShowRelatedTransactions" Executed="OnShowRelatedTransactions" CanExecute="CanExecute_ShowRelatedTransactions" />
     <CommandBinding Command="views:SecuritiesView.CommandUpdateHistory" Executed="OnUpdateHistory" CanExecute="CanExecute_UpdateHistory" />
+    <CommandBinding Command="views:SecuritiesView.CommandUpdateStockSplits" Executed="OnUpdateAllStockSplits" CanExecute="CanExecute_UpdateStockSplits" />
   </UserControl.CommandBindings>
   <UserControl.InputBindings>
     <KeyBinding Command="views:SecuritiesView.CommandToggleAllSplits" Key="T" Modifiers="Alt"/>
@@ -492,7 +492,8 @@
 
       <MenuItem x:Name="MenuItemToggleSplitViews" Header="_Show All Splits" Command="views:SecuritiesView.CommandToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
       <MenuItem x:Name="MenuItemGotoRelated" Header="Show _Related Transactions" Command="views:SecuritiesView.CommandShowRelatedTransactions" InputGestureText="F12"/>
-      <MenuItem x:Name="MenuitemUpdateHistory" Header="_Update History" Command="views:SecuritiesView.CommandUpdateHistory" InputGestureText="F5"/>
+      <MenuItem x:Name="MenuitemUpdateHistory" Header="_Download Quote History" Command="views:SecuritiesView.CommandUpdateHistory" InputGestureText="F5"/>
+      <MenuItem x:Name="MenuitemUpdateStockSplits" Header="_Download All Stock Splits" Command="views:SecuritiesView.CommandUpdateStockSplits" />
     </ContextMenu>
   </UserControl.ContextMenu>
 

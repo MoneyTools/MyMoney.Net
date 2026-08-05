@@ -24,17 +24,23 @@ namespace Walkabout.Reports
         private RetirementControl panel;
         private decimal investmentRateOfReturn = 0.05M;
         private decimal inflationRate = 0.04M;
-        private bool DoRothConverstion = false;
         private string normalizedCurrency;
         private DateTime reportDate;
         private decimal desiredAnnualIncome = 200000;
         private int currentAge = 60;
-        private int graduationAge = 95;        
+        private int retirementAge = 65;
+        private int graduationAge = 95;
+        private int taxDeferredStrategyYears = 5;
+        private string taxDeferredStrategy = TaxDeferredStrategyNone;
         private StockQuoteCache cache;
+
+        public static string TaxDeferredStrategyNone = "None";
+        public static string TaxDeferredStrategyRoth = "Roth Conversion";
+
 
         public RetirementPlanReport(FlowDocumentView view)
         {
-            this.view = view;
+            this.view = view;            
         }
 
         protected override void Dispose(bool disposing)
@@ -50,7 +56,11 @@ namespace Walkabout.Reports
             this.panel.DesiredIncomeChanged += this.OnDesiredIncomeChanged;
             this.panel.GraduationAgeChanged += this.OnGraduationAgeChanged;
             this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
+            this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
+            this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
+            this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
         }
+
 
         private void UnRegister()
         {
@@ -61,6 +71,9 @@ namespace Walkabout.Reports
                 this.panel.DesiredIncomeChanged -= this.OnDesiredIncomeChanged;
                 this.panel.GraduationAgeChanged -= this.OnGraduationAgeChanged;
                 this.panel.CurrentAgeChanged -= this.OnCurrentAgeChanged;
+                this.panel.RetirementAgeChanged -= this.OnRetirementAgeChanged;
+                this.panel.TaxDeferredStrategyChanged -= this.OnTaxDeferredStrategyChanged;
+                this.panel.TaxDeferredStrategyYearsChanged -= this.OnTaxDeferredStrategyYearsChanged;
             }
         }
 
@@ -92,6 +105,21 @@ namespace Walkabout.Reports
             this.currentAge = e;
             this.Regenerate();
         }
+        private void OnRetirementAgeChanged(object sender, int e)
+        {
+            this.retirementAge = e;
+            this.Regenerate();
+        }
+        private void OnTaxDeferredStrategyChanged(object sender, string e)
+        {
+            this.taxDeferredStrategy = e;
+            this.Regenerate();
+        }
+        private void OnTaxDeferredStrategyYearsChanged(object sender, int e)
+        {
+            this.taxDeferredStrategyYears = e;
+            this.Regenerate();
+        }
 
 
         public override void OnSiteChanged()
@@ -104,16 +132,32 @@ namespace Walkabout.Reports
             this.UnRegister();
             this.panel = panel;
 
-            this.panel = panel;
+            bool hasTaxDeferredAccounts = this.MyMoney.Accounts.GetAccounts(true).Any(t => t.IsTaxDeferred);
+            if (hasTaxDeferredAccounts)
+            {
+                var box = panel.ShowTaxDeferredRow();
+                box.Items.Clear();
+                box.Items.Add(TaxDeferredStrategyNone);
+                box.Items.Add(TaxDeferredStrategyRoth);
+                box.SelectedItem = this.taxDeferredStrategy;
+            }
+
             this.reportDate = DateTime.Today;
             this.panel.RateOfReturn = this.investmentRateOfReturn;
             this.panel.InflationRate = this.inflationRate;
             this.panel.DesiredIncome = this.desiredAnnualIncome;
             this.panel.GraduationAge = this.graduationAge;
             this.panel.CurrentAge = this.currentAge;
+            this.panel.RetirementAge = this.retirementAge;
+            this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
+            this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
             this.UnRegister();
             this.Register();
         }
+
+        private static string ChartValueTaxable = "Taxable";
+        private static string ChartValueTaxDeferred = "Tax Deferred";
+        private static string ChartValueTaxFree = "Tax Free";
 
         public override async Task Generate(IReportWriter writer)
         {
@@ -133,8 +177,8 @@ namespace Walkabout.Reports
             Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
             var cashBalance = this.myMoney.GetCashBalanceNormalized(date, notLoans);
             decimal loanBalance = this.GetTotalLoansBalance(date);
-            decimal portfolio = await this.CalculatePortfolioBalance(date);
-            var networth = this.GetNormalizedAmount(cashBalance + loanBalance + portfolio);
+            var funds = await this.CalculatePortfolioBalance(date);
+            
             decimal futureIncome = this.desiredAnnualIncome;
 
             //writer.StartTable();
@@ -155,11 +199,21 @@ namespace Walkabout.Reports
             //writer.EndCell();
             //writer.EndHeaderRow();
 
-            var color = Colors.Green;
+            var taxableColor = Colors.Green;
+            var taxFreeColor = Colors.LightGreen;
+            var taxDeferredColor = Colors.SeaGreen;
             var incomeColor = Colors.Goldenrod;
+            var taxColor = Colors.Salmon;
 
-            var networthSeries = new ChartDataSeries() { Name = "Networth" };
+            var taxDeferredSeries = new ChartDataSeries() { Name = "Tax Deferred" };
+            var taxableSeries = new ChartDataSeries() { Name = "Taxable" };
+            var taxFreeSeries = new ChartDataSeries() { Name = "Tax Free" };
             var incomeSeries = new ChartDataSeries() { Name = "Income" };
+            var taxesSeries = new ChartDataSeries() { Name = "Taxes" };
+
+            decimal totalTaxes = 0;
+            decimal conversionAmount = 0;
+
 
             for (int age = this.currentAge; age <= this.graduationAge; age++)
             {
@@ -174,19 +228,93 @@ namespace Walkabout.Reports
                 //writer.WriteNumber(futureIncome.ToString("C"));
                 //writer.EndCell();
                 //writer.EndRow();
+                if (age == this.retirementAge)
+                {
+                    if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
+                    {
+                        if (this.taxDeferredStrategyYears < 1)
+                        {
+                            this.taxDeferredStrategyYears = 1;
+                        }
+                   
+                        conversionAmount = funds.TaxDeferred / this.taxDeferredStrategyYears;
+                    }
+                }
 
-                networthSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)networth, Color = color });
-                incomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)futureIncome, Color = incomeColor });
+                if (age >= this.retirementAge)
+                {
+                    decimal income = 0;
+                    decimal taxes = 0;
 
-                networth = networth * (1 + this.investmentRateOfReturn) - futureIncome;
+                    if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
+                    {
+                        taxes += funds.ConvertToRoth(conversionAmount);
+                    }
+
+                    taxableSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable});
+                    taxFreeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxFree, Color = taxFreeColor, UserData = ChartValueTaxFree });
+                    taxDeferredSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxDeferred, Color = taxDeferredColor, UserData = ChartValueTaxDeferred });
+                    incomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)futureIncome, Color = incomeColor });
+
+                    // Now figure out where to draw the income from and how to pay taxes on it.
+                    if (funds.TaxDeferred > 0 && age >= 75)
+                    {
+                        // must take RMD distribution.
+                        income = funds.GetMinimumDistribution(age);
+                        funds.TaxDeferred -= income;
+
+                        // Now to pay to taxes on this we need to take out more.                        
+                        taxes += funds.PayIncomeTaxRecursively(income);
+                    }
+                    if (income < futureIncome && funds.Taxable > 0)
+                    {
+                        // we need more from taxable or taxfree accounts.
+                        var amount = futureIncome - income;
+                        if (amount > funds.Taxable)
+                        {
+                            amount = funds.Taxable;
+                        }
+                        income += amount;
+                        funds.Taxable -= amount;
+                        taxes += funds.PayCapitalGainsTaxRecursively(futureIncome, amount);
+                    }
+                    if (income < futureIncome && funds.TaxFree > 0)
+                    {
+                        // draw down taxfree last to maximize taxfree inheritance.
+                        var amount = futureIncome - income;
+                        if (amount > funds.TaxFree) 
+                        {
+                            amount = funds.TaxFree;
+                        }
+                        funds.TaxFree -= amount;
+                    }
+
+                    totalTaxes += taxes;
+                    taxesSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
+                }
+
+                funds.Appreciate(this.investmentRateOfReturn);
                 futureIncome = futureIncome * (1 + this.inflationRate);
             }
 
             //writer.EndTable();
 
+            var totalAssets = funds.Taxable + funds.TaxDeferred + funds.TaxFree;
+            writer.WriteParagraph($"Assets remaining at age : {this.graduationAge} = { totalAssets.ToString("C0")}");
+            writer.WriteParagraph($"Taxable assets = {funds.Taxable.ToString("C0")}");
+
+            if (funds.TaxDeferred > 0)
+            {
+                writer.WriteParagraph($"Tax deferred assets = {funds.TaxDeferred.ToString("C0")}");
+            }
+            if (funds.TaxFree > 0)
+            {
+                writer.WriteParagraph($"Tax free assets = {funds.TaxFree.ToString("C0")}");
+            }
+            writer.WriteParagraph($"Total taxes paid during retirement = {totalTaxes.ToString("C0")}");
+
             // insert networth graph
             writer.WriteHeading("Networth");
-
 
             AnimatingBarChart networthChart = new AnimatingBarChart();
             networthChart.Width = 1280;
@@ -199,7 +327,9 @@ namespace Walkabout.Reports
             networthChart.ToolTipGenerator = this.OnGenerateToolTip;
 
             ChartData chartData = new ChartData();
-            chartData.AddSeries(networthSeries);
+            chartData.AddSeries(taxableSeries);
+            chartData.AddSeries(taxFreeSeries);
+            chartData.AddSeries(taxDeferredSeries);
             networthChart.Data = chartData;
             writer.WriteElement(networthChart);
 
@@ -220,36 +350,321 @@ namespace Walkabout.Reports
             incomeChart.Data = chartData;
 
             writer.WriteElement(incomeChart);
+
+            writer.WriteHeading("Taxes paid to get this income");
+            AnimatingBarChart taxesChart = new AnimatingBarChart();
+            taxesChart.Width = 1280;
+            taxesChart.Height = 400;
+            taxesChart.HorizontalContentAlignment = HorizontalAlignment.Left;
+            taxesChart.Padding = new Thickness(20, 0, 100, 0);
+            taxesChart.BorderThickness = new Thickness(0);
+            taxesChart.VerticalAlignment = VerticalAlignment.Top;
+            taxesChart.HorizontalAlignment = HorizontalAlignment.Left;
+            taxesChart.HorizontalAlignment = HorizontalAlignment.Left;
+            taxesChart.ToolTipGenerator = this.OnGenerateToolTip;
+
+            chartData = new ChartData();
+            chartData.AddSeries(taxesSeries);
+            taxesChart.Data = chartData;
+
+            writer.WriteElement(taxesChart);
         }
 
         private UIElement OnGenerateToolTip(ChartDataValue value)
         {
             var tip = new StackPanel() { Orientation = Orientation.Vertical };
             var age = value.Label;
+            var prefix = value.UserData as String;            
+            if (!string.IsNullOrEmpty(prefix))
+            {
+                prefix += " ";
+            }
             tip.Children.Add(new TextBlock() { Text = "Age: " + age, FontWeight = FontWeights.Bold });
-            tip.Children.Add(new TextBlock() { Text = "Amount: " + value.Value.ToString("C0") });
+            tip.Children.Add(new TextBlock() { Text = prefix + "Amount: " + value.Value.ToString("C0") });
             return tip;
         }
 
-        internal async Task<decimal> CalculatePortfolioBalance(DateTime date)
+        internal class RetirementFunds
+        {
+            public decimal Taxable;
+            public decimal TaxDeferred;
+            public decimal TaxFree;
+            public decimal CostBasisRatio;
+
+            internal void Appreciate(decimal investmentRateOfReturn)
+            {
+                this.Taxable = this.Taxable * (1 + investmentRateOfReturn);
+                this.TaxDeferred = this.TaxDeferred * (1 + investmentRateOfReturn);
+                this.TaxFree = this.TaxFree * (1 + investmentRateOfReturn);
+            }
+
+            // Pseudocode:
+            // - Define standard deduction.
+            // - Define tax brackets as (rate, threshold) ordered from highest threshold to lowest.
+            // - Subtract standard deduction from income.
+            // - If remaining income <= 0 return 0.
+            // - For each bracket: if income > bracket.threshold, tax += (income - bracket.threshold) * rate; income = bracket.threshold.
+            // - Return tax.
+            internal decimal GetIncomeTax(decimal paycheck)
+            {
+                const decimal standardDeduction = 32200M;
+
+                // Brackets for Married Filing Jointly (thresholds are upper bounds for lower brackets)
+                // Ordered from highest threshold to lowest.
+                (decimal Rate, decimal Threshold)[] brackets = new (decimal, decimal)[]
+                {
+                (0.37M, 768700M),
+                (0.35M, 512450M),
+                (0.32M, 403550M),
+                (0.24M, 211400M),
+                (0.22M, 100800M),
+                (0.12M, 24800M),
+                (0.00M, 0M) // floor
+                };
+
+                decimal income = paycheck - standardDeduction;
+                if (income <= 0M)
+                {
+                    return 0M;
+                }
+
+                decimal tax = 0M;
+                foreach (var bracket in brackets)
+                {
+                    if (income > bracket.Threshold)
+                    {
+                        decimal taxableAtThisRate = income - bracket.Threshold;
+                        tax += taxableAtThisRate * bracket.Rate;
+                        income = bracket.Threshold;
+                    }
+                }
+
+                return tax;
+            }
+
+            // See https://www.finsyn.com/wp-content/uploads/2026/04/Required-Minimum-Distributions-Tables-Summary-Guide.pdf
+            // Here we start at 75 since that is the age at which RMD must start (of born after 1960).
+            static decimal[] RmdTable = new decimal[]
+            {
+                24.6M,
+                23.7M,
+                22.9M,
+                22.0M,
+                21.1M,
+                20.2M,
+                19.4M,
+                18.5M,
+                17.7M,
+                16.8M,
+                16.0M,
+                15.2M,
+                14.4M,
+                13.7M,
+                12.9M,
+                12.2M,
+                11.5M,
+                10.8M,
+                10.1M,
+                9.5M,
+                8.9M,
+                8.4M,
+                7.8M,
+                7.3M,
+                6.8M,
+                6.4M,
+                6.0M,
+                5.6M,
+                5.2M,
+                4.9M,
+            };
+
+            internal decimal GetRMDFactor(int age)
+            {
+                if (age > 75)
+                {
+                    int index = age - 75;
+                    if (index < RmdTable.Length)
+                    {
+                        return RmdTable[index];
+                    }
+                    return 4.9M;
+                }
+                return 0;
+            }
+
+            internal decimal GetMinimumDistribution(int age)
+            {
+                var factor = this.GetRMDFactor(age);
+                if (factor == 0)
+                {
+                    return 0;
+                }
+                return this.TaxDeferred / factor;
+            }
+
+            internal decimal PayIncomeTaxRecursively(decimal income)
+            {
+                decimal capitalGainsTax = 0;
+                decimal incomeTax = this.GetIncomeTax(income);
+                decimal totalTax = incomeTax;
+                while (incomeTax > 0)
+                {
+                    if (this.TaxDeferred > 0)
+                    {
+                        // Sell this much to pay the incomeTax (which generates new income tax)
+                        var amount = incomeTax;
+                        if (incomeTax > this.TaxDeferred)
+                        {
+                            amount = this.TaxDeferred;
+                        }
+                        this.TaxDeferred -= amount;
+                        incomeTax -= amount;
+                        var ic = this.GetIncomeTax(amount);
+                        totalTax += ic;
+                        incomeTax += ic;
+                    }
+                    else if (this.Taxable > 0)
+                    {
+                        // Sell this much to pay the incomeTax (which generates capital gains tax)
+                        var amount = incomeTax;
+                        if (incomeTax > this.Taxable)
+                        {
+                            amount = this.Taxable;
+                        }
+                        this.Taxable -= amount;
+                        incomeTax -= amount;
+                        var capTax = this.GetCapitalGainsTax(income, amount);
+                        capitalGainsTax += capTax;
+                        totalTax += capTax;
+                    }
+                    else if (this.TaxFree > 0)
+                    {
+                        var amount = incomeTax;
+                        if (incomeTax > this.TaxFree)
+                        {
+                            amount = this.TaxFree;
+                        }
+                        this.TaxFree -= amount;
+                        incomeTax -= amount;
+                        // no tax consequence.
+                    }
+                    else
+                    {
+                        // crap we cannot pay out taxes!
+                        break;
+                    }
+                }
+                if (capitalGainsTax > 0)
+                {
+                    totalTax += this.PayCapitalGainsTaxRecursively(income, capitalGainsTax);
+                }
+                return totalTax;
+            }
+
+            internal decimal PayCapitalGainsTaxRecursively(decimal income, decimal capitalGains)
+            {
+                decimal capitalGainsTax = this.GetCapitalGainsTax(income, capitalGains);
+                decimal totalTax = capitalGainsTax;
+                while (capitalGainsTax > 0)
+                {
+                    if (this.Taxable > 0.01M)
+                    {
+                        // Sell this much to pay the incomeTax (which generates capital gains tax)
+                        var amount = capitalGainsTax;
+                        if (capitalGainsTax > this.Taxable)
+                        {
+                            amount = this.Taxable;
+                        }
+                        this.Taxable -= amount;
+                        capitalGainsTax -= amount;
+                        var capTax = this.GetCapitalGainsTax(income, amount);
+                        capitalGainsTax += capTax;
+                        totalTax += capTax;
+                    }
+                    else if (this.TaxFree > 0)
+                    {
+                        var amount = capitalGainsTax;
+                        if (capitalGainsTax > this.TaxFree)
+                        {
+                            amount = this.TaxFree;
+                        }
+                        this.TaxFree -= amount;
+                        capitalGainsTax -= amount;
+                        // no tax consequence.
+                    }
+                    else
+                    {
+                        // crap we cannot pay our taxes!
+                        break;
+                    }
+                }
+                return totalTax;
+            }
+
+            private decimal GetCapitalGainsTax(decimal income, decimal amount)
+            {
+                var capGains = amount * (1 - CostBasisRatio);
+                if (income > 613700)
+                {
+                    return capGains * 0.20M;
+                }
+                else if (income > 98900)
+                {
+                    return capGains * 0.15M;
+                }
+                return 0;
+            }
+
+            internal decimal ConvertToRoth(decimal amountToConvert)
+            {
+                decimal tax = 0;
+                if (this.TaxDeferred > 0)
+                {
+                    var amount = amountToConvert;
+                    if (amount > this.TaxDeferred)
+                    {
+                        amount = this.TaxDeferred;
+                    }
+                    this.TaxDeferred -= amount;
+                    this.TaxFree += amount;
+                    tax = this.PayIncomeTaxRecursively(amount);
+                }
+                return tax;
+            }
+        }
+
+        internal async Task<RetirementFunds> CalculatePortfolioBalance(DateTime date)
         {
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
-            decimal total = 0;
+            var funds = new RetirementFunds();
+            decimal totalCostBasis = 0;
             foreach (var accountHolding in calc.GetAccountHoldings())
             {
-                var pending = accountHolding.GetPendingSales().Count();
-                if (pending > 0)
-                {
-                    // todo: how to handle pending sales that have not cleared by the given date?
-                    Debug.WriteLine($"Found {pending} pending sales for {accountHolding.Account.Name} on {date.ToShortDateString()}");
-                }
                 foreach (var holding in accountHolding.GetHoldings())
                 {
                     var price = await this.cache.GetSecurityMarketPrice(date, holding.Security);
-                    total += holding.FuturesFactor * holding.UnitsRemaining * price;
+                    if (accountHolding.Account.IsTaxDeferred)
+                    {
+                        funds.TaxDeferred += this.GetNormalizedAmount(holding.FuturesFactor * holding.UnitsRemaining * price);
+                    }
+                    else if (accountHolding.Account.IsTaxFree)
+                    {
+                        funds.TaxFree += this.GetNormalizedAmount(holding.FuturesFactor * holding.UnitsRemaining * price);
+                    }
+                    else
+                    {
+                        funds.Taxable += this.GetNormalizedAmount(holding.FuturesFactor * holding.UnitsRemaining * price);
+                        totalCostBasis += this.GetNormalizedAmount(holding.TotalCostBasis);
+                    }
                 }
             }
-            return this.GetNormalizedAmount(total);
+
+            if (totalCostBasis > 0 && funds.Taxable > 0)
+            {
+                funds.CostBasisRatio = totalCostBasis / funds.Taxable;
+            }
+
+            return funds;
         }
 
         private decimal GetTotalLoansBalance(DateTime date)
@@ -275,6 +690,13 @@ namespace Walkabout.Reports
             {
                 this.reportDate = s.ReportDate;
                 this.normalizedCurrency = s.NormalizedCurrency;
+                this.investmentRateOfReturn = s.InvestmentRateOfReturn;
+                this.desiredAnnualIncome = s.DesiredAnnualIncome;
+                this.currentAge = s.CurrentAge;
+                this.graduationAge = s.GraduationAge;
+                this.retirementAge = s.RetirementAge;
+                this.taxDeferredStrategy = s.TaxDeferredStrategy;
+
                 if (this.panel != null)
                 {
                     this.UnRegister();
@@ -283,6 +705,9 @@ namespace Walkabout.Reports
                     this.panel.DesiredIncome = this.desiredAnnualIncome;
                     this.panel.CurrentAge = this.currentAge;
                     this.panel.GraduationAge = this.graduationAge;
+                    this.panel.RetirementAge = this.retirementAge;
+                    this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
+                    this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
                     this.Register();
                 }
             }
@@ -296,10 +721,12 @@ namespace Walkabout.Reports
                 NormalizedCurrency = this.normalizedCurrency,
                 InvestmentRateOfReturn = this.investmentRateOfReturn,
                 InflationRate = this.inflationRate,
-                DoRothConverstion = this.DoRothConverstion,
                 DesiredAnnualIncome = this.desiredAnnualIncome,
                 CurrentAge = this.currentAge,
-                GraduationAge = this.graduationAge
+                GraduationAge = this.graduationAge,
+                RetirementAge = this.retirementAge,
+                TaxDeferredStrategy = this.taxDeferredStrategy,
+                TaxDeferredStrategyYears = this.taxDeferredStrategyYears
             };
         }
 
@@ -310,10 +737,12 @@ namespace Walkabout.Reports
 
             public decimal InvestmentRateOfReturn { get; set; }
             public decimal InflationRate { get; set; }
-            public bool DoRothConverstion { get; set; }
             public decimal DesiredAnnualIncome { get; set; }
             public int CurrentAge { get; set; }
+            public int RetirementAge { get; set; }
             public int GraduationAge { get; set; }
+            public string TaxDeferredStrategy { get; set; }
+            public int TaxDeferredStrategyYears { get; set; }
 
 
             public string Name => "RetirementPlan";

@@ -97,7 +97,7 @@ namespace Walkabout.Reports
         public DateTime ReportDate
         {
             get => reportDate;
-            set { reportDate = value; this.panel.ReportDate = value; } 
+            set { reportDate = value;  } 
         }
 
         public override void OnSiteChanged()
@@ -222,6 +222,7 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
+            Debug.WriteLine("PortfolioReport::Generate");
             this.generating = true;
             try
             {

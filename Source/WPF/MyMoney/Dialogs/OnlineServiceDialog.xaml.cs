@@ -85,6 +85,7 @@ namespace Walkabout.Dialogs
                     if (c.Name == item.Name || c.OldName == item.Name || c.Name == item.OldName)
                     {
                         c.Name = item.Name; // in case it was renamed.
+                        c.Address = item.Address;
                         current.Add(c);
                         found = true;
                         break;

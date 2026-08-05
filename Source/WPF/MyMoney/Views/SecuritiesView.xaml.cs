@@ -28,6 +28,8 @@ namespace Walkabout.Views
         public static readonly RoutedUICommand CommandToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "CommandToggleAllSplits", typeof(SecuritiesView));
         public static readonly RoutedUICommand CommandShowRelatedTransactions = new RoutedUICommand("Show Related Transactions", "CommandShowRelatedTransactions", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandUpdateHistory = new RoutedUICommand("Update History", "CommandUpdateHistory", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandUpdateStockSplits = new RoutedUICommand("Update Stock Splits", "CommandUpdateStockSplits", typeof(TransactionsView));
+
         private ListCollectionView _allSymbols;
         private DelayedActions actions = new DelayedActions();
 
@@ -251,6 +253,12 @@ namespace Walkabout.Views
         private void OnDataGridCommit(object sender, DataGridRowEditEndingEventArgs e)
         {
             this.IsEditing = false;
+            Security updated = this.pending;
+            this.pending = null;
+            if (updated != null)
+            {
+                this.BeginUpdateHistory(updated);
+            }
         }
 
         private void OnDataGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -282,15 +290,6 @@ namespace Walkabout.Views
             {
                 throw new Exception("Symbol '" + newSymbol + "' should not contain any spaces.");
             }
-
-            //foreach (Security s in this.money.Securities.AllSecurities)
-            //{
-            //    if (!s.IsDeleted && s != edited && !string.IsNullOrEmpty(s.Symbol) &&
-            //        string.Compare(s.Symbol, newSymbol, StringComparison.OrdinalIgnoreCase) == 0)
-            //    {
-            //        throw new Exception("Symbol '" + newSymbol + "' is already being used elsewhere");
-            //    }
-            //}
         }
 
         public static readonly DependencyProperty ViewAllSplitsProperty = DependencyProperty.Register("ViewAllSplits", typeof(bool), typeof(SecuritiesView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnViewAllSplitsChanged)));
@@ -439,6 +438,7 @@ namespace Walkabout.Views
         }
 
         public ListCollectionView AllSymbols => this._allSymbols;
+        private Security pending = null;
 
         private void ComboBoxForSymbol_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -455,6 +455,9 @@ namespace Walkabout.Views
                     {
                         // then we need to add the Symbol to the list.
                         t.Symbol = text;
+                        // Remember this one so that when the row is committed and we have the "name"
+                        // go fetch the stock quotes since this might be a new one.
+                        pending = t; 
                     }
                 }
             }
@@ -612,6 +615,11 @@ namespace Walkabout.Views
                         {
                             this.SecuritiesDataGrid.SelectedItem = s;
                             this.SecuritiesDataGrid.ScrollIntoView(s);
+                            if (!this.ViewAllSplits)
+                            {
+                                // make sure it's in the right state!
+                                this.SecuritiesDataGrid.RowDetailsVisibilityMode = s.IsExpanded ? DataGridRowDetailsVisibilityMode.VisibleWhenSelected : DataGridRowDetailsVisibilityMode.Collapsed;
+                            }
                         }
                     }
                     if (svs.SortedColumn != -1 && svs.SortedColumn < this.SecuritiesDataGrid.Columns.Count && svs.SortDirection.HasValue)
@@ -782,6 +790,11 @@ namespace Walkabout.Views
         private void OnUpdateHistory(object sender, ExecutedRoutedEventArgs e)
         {
             Security t = this.lastSelectedItem as Security;
+            this.BeginUpdateHistory(t);
+        }
+
+        private void BeginUpdateHistory(Security t)
+        { 
             if (t != null && !string.IsNullOrEmpty(t.Symbol))
             {
                 StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
@@ -824,6 +837,31 @@ namespace Walkabout.Views
             _allSymbols = new ListCollectionView(copy);
         }
 
+        private void OnUpdateAllStockSplits(object sender, ExecutedRoutedEventArgs e)
+        {
+            var fromDate = new DateTime(1985, 1, 1);
+            StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
+            if (service != null)
+            {
+                foreach (var s in this.money.Securities.GetSecurities())
+                {
+                    if (!string.IsNullOrEmpty(s.Symbol) && s.SecurityType == SecurityType.Equity)
+                    {
+                        service.BeginUpdateStockSplits(s, fromDate);
+                    }
+                }
+            }
+        }
+
+        private void CanExecute_UpdateStockSplits(object sender, CanExecuteRoutedEventArgs e)
+        {
+            Security t = this.lastSelectedItem as Security;
+            if (t != null)
+            {
+                e.CanExecute = !string.IsNullOrEmpty(t.Symbol);
+            }
+            e.Handled = true;
+        }
     }
 
     public class SecuritiesViewState : ViewState

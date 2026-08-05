@@ -12,10 +12,10 @@
 
 
     <UserControl.CommandBindings>
-        <CommandBinding Command="local:SecuritiesControl.CommandDeletePayee" CanExecute="OnCanDeleteCommand" Executed="OnExecuteDelete" />
+    <CommandBinding Command="local:SecuritiesControl.CommandDeleteSecurity" CanExecute="OnCanDeleteCommand" Executed="OnExecuteDelete" />
     </UserControl.CommandBindings>
     <UserControl.InputBindings>
-        <KeyBinding Command="local:SecuritiesControl.CommandDeletePayee" Key="Delete"/>
+    <KeyBinding Command="local:SecuritiesControl.CommandDeleteSecurity" Key="Delete"/>
     </UserControl.InputBindings>
     <UserControl.Resources>
         
@@ -75,7 +75,7 @@
         <ListBox.ContextMenu>
             <ContextMenu Name="cm">
                 <!--<MenuItem Header="_Rename" Click="OnMenuItem_Rename" />-->
-                <MenuItem Header="_Delete" Command="local:SecuritiesControl.CommandDeletePayee" InputGestureText="Del"/>
+                <MenuItem Header="_Delete" Command="local:SecuritiesControl.CommandDeleteSecurity" InputGestureText="Del"/>
             </ContextMenu>
         </ListBox.ContextMenu>
     </ListBox>

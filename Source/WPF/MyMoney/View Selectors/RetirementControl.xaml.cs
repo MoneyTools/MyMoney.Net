@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Walkabout.Reports;
 
 namespace Walkabout.Views.Controls
 {
@@ -21,6 +22,7 @@ namespace Walkabout.Views.Controls
         public RetirementControl()
         {
             InitializeComponent();
+            TaxDeferredRow.Visibility = Visibility.Collapsed;
         }
 
         public decimal InflationRate
@@ -125,6 +127,78 @@ namespace Walkabout.Views.Controls
             if (CurrentAgeChanged != null)
             {
                 CurrentAgeChanged(this, this.CurrentAge);
+            }
+        }
+
+        public int RetirementAge
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.RetirementAgeText.Text, out result);
+                return result;
+            }
+            set { this.RetirementAgeText.Text = value.ToString(); }
+        }
+
+        public event EventHandler<int> RetirementAgeChanged;
+
+        private void OnRetirementAgeChanged(object sender, string e)
+        {
+            if (RetirementAgeChanged != null)
+            {
+                RetirementAgeChanged(this, this.RetirementAge);
+            }
+        }
+
+        public ComboBox ShowTaxDeferredRow()
+        {
+            TaxDeferredRow.Visibility = Visibility.Visible;
+            return this.TaxDeferredStrategyCombo;
+        }
+
+        public string TaxDeferredStrategy
+        {
+            get
+            {
+                return this.TaxDeferredStrategyCombo.SelectedItem as string;
+            }
+            set
+            {
+                this.TaxDeferredStrategyCombo.SelectedItem = value;
+            }
+        }
+
+        public event EventHandler<string> TaxDeferredStrategyChanged;
+
+        private void OnTaxDeferredStrategyChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TaxDeferredStrategyChanged != null)
+            {
+                TaxDeferredStrategyChanged(this, this.TaxDeferredStrategy);
+            }
+        }
+
+        public int TaxDeferredStrategyYears
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.TaxDeferredStrategyYearsText.Text, out result);
+                return result;
+            }
+            set { this.TaxDeferredStrategyYearsText.Text = value.ToString(); }
+        }
+
+
+        public event EventHandler<int> TaxDeferredStrategyYearsChanged;
+
+
+        private void OnTaxDeferredStrategyYearsChanged(object sender, string e)
+        {
+            if (TaxDeferredStrategyYearsChanged != null)
+            {
+                TaxDeferredStrategyYearsChanged(this, this.TaxDeferredStrategyYears);
             }
         }
     }

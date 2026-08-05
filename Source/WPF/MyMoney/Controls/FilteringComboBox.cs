@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -75,6 +76,8 @@ namespace Walkabout.Controls
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
+            var selection = e.AddedItems.Count > 0 ? e.AddedItems[0] : "null";
+            Debug.WriteLine($"FilteringComboBox selection is {selection}");
             base.OnSelectionChanged(e);
         }
 
