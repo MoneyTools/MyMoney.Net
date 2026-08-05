@@ -51,11 +51,11 @@ namespace Walkabout.PerformanceProvider
                     var cache = Interlocked.CompareExchange(ref this.cache, null, null);
                     if (cache != null)
                     {
-                        foreach (var m in this.cache)
+                        foreach (var m in cache)
                         {
                             await this.client.SendPerformanceAsync(m);
                         }
-                        this.cache.Clear();
+                        cache.Clear();
                     }
                     var response = await this.client.SendPerformanceAsync(message);
                     Debug.WriteLine(response.Message);

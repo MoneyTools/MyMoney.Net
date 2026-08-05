@@ -11,6 +11,8 @@ MyMoney.Net provides various kinds of reports as you can see in the Reports menu
 - [Cash Flow Report](CashFlowReport.md)
 - [Unaccepted Report](UnacceptedReport.md)
 - [Future Bills Report](FutureBillsReport.md)
+- [Account Summary Report](AccountSummaryReport.md)
+- [Retirement Plan Report](RetirementPlanReport.md)
 
 All reports can be exported to HTML using context menu.
 
