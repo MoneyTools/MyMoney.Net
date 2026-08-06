@@ -29,6 +29,8 @@ namespace Walkabout.Reports
         private DateTime reportDate;
         private decimal desiredAnnualIncome = 200000;
         private int currentAge = 60;
+        private int spouseAge = 60;
+        private bool marriedFilingJointly = false;
         private int retirementAge = 65;
         private int graduationAge = 95;
         private string taxDeferredStrategy = TaxDeferredStrategyNone;
@@ -36,6 +38,7 @@ namespace Walkabout.Reports
         private int taxDeferredStrategyAge = 65;
         private decimal socialSecurityAmount = 0;
         private int socialSecurityAge = 67;
+        private int spousalSocialSecurityFullRetirementAge = 67;
         private decimal socialSecurityAdjustment = 0.04M; // for inflation
         private StockQuoteCache cache;
 
@@ -66,6 +69,8 @@ namespace Walkabout.Reports
             this.panel.DesiredIncomeChanged += this.OnDesiredIncomeChanged;
             this.panel.GraduationAgeChanged += this.OnGraduationAgeChanged;
             this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
+            this.panel.SpouseAgeChanged += this.OnSpouseAgeChanged;
+            this.panel.MarriedFilingJointlyChanged += this.OnMarriedFilingJointlyChanged;
             this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
             this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
             this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
@@ -83,6 +88,8 @@ namespace Walkabout.Reports
                 this.panel.DesiredIncomeChanged -= this.OnDesiredIncomeChanged;
                 this.panel.GraduationAgeChanged -= this.OnGraduationAgeChanged;
                 this.panel.CurrentAgeChanged -= this.OnCurrentAgeChanged;
+                this.panel.SpouseAgeChanged -= this.OnSpouseAgeChanged;
+                this.panel.MarriedFilingJointlyChanged -= this.OnMarriedFilingJointlyChanged;
                 this.panel.RetirementAgeChanged -= this.OnRetirementAgeChanged;
                 this.panel.TaxDeferredStrategyChanged -= this.OnTaxDeferredStrategyChanged;
                 this.panel.TaxDeferredStrategyYearsChanged -= this.OnTaxDeferredStrategyYearsChanged;
@@ -115,6 +122,15 @@ namespace Walkabout.Reports
         {
             this.currentAge = e; this.Regenerate();
         }
+        private void OnSpouseAgeChanged(object sender, int e)
+        {
+            this.spouseAge = e; this.Regenerate();
+        }
+        private void OnMarriedFilingJointlyChanged(object sender, bool e)
+        {
+            this.marriedFilingJointly = e; this.Regenerate();
+        }
+
         private void OnRetirementAgeChanged(object sender, int e)
         {
             this.retirementAge = e; this.Regenerate();
@@ -168,6 +184,8 @@ namespace Walkabout.Reports
             this.panel.DesiredIncome = this.desiredAnnualIncome;
             this.panel.GraduationAge = this.graduationAge;
             this.panel.CurrentAge = this.currentAge;
+            this.panel.SpouseAge = this.spouseAge;
+            this.panel.MarriedFilingJointly = this.marriedFilingJointly;
             this.panel.RetirementAge = this.retirementAge;
             this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
             this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
@@ -211,11 +229,12 @@ namespace Walkabout.Reports
             var taxableColor = Colors.Green;
             var taxFreeColor = Colors.LightGreen;
             var taxDeferredColor = Colors.SeaGreen;
+
             var taxableIncomeColor = Color.FromRgb(0xf0, 0x66, 0x00);
             var taxFreeIncomeColor = Color.FromRgb(0xDA, 0x80, 0x21);
             var taxDeferredIncomeColor = Color.FromRgb(0xF4, 0xA9, 0x01);
             var socialSecurityIncomeColor = Colors.Yellow;
-            var grossIncomeColor = Colors.LightYellow;
+            var grossIncomeColor = Color.FromRgb(0xB6, 0x49, 0x00);
 
             var taxColor = Colors.Salmon;
 
@@ -237,6 +256,7 @@ namespace Walkabout.Reports
 
             for (int age = this.currentAge; age <= this.graduationAge; age++)
             {
+                int spouseAge = age + this.spouseAge - this.currentAge;
                 if (age == this.taxDeferredStrategyAge)
                 {
                     if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
@@ -272,10 +292,17 @@ namespace Walkabout.Reports
 
                     if (age >= this.socialSecurityAge)
                     {
-                        socialSecurityIncome = socialSecurity;
-                        baseIncome += socialSecurity;
+                        socialSecurityIncome = socialSecurity * 12;
                         socialSecurity *= (1 + this.socialSecurityAdjustment);
-                        income = socialSecurityIncome;
+                        if (marriedFilingJointly && spouseAge >= this.spousalSocialSecurityFullRetirementAge)
+                        {
+                            // To receive the full spousal benefit of up to 50%, she must wait until her own Full Retirement Age (FRA).
+                            // For someone born in 1960 or later, FRA is 67.
+                            socialSecurityIncome *= 1.5M;
+                        }
+                        baseIncome += socialSecurityIncome;
+                        income += socialSecurityIncome;
+                        // TODO: also have to pay taxes on this, but how much?
                     }
 
                     // Now figure out where to draw the income from and how to pay taxes on it.
@@ -440,6 +467,7 @@ namespace Walkabout.Reports
             public decimal TaxDeferred;
             public decimal TaxFree;
             public decimal CostBasisRatio;
+            public bool MarriedFilingJointly;
 
             internal void Appreciate(decimal investmentRateOfReturn)
             {
@@ -447,6 +475,27 @@ namespace Walkabout.Reports
                 this.TaxDeferred = this.TaxDeferred * (1 + investmentRateOfReturn);
                 this.TaxFree = this.TaxFree * (1 + investmentRateOfReturn);
             }
+
+            private static (decimal Rate, decimal Threshold)[] JointBracket = new (decimal, decimal)[]
+                {
+                    (0.37M, 768700M),
+                    (0.35M, 512450M),
+                    (0.32M, 403550M),
+                    (0.24M, 211400M),
+                    (0.22M, 100800M),
+                    (0.12M, 24800M),
+                    (0.10M, 0M), // floor
+            };
+            private static (decimal Rate, decimal Threshold)[] SingleBrackets = new (decimal, decimal)[]
+                {
+                    (0.37M, 640600M),
+                    (0.35M, 256225M),
+                    (0.32M, 201775M),
+                    (0.24M, 105700M),
+                    (0.22M, 50400M),
+                    (0.12M, 12400M),
+                    (0.10M, 0M),// floor
+            };
 
             /// <summary>
             /// Compute additional income tax to be paid for paycheck over and above what we have 
@@ -460,16 +509,7 @@ namespace Walkabout.Reports
 
                 // Brackets for Married Filing Jointly (thresholds are upper bounds for lower brackets)
                 // Ordered from highest threshold to lowest.
-                (decimal Rate, decimal Threshold)[] brackets = new (decimal, decimal)[]
-                {
-                (0.37M, 768700M),
-                (0.35M, 512450M),
-                (0.32M, 403550M),
-                (0.24M, 211400M),
-                (0.22M, 100800M),
-                (0.12M, 24800M),
-                (0.00M, 0M) // floor
-                };
+                var brackets = this.MarriedFilingJointly ? JointBracket : SingleBrackets;
 
                 decimal income = baseIncome + paycheck - standardDeduction;
                 if (income <= 0M)
@@ -698,6 +738,7 @@ namespace Walkabout.Reports
         {
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
             var funds = new RetirementFunds();
+            funds.MarriedFilingJointly = this.marriedFilingJointly;
             decimal totalCostBasis = 0;
             foreach (var accountHolding in calc.GetAccountHoldings())
             {
@@ -754,6 +795,8 @@ namespace Walkabout.Reports
                 this.investmentRateOfReturn = s.InvestmentRateOfReturn;
                 this.desiredAnnualIncome = s.DesiredAnnualIncome;
                 this.currentAge = s.CurrentAge;
+                this.spouseAge = s.SpouseAge;
+                this.marriedFilingJointly = s.MarriedFilingJointly;
                 this.graduationAge = s.GraduationAge;
                 this.retirementAge = s.RetirementAge;
                 this.taxDeferredStrategy = s.TaxDeferredStrategy;
@@ -769,6 +812,8 @@ namespace Walkabout.Reports
                     this.panel.InflationRate = this.inflationRate;
                     this.panel.DesiredIncome = this.desiredAnnualIncome;
                     this.panel.CurrentAge = this.currentAge;
+                    this.panel.SpouseAge = this.spouseAge;
+                    this.panel.MarriedFilingJointly = this.marriedFilingJointly;
                     this.panel.GraduationAge = this.graduationAge;
                     this.panel.RetirementAge = this.retirementAge;
                     this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
@@ -791,6 +836,8 @@ namespace Walkabout.Reports
                 InflationRate = this.inflationRate,
                 DesiredAnnualIncome = this.desiredAnnualIncome,
                 CurrentAge = this.currentAge,
+                SpouseAge = this.spouseAge,
+                MarriedFilingJointly = this.marriedFilingJointly,
                 GraduationAge = this.graduationAge,
                 RetirementAge = this.retirementAge,
                 TaxDeferredStrategy = this.taxDeferredStrategy,
@@ -810,6 +857,8 @@ namespace Walkabout.Reports
             public decimal InflationRate { get; set; }
             public decimal DesiredAnnualIncome { get; set; }
             public int CurrentAge { get; set; }
+            public int SpouseAge { get; set; }
+            public bool MarriedFilingJointly { get; set; }
             public int RetirementAge { get; set; }
             public int GraduationAge { get; set; }
             public string TaxDeferredStrategy { get; set; }
@@ -820,6 +869,7 @@ namespace Walkabout.Reports
 
 
             public string Name => "RetirementPlan";
+
 
             public RetirementPlanState()
             {

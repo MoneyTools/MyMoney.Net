@@ -19,10 +19,11 @@ Then you will see the following if you started with:
 
 The first part of the report shows a summary of assets remaining at the end date (in this case age 90):
 
-- Assets remaining at age : 90 = $432,179
-= Taxable assets = $0
-- Tax free assets = $432,179
-- Total taxes paid during retirement = $713,858
+- Assets remaining at age : 90 = $8,108,402
+- Taxable assets = $0
+- Tax deferred assets = $415569
+- Tax free assets = $7,692,832
+- Total taxes paid during retirement = $1,496,769
 
 And then it shows some charts, the first one is a chart showing how
 each class of asset grows and/or is drawn down over the years as follows:
@@ -30,7 +31,8 @@ each class of asset grows and/or is drawn down over the years as follows:
 ![retirement networth](../Images/RetirementNetworth.png)
 
 The next chart shows where your retirement income is coming from,
-with different color bars for different types of income:
+with different color bars for different types of income. The tallest
+bar is gross income needed to pay the taxes. The rest add up to the desired income you specified in the settings:
 
 ![retirement income](../Images/RetirementIncome.png)
 
@@ -46,14 +48,15 @@ is paid from your retirement funds (over and above the desired income):
 
 ![retirement taxes](../Images/RetirementTaxes.png)
 
-Here you see the jump in taxes when RMD's kick in then the
-switch over to tax free assets at the end.
+Here you see the jump in taxes when RMD's kick in or when you enter
+a new tax bracket. Retirement planning is often about managing those
+tax brackets.
 
 You can then try different strategies on your tax deferred account
 to see if you can minimize the total tax.  For example, the above
-report has a total tax of $713,858, but if you switch to the
+report has a total tax of $1,496,769, but if you switch to the
 Roth Conversion strategy over 5 years you will see a drop in taxes
-to $520,025 and an increase in the remaining net worth at age 90.
+to $983,872 and an increase in the remaining net worth at age 90.
 
 
 

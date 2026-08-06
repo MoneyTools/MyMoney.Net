@@ -49,7 +49,7 @@ namespace Walkabout.Controls
 
         public object Selected
         {
-            get { return this.currentlyExpandedExpander.Content; }
+            get { return this.currentlyExpandedExpander?.Content; }
             set
             {
                 foreach (object item in this.MainGrid.Children)

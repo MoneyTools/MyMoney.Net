@@ -11,7 +11,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              help:HelpService.HelpKeyword="Accounts/BalancingAccounts/"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="350">
+             d:DesignHeight="1000" d:DesignWidth="350">
 
   <UserControl.Resources>
 
@@ -49,14 +49,37 @@
     <StackPanel >
 
       <Border Style="{StaticResource Rows}" >
-        <StackPanel>
-          <TextBlock Text="Current Age:"/>
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="CurrentAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
-                        ToolTip="Enter your current age"
-                        Committed="OnCurrentAgeChanged"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <TextBlock Text="Current Age:" Grid.Column="0" Grid.Row="0"/>
+          <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="CurrentAgeText" Style="{StaticResource NumericTextBoxStyle}"
+                          ToolTip="Enter your current age"
+                          Committed="OnCurrentAgeChanged"/>
           </Border>
-        </StackPanel>
+
+          <TextBlock x:Name="SpouseAgeLabel" Text="Spouse Age:" Grid.Column="1" Grid.Row="0" />
+
+          <Border x:Name="SpouseAgeBorder" Grid.Column="1" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="SpouseAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the age of your spouse"
+                        Committed="OnSpouseAgeChanged"/>
+          </Border>
+        </Grid>
+      </Border>
+
+      <Border Style="{StaticResource Rows}" >
+        <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
+          <CheckBox x:Name="FilingJointlyCheckbox" Checked="OnMarriedFilingJointlyChanged" Unchecked="OnMarriedFilingJointlyChanged">Married filing jointly</CheckBox>
+        </Border>
       </Border>
 
       <Border Style="{StaticResource Rows}" >
@@ -129,25 +152,27 @@
                         />
           </Border>
 
-          <TextBlock Text="Years to implement strategy:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="TaxDeferredStrategyYearsText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
-                        ToolTip="Enter the number of years to implement this strategy"
-                        Committed="OnTaxDeferredStrategyYearsChanged"/>
-          </Border>
+          <StackPanel x:Name="TaxDeferredDetails" >
+            <TextBlock Text="Years to implement strategy:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="TaxDeferredStrategyYearsText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                          ToolTip="Enter the number of years to implement this strategy"
+                          Committed="OnTaxDeferredStrategyYearsChanged"/>
+            </Border>
 
-          <TextBlock Text="Age to start strategy:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="TaxDeferredStrategyAgeText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
-                        ToolTip="Enter the age to start this strategy"
-                        Committed="OnTaxDeferredStrategyAgeChanged"/>
-          </Border>
+            <TextBlock Text="Age to start strategy:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="TaxDeferredStrategyAgeText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                          ToolTip="Enter the age to start this strategy"
+                          Committed="OnTaxDeferredStrategyAgeChanged"/>
+            </Border>
+          </StackPanel>
         </StackPanel>
       </Border>
 
       <Border x:Name="SocialSecurityRow" Style="{StaticResource Rows}" >
         <StackPanel>
-          <TextBlock Text="Social security initial payment:" />
+          <TextBlock Text="Social security payment per month:" />
           <Border Style="{StaticResource ValueAreaBorder}">
             <c:HandyTextBox x:Name="SocialSecurityText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the amount you expect to get from social security"

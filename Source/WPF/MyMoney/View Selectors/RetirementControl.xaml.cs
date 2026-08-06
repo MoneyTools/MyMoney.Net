@@ -23,6 +23,14 @@ namespace Walkabout.Views.Controls
         {
             InitializeComponent();
             TaxDeferredRow.Visibility = Visibility.Collapsed;
+            this.UpdateVisibility();
+        }
+
+        private void UpdateVisibility()
+        {
+            var visibility = this.MarriedFilingJointly ? Visibility.Visible : Visibility.Collapsed;
+            SpouseAgeLabel.Visibility = SpouseAgeBorder.Visibility = visibility;
+            TaxDeferredDetails.Visibility = this.TaxDeferredStrategy != "None" ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public decimal InflationRate
@@ -173,6 +181,7 @@ namespace Walkabout.Views.Controls
 
         private void OnTaxDeferredStrategyChanged(object sender, SelectionChangedEventArgs e)
         {
+            this.UpdateVisibility();
             if (TaxDeferredStrategyChanged != null)
             {
                 TaxDeferredStrategyChanged(this, this.TaxDeferredStrategy);
@@ -269,6 +278,51 @@ namespace Walkabout.Views.Controls
             if (SocialSecurityAgeChanged != null)
             {
                 SocialSecurityAgeChanged(this, this.SocialSecurityAge);
+            }
+        }
+
+        public int SpouseAge
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.SpouseAgeText.Text, out result);
+                return result;
+            }
+            set
+            {
+                this.SpouseAgeText.Text = value.ToString();
+                this.UpdateVisibility();
+            }
+        }
+
+        public event EventHandler<int> SpouseAgeChanged;
+
+        private void OnSpouseAgeChanged(object sender, string e)
+        {
+            if (SpouseAgeChanged != null)
+            {
+                SpouseAgeChanged(this, this.SpouseAge);
+            }
+        }
+
+        public bool MarriedFilingJointly
+        {
+            get => this.FilingJointlyCheckbox.IsChecked == true;
+            set
+            {
+                this.FilingJointlyCheckbox.IsChecked = value;
+            }
+        }
+
+        public event EventHandler<bool> MarriedFilingJointlyChanged;
+
+        private void OnMarriedFilingJointlyChanged(object sender, RoutedEventArgs e)
+        {
+            this.UpdateVisibility();
+            if (MarriedFilingJointlyChanged != null)
+            {
+                MarriedFilingJointlyChanged(this, this.MarriedFilingJointly);
             }
         }
 
