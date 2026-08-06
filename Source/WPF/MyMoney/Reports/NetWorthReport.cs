@@ -102,10 +102,13 @@ namespace Walkabout.Reports
             this.Register();
         }
 
-        class NetworthReportState : IReportState
+        public class NetworthReportState : IReportState
         {
             public DateTime ReportDate { get; set; }
             public string NormalizedCurrency { get; set; }
+
+            // for serialization
+            public NetworthReportState() { }
 
             public NetworthReportState(DateTime reportDate, string normalizedCurrency)
             {
@@ -142,6 +145,8 @@ namespace Walkabout.Reports
 
         public override async Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
+
             this.generating = true;
 
             this.SetDefaultCurrency(writer, this.normalizedCurrency);

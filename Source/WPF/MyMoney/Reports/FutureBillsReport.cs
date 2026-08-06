@@ -8,6 +8,8 @@ using System.Windows;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
+using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -295,19 +297,35 @@ namespace Walkabout.Reports
         public override void OnSiteChanged()
         {
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+
+            // this also makes the panel visible!
+            var panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+            panel.HideNormalizeCurrencyRow();
+            panel.HideReportDateRow();
         }
 
         public override IReportState GetState()
         {
-            return new SimpleReportState(typeof(FutureBillsReport));
+            return new FutureBillReportState();
         }
 
         public override void ApplyState(IReportState state)
         {
         }
 
+        public class FutureBillReportState : IReportState
+        {
+            public FutureBillReportState() { }
+
+            public Type GetReportType()
+            {
+                return typeof(FutureBillsReport);
+            }
+        }
+
         public override Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
             writer.WriteHeading("Future Bills Report");
 
             Transactions transactions = this.myMoney.Transactions;

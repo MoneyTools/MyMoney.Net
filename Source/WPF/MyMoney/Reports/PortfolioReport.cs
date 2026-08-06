@@ -112,7 +112,7 @@ namespace Walkabout.Reports
             this.Register();
         }
 
-        class PortfolioReportState : IReportState
+        public class PortfolioReportState : IReportState
         {
             public DateTime ReportDate { get; set; }
             public Account Account { get; set; }
@@ -121,6 +121,10 @@ namespace Walkabout.Reports
 
             public PortfolioReportState()
             {
+                // TODO: this state contains Predicates which cannot be serialized.
+                // Changing that is a lot of work.  For now it just means the state is
+                // not serialized, but we have a try catch in SaveState which catches
+                // the error there no problem.
             }
 
             public Type GetReportType()
@@ -222,6 +226,7 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
             Debug.WriteLine("PortfolioReport::Generate");
             this.generating = true;
             try
@@ -236,6 +241,7 @@ namespace Walkabout.Reports
 
         private async Task InternalGenerate(IReportWriter writer)
         {
+            this.DelaySaveState();
             if (this.reportDate == DateTime.MinValue)
             {
                 this.reportDate = DateTime.Now;

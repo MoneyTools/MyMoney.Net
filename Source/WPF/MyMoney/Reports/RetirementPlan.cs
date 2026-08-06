@@ -12,12 +12,13 @@ using Walkabout.Charts;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.StockQuotes;
+using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
-    internal class RetirementPlanReport : Report
+    public class RetirementPlanReport : Report
     {
         private MyMoney myMoney;
         private FlowDocumentView view;
@@ -31,6 +32,9 @@ namespace Walkabout.Reports
         private int retirementAge = 65;
         private int graduationAge = 95;
         private int taxDeferredStrategyYears = 5;
+        private decimal socialSecurityAmount = 0;
+        private int socialSecurityAge = 67;
+        private decimal socialSecurityAdjustment = 0.04M; // for inflation
         private string taxDeferredStrategy = TaxDeferredStrategyNone;
         private StockQuoteCache cache;
 
@@ -40,13 +44,18 @@ namespace Walkabout.Reports
 
         public RetirementPlanReport(FlowDocumentView view)
         {
-            this.view = view;            
+            this.view = view;
         }
 
         protected override void Dispose(bool disposing)
         {
             this.UnRegister();
             base.Dispose(disposing);
+        }
+
+        private void Load()
+        {
+
         }
 
         private void Register()
@@ -59,8 +68,9 @@ namespace Walkabout.Reports
             this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
             this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
             this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
+            this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
+            this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
         }
-
 
         private void UnRegister()
         {
@@ -74,53 +84,55 @@ namespace Walkabout.Reports
                 this.panel.RetirementAgeChanged -= this.OnRetirementAgeChanged;
                 this.panel.TaxDeferredStrategyChanged -= this.OnTaxDeferredStrategyChanged;
                 this.panel.TaxDeferredStrategyYearsChanged -= this.OnTaxDeferredStrategyYearsChanged;
+                this.panel.SocialSecurityAgeChanged -= this.OnSocialSecurityAgeChanged;
+                this.panel.SocialSecurityAmountChanged -= this.OnSocialSecurityAmountChanged;
             }
         }
 
         private void OnDesiredIncomeChanged(object sender, decimal e)
         {
-            this.desiredAnnualIncome = e;
-            this.Regenerate();
+            this.desiredAnnualIncome = e; this.Regenerate();
         }
 
         private void OnInflationRateChanged(object sender, decimal e)
         {
-            this.inflationRate = e;
-            this.Regenerate();
+            this.inflationRate = e; this.Regenerate();
         }
 
         private void OnRateOfReturnChanged(object sender, decimal e)
         {
-            this.investmentRateOfReturn = e;
-            this.Regenerate();
+            this.investmentRateOfReturn = e; this.Regenerate();
         }
 
         private void OnGraduationAgeChanged(object sender, int e)
         {
-            this.graduationAge = e;
-            this.Regenerate();
+            this.graduationAge = e; this.Regenerate();
         }
         private void OnCurrentAgeChanged(object sender, int e)
         {
-            this.currentAge = e;
-            this.Regenerate();
+            this.currentAge = e; this.Regenerate();
         }
         private void OnRetirementAgeChanged(object sender, int e)
         {
-            this.retirementAge = e;
-            this.Regenerate();
+            this.retirementAge = e; this.Regenerate();
         }
         private void OnTaxDeferredStrategyChanged(object sender, string e)
         {
-            this.taxDeferredStrategy = e;
-            this.Regenerate();
+            this.taxDeferredStrategy = e; this.Regenerate();
         }
         private void OnTaxDeferredStrategyYearsChanged(object sender, int e)
         {
-            this.taxDeferredStrategyYears = e;
-            this.Regenerate();
+            this.taxDeferredStrategyYears = e; this.Regenerate();
+        }
+        private void OnSocialSecurityAmountChanged(object sender, decimal e)
+        {
+            this.socialSecurityAmount = e; this.Regenerate();
         }
 
+        private void OnSocialSecurityAgeChanged(object sender, int e)
+        {
+            this.socialSecurityAge = e; this.Regenerate();
+        }
 
         public override void OnSiteChanged()
         {
@@ -151,6 +163,8 @@ namespace Walkabout.Reports
             this.panel.RetirementAge = this.retirementAge;
             this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
             this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
+            this.panel.SocialSecurityAge = this.socialSecurityAge;
+            this.panel.SocialSecurityAmount = this.socialSecurityAmount;
             this.UnRegister();
             this.Register();
         }
@@ -158,10 +172,14 @@ namespace Walkabout.Reports
         private static string ChartValueTaxable = "Taxable";
         private static string ChartValueTaxDeferred = "Tax Deferred";
         private static string ChartValueTaxFree = "Tax Free";
+        private static string ChartValueSocialSecurity = "Social Security";
+        private static string ChartValueGross = "Gross";
 
         public override async Task Generate(IReportWriter writer)
         {
             await Task.CompletedTask;
+
+            this.DelaySaveState();
 
             this.SetDefaultCurrency(writer, this.normalizedCurrency);
 
@@ -187,6 +205,9 @@ namespace Walkabout.Reports
             var taxableIncomeColor = Color.FromRgb(0xf0, 0x66, 0x00);
             var taxFreeIncomeColor = Color.FromRgb(0xDA, 0x80, 0x21);
             var taxDeferredIncomeColor = Color.FromRgb(0xF4, 0xA9, 0x01);
+            var socialSecurityIncomeColor = Colors.Yellow;
+            var grossIncomeColor = Colors.LightYellow;
+
             var taxColor = Colors.Salmon;
 
             var taxDeferredSeries = new ChartDataSeries() { Name = "Tax Deferred" };
@@ -196,10 +217,13 @@ namespace Walkabout.Reports
             var taxableIncomeSeries = new ChartDataSeries() { Name = "Taxable Income" };
             var taxDeferredIncomeSeries = new ChartDataSeries() { Name = "Tax Deferred Income" };
             var taxFreeIncomeSeries = new ChartDataSeries() { Name = "Tax Free Income" };
+            var socialSecurityIncomeSeries = new ChartDataSeries() { Name = "Social Security Income" };
+            var grossIncomeSeries = new ChartDataSeries() { Name = "Gross Income" };
             var taxesSeries = new ChartDataSeries() { Name = "Taxes" };
 
             decimal totalTaxes = 0;
             decimal conversionAmount = 0;
+            decimal socialSecurity = this.socialSecurityAmount;
 
 
             for (int age = this.currentAge; age <= this.graduationAge; age++)
@@ -235,6 +259,15 @@ namespace Walkabout.Reports
                     decimal taxableIncome = 0;
                     decimal taxDeferredIncome = 0;
                     decimal taxFreeIncome = 0;
+                    decimal socialSecurityIncome = 0;
+
+                    if (age >= this.socialSecurityAge)
+                    {
+                        socialSecurityIncome = socialSecurity;
+                        baseIncome += socialSecurity;
+                        socialSecurity *= (1 + this.socialSecurityAdjustment);
+                        income = socialSecurityIncome;
+                    }
 
                     // Now figure out where to draw the income from and how to pay taxes on it.
                     if (funds.TaxDeferred > 0 && age >= 75)
@@ -293,6 +326,8 @@ namespace Walkabout.Reports
                     taxableIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
                     taxDeferredIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
                     taxFreeIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
+                    socialSecurityIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
+                    grossIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)baseIncome, Color = grossIncomeColor, UserData = ChartValueGross });
 
                     taxesSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
                     futureIncome = futureIncome * (1 + this.inflationRate);
@@ -348,9 +383,11 @@ namespace Walkabout.Reports
             incomeChart.ToolTipGenerator = this.OnGenerateToolTip;
 
             chartData = new ChartData();
+            chartData.AddSeries(grossIncomeSeries);
             chartData.AddSeries(taxableIncomeSeries);
             chartData.AddSeries(taxFreeIncomeSeries);
             chartData.AddSeries(taxDeferredIncomeSeries);
+            chartData.AddSeries(socialSecurityIncomeSeries);
             incomeChart.Data = chartData;
 
             writer.WriteElement(incomeChart);
@@ -711,6 +748,9 @@ namespace Walkabout.Reports
                 this.graduationAge = s.GraduationAge;
                 this.retirementAge = s.RetirementAge;
                 this.taxDeferredStrategy = s.TaxDeferredStrategy;
+                this.taxDeferredStrategyYears = s.TaxDeferredStrategyYears;
+                this.socialSecurityAmount = s.SocialSecurityAmount;
+                this.socialSecurityAge = s.SocialSecurityAge;
 
                 if (this.panel != null)
                 {
@@ -723,6 +763,8 @@ namespace Walkabout.Reports
                     this.panel.RetirementAge = this.retirementAge;
                     this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
                     this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
+                    this.panel.SocialSecurityAmount = this.socialSecurityAmount;
+                    this.panel.SocialSecurityAge = this.socialSecurityAge;
                     this.Register();
                 }
             }
@@ -741,11 +783,13 @@ namespace Walkabout.Reports
                 GraduationAge = this.graduationAge,
                 RetirementAge = this.retirementAge,
                 TaxDeferredStrategy = this.taxDeferredStrategy,
-                TaxDeferredStrategyYears = this.taxDeferredStrategyYears
+                TaxDeferredStrategyYears = this.taxDeferredStrategyYears,
+                SocialSecurityAmount = this.socialSecurityAmount,
+                SocialSecurityAge = this.socialSecurityAge,
             };
         }
 
-        class RetirementPlanState : IReportState
+        public class RetirementPlanState : IReportState
         {
             public DateTime ReportDate { get; set; }
             public string NormalizedCurrency { get; set; }
@@ -758,6 +802,8 @@ namespace Walkabout.Reports
             public int GraduationAge { get; set; }
             public string TaxDeferredStrategy { get; set; }
             public int TaxDeferredStrategyYears { get; set; }
+            public decimal SocialSecurityAmount { get; set; }
+            public int SocialSecurityAge { get; set; }
 
 
             public string Name => "RetirementPlan";

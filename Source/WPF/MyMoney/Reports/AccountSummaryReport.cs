@@ -97,7 +97,7 @@ namespace Walkabout.Reports
             this.Register();
         }
 
-        class AccountSummaryReportState : IReportState
+        public class AccountSummaryReportState : IReportState
         {
             public DateTime ReportDate { get; set; }
             public string NormalizeCurrency { get; set; }
@@ -154,6 +154,8 @@ namespace Walkabout.Reports
         {
             await Task.CompletedTask;
             if (myMoney == null) return;
+
+            this.DelaySaveState();
 
             if (this.reportDate == DateTime.MinValue)
             {

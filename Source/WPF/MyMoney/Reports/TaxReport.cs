@@ -88,7 +88,7 @@ namespace Walkabout.Reports
             this.Register();
         }
 
-        class TaxReportState : IReportState
+        public class TaxReportState : IReportState
         {
             public int FiscalYearStart { get; set; }
             public bool InvestmentsOnly { get; set; }
@@ -155,6 +155,7 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
             this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
             writer.WriteHeading("Tax Report For Financial Year " + this.startDate.Year);
 

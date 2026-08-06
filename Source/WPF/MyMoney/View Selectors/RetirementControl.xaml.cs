@@ -201,5 +201,53 @@ namespace Walkabout.Views.Controls
                 TaxDeferredStrategyYearsChanged(this, this.TaxDeferredStrategyYears);
             }
         }
+
+        public decimal SocialSecurityAmount
+        {
+            get
+            {
+                decimal result = 0;
+                decimal.TryParse(this.SocialSecurityText.Text, out result);
+                return result;
+            }
+            set
+            {
+                this.SocialSecurityText.Text = value.ToString();
+            }
+        }
+
+        public event EventHandler<decimal> SocialSecurityAmountChanged;
+
+        private void OnSocialSecurityTextChanged(object sender, string e)
+        {
+            if (SocialSecurityAmountChanged != null)
+            {
+                SocialSecurityAmountChanged(this, this.SocialSecurityAmount);
+            }
+        }
+
+        public int SocialSecurityAge
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.SocialSecurityAgeText.Text, out result);
+                return result;
+            }
+            set
+            {
+                this.SocialSecurityAgeText.Text = value.ToString();
+            }
+        }
+
+        public event EventHandler<int> SocialSecurityAgeChanged;
+
+        private void OnSocialSecurityAgeTextChanged(object sender, string e)
+        {
+            if (SocialSecurityAgeChanged != null)
+            {
+                SocialSecurityAgeChanged(this, this.SocialSecurityAge);
+            }
+        }
     }
 }

@@ -15,6 +15,10 @@ namespace Walkabout.Interfaces.Reports
 
         void Export(string filename);
 
+        void LoadState(string path);
+
+        void SaveState(string path);
+
         IReportState GetState();
 
         void ApplyState(IReportState state);
@@ -22,25 +26,9 @@ namespace Walkabout.Interfaces.Reports
         void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e);
     }
 
-    [XmlInclude(typeof(SimpleReportState))]
     public interface IReportState
     {
         Type GetReportType();
-    }
-
-    public class SimpleReportState : IReportState
-    {
-        Type type;
-
-        public SimpleReportState(Type reportType)
-        {
-            this.type = reportType;
-        }
-
-        public virtual Type GetReportType()
-        {
-            return this.type;
-        }
     }
 
     public enum ReportInterval

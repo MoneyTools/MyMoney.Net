@@ -95,7 +95,7 @@ namespace Walkabout.Reports
             this.Register();
         }
 
-        class CashFlowReportState : IReportState
+        public class CashFlowReportState : IReportState
         {
             public int FiscalYearStart { get; set; }
             public DateTime StartDate { get; set; }
@@ -254,6 +254,7 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
             this.fiscalYearStart = this.databaseSettings.FiscalYearStart;           
             this.panel.ReportDate = this.startDate;
             this.panel.ReportEndDate = this.endDate;

@@ -4,6 +4,7 @@
 using Microsoft.Win32;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
@@ -24,6 +26,7 @@ namespace Walkabout.Reports
         private IServiceProvider serviceProvider;
         private bool disposedValue;
         private MyMoney myMoney;
+        private DelayedActions actions = new DelayedActions();
 
         public IServiceProvider ServiceProvider
         {
@@ -35,6 +38,8 @@ namespace Walkabout.Reports
                 this.OnSiteChanged();
             }
         }
+
+        public string ReportPath { get; set; }
 
         public virtual void OnSiteChanged() {
         }
@@ -55,6 +60,72 @@ namespace Walkabout.Reports
         {
             throw new NotImplementedException();
         }
+
+        public void LoadState(string reportPath)
+        {
+            try
+            {
+                var state = this.GetState();
+                Type stateType = state.GetType();
+                var fileName = stateType.Name + ".xml";
+                if (!string.IsNullOrEmpty(reportPath))
+                {
+                    this.ReportPath = reportPath;
+                    var fullPath = System.IO.Path.Combine(reportPath, fileName);
+                    if (System.IO.Path.Exists(fullPath))
+                    {
+                        var serializer = new XmlSerializer(stateType);
+                        using (var fs = System.IO.File.OpenRead(fullPath))
+                        {
+                            var newState = serializer.Deserialize(fs) as IReportState;
+                            this.ApplyState(newState);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignore it
+            }
+        }
+
+        public void SaveState(string reportPath)
+        {
+            try
+            {
+                var state = this.GetState();
+                Type stateType = state.GetType();
+                var fileName = stateType.Name + ".xml";
+                if (!string.IsNullOrEmpty(reportPath))
+                {
+                    Directory.CreateDirectory(reportPath);
+                    var fullPath = System.IO.Path.Combine(reportPath, fileName);
+                    var serializer = new XmlSerializer(stateType);
+                    using (var fs = System.IO.File.Create(fullPath))
+                    {
+                        serializer.Serialize(fs, state);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignore it
+            }
+        }
+
+        public void DelaySaveState(int delay = 1000)
+        {
+            this.actions.StartDelayedAction("SaveState", this.OnSaveState, TimeSpan.FromMilliseconds(delay));
+        }
+
+        private void OnSaveState()
+        {
+            if (!string.IsNullOrEmpty(this.ReportPath))
+            {
+                this.SaveState(this.ReportPath);
+            }
+        }
+
 
         public void AddInline(Paragraph p, UIElement childUIElement)
         {

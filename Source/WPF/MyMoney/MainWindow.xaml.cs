@@ -34,6 +34,10 @@ using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Views.Controls;
+using System.Xml.Serialization;
+using System.Data;
+
+
 
 
 #if PerformanceBlocks
@@ -709,6 +713,12 @@ namespace Walkabout
         {
             string path = this.database?.DatabasePath;
             return string.IsNullOrEmpty(path) ? null : Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
+        }
+
+        private string GetReportPath()
+        {
+            string path = this.database?.DatabasePath;
+            return string.IsNullOrEmpty(path) ? null : Path.Combine(Path.GetDirectoryName(path), "Reports");
         }
 
         private void ClearOfxDownloads()
@@ -3700,14 +3710,16 @@ namespace Walkabout
         private ReportEventHandler reportHandler;
 
 
-        private void OnReportCreated(object sender, IReport e)
+        private void OnReportCreated(object sender, IReport report)
         {
+            report.LoadState(this.GetReportPath());
+
             using (this.reportHandler)
             {
                 // dispose previous report handler.
             }
 
-            this.reportHandler = new ReportEventHandler(this, e);
+            this.reportHandler = new ReportEventHandler(this, report);
         }
 
         private void OnCommandNetWorth(object sender, ExecutedRoutedEventArgs e)

@@ -76,7 +76,7 @@ namespace Walkabout.Taxes
             this.Register();
         }
 
-        class W2ReportState : IReportState
+        public class W2ReportState : IReportState
         {
             public int FiscalYearStart { get; set; }
             public int Year { get; set; }
@@ -197,6 +197,7 @@ namespace Walkabout.Taxes
 
         public override Task Generate(IReportWriter writer)
         {
+            this.DelaySaveState();
             this.fiscalYearStart = this.databaseSettings.FiscalYearStart;
             this.transactionsByCategory = new Dictionary<Category, List<Transaction>>();
 
