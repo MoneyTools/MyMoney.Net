@@ -202,6 +202,28 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public int TaxDeferredStrategyAge
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.TaxDeferredStrategyAgeText.Text, out result);
+                return result;
+            }
+            set { this.TaxDeferredStrategyAgeText.Text = value.ToString(); }
+        }
+
+
+        public event EventHandler<int> TaxDeferredStrategyAgeChanged;
+
+        private void OnTaxDeferredStrategyAgeChanged(object sender, string e)
+        {
+            if (TaxDeferredStrategyAgeChanged != null)
+            {
+                TaxDeferredStrategyAgeChanged(this, this.TaxDeferredStrategyAge);
+            }
+        }
+
         public decimal SocialSecurityAmount
         {
             get
@@ -249,5 +271,6 @@ namespace Walkabout.Views.Controls
                 SocialSecurityAgeChanged(this, this.SocialSecurityAge);
             }
         }
+
     }
 }

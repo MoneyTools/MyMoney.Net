@@ -31,11 +31,12 @@ namespace Walkabout.Reports
         private int currentAge = 60;
         private int retirementAge = 65;
         private int graduationAge = 95;
+        private string taxDeferredStrategy = TaxDeferredStrategyNone;
         private int taxDeferredStrategyYears = 5;
+        private int taxDeferredStrategyAge = 65;
         private decimal socialSecurityAmount = 0;
         private int socialSecurityAge = 67;
         private decimal socialSecurityAdjustment = 0.04M; // for inflation
-        private string taxDeferredStrategy = TaxDeferredStrategyNone;
         private StockQuoteCache cache;
 
         public static string TaxDeferredStrategyNone = "None";
@@ -68,6 +69,7 @@ namespace Walkabout.Reports
             this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
             this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
             this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
+            this.panel.TaxDeferredStrategyAgeChanged += this.OnTaxDeferredStrategyAgeChanged;
             this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
             this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
         }
@@ -84,6 +86,7 @@ namespace Walkabout.Reports
                 this.panel.RetirementAgeChanged -= this.OnRetirementAgeChanged;
                 this.panel.TaxDeferredStrategyChanged -= this.OnTaxDeferredStrategyChanged;
                 this.panel.TaxDeferredStrategyYearsChanged -= this.OnTaxDeferredStrategyYearsChanged;
+                this.panel.TaxDeferredStrategyAgeChanged -= this.OnTaxDeferredStrategyAgeChanged;
                 this.panel.SocialSecurityAgeChanged -= this.OnSocialSecurityAgeChanged;
                 this.panel.SocialSecurityAmountChanged -= this.OnSocialSecurityAmountChanged;
             }
@@ -124,6 +127,11 @@ namespace Walkabout.Reports
         {
             this.taxDeferredStrategyYears = e; this.Regenerate();
         }
+        private void OnTaxDeferredStrategyAgeChanged(object sender, int e)
+        {
+            this.taxDeferredStrategyAge = e; this.Regenerate();
+        }
+
         private void OnSocialSecurityAmountChanged(object sender, decimal e)
         {
             this.socialSecurityAmount = e; this.Regenerate();
@@ -163,6 +171,7 @@ namespace Walkabout.Reports
             this.panel.RetirementAge = this.retirementAge;
             this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
             this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
+            this.panel.TaxDeferredStrategyAge = this.taxDeferredStrategyAge;
             this.panel.SocialSecurityAge = this.socialSecurityAge;
             this.panel.SocialSecurityAmount = this.socialSecurityAmount;
             this.UnRegister();
@@ -228,7 +237,7 @@ namespace Walkabout.Reports
 
             for (int age = this.currentAge; age <= this.graduationAge; age++)
             {
-                if (age == this.retirementAge)
+                if (age == this.taxDeferredStrategyAge)
                 {
                     if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
                     {
@@ -247,7 +256,7 @@ namespace Walkabout.Reports
                     decimal taxes = 0;
                     decimal baseIncome = 0;
 
-                    if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
+                    if (age >= this.taxDeferredStrategyAge && this.taxDeferredStrategy == TaxDeferredStrategyRoth)
                     {
                         taxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
                     }
@@ -749,6 +758,7 @@ namespace Walkabout.Reports
                 this.retirementAge = s.RetirementAge;
                 this.taxDeferredStrategy = s.TaxDeferredStrategy;
                 this.taxDeferredStrategyYears = s.TaxDeferredStrategyYears;
+                this.taxDeferredStrategyAge = s.TaxDeferredStrategyAge;
                 this.socialSecurityAmount = s.SocialSecurityAmount;
                 this.socialSecurityAge = s.SocialSecurityAge;
 
@@ -763,6 +773,7 @@ namespace Walkabout.Reports
                     this.panel.RetirementAge = this.retirementAge;
                     this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
                     this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
+                    this.panel.TaxDeferredStrategyAge = this.taxDeferredStrategyAge;
                     this.panel.SocialSecurityAmount = this.socialSecurityAmount;
                     this.panel.SocialSecurityAge = this.socialSecurityAge;
                     this.Register();
@@ -784,6 +795,7 @@ namespace Walkabout.Reports
                 RetirementAge = this.retirementAge,
                 TaxDeferredStrategy = this.taxDeferredStrategy,
                 TaxDeferredStrategyYears = this.taxDeferredStrategyYears,
+                TaxDeferredStrategyAge = this.taxDeferredStrategyAge,
                 SocialSecurityAmount = this.socialSecurityAmount,
                 SocialSecurityAge = this.socialSecurityAge,
             };
@@ -802,6 +814,7 @@ namespace Walkabout.Reports
             public int GraduationAge { get; set; }
             public string TaxDeferredStrategy { get; set; }
             public int TaxDeferredStrategyYears { get; set; }
+            public int TaxDeferredStrategyAge { get; set; }
             public decimal SocialSecurityAmount { get; set; }
             public int SocialSecurityAge { get; set; }
 
