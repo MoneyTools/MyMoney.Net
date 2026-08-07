@@ -101,7 +101,7 @@ namespace Walkabout.Reports
 
         internal class Payments
         {
-            internal const double AmountSensitivity = 0.1; // % stderr
+            internal const double AmountSensitivity = 4; // % stderr allow for inflation.
             internal const double TimeSensitivity = 0.5; // % stderr on date
 
             public Payee Payee { get; internal set; }
@@ -114,7 +114,7 @@ namespace Walkabout.Reports
             public double MeanDays { get; internal set; }
             private List<double> Predictions { get; set; }
             private int NextIndex { get; set; }
-            private bool Monthly { get; set; }
+            private CalendarRange Frequency { get; set; }
 
             private List<int> years;
 
@@ -155,9 +155,41 @@ namespace Walkabout.Reports
             {
                 // Return the next prediction and advance the NextDate according to the 
                 // calculated payment Interval.
-                if (this.Monthly)
+                if (this.Frequency != CalendarRange.None)
                 {
-                    this.NextDate = this.NextDate.AddMonths(1);
+                    switch (this.Frequency)
+                    {
+                        case CalendarRange.Daily:
+                            this.NextDate = this.NextDate.AddDays(1);
+                            break;
+                        case CalendarRange.Weekly:
+                            this.NextDate = this.NextDate.AddDays(7);
+                            break;
+                        case CalendarRange.BiWeekly:
+                            this.NextDate = this.NextDate.AddDays(14);
+                            break;
+                        case CalendarRange.Monthly:
+                            this.NextDate = this.NextDate.AddMonths(1);
+                            break;
+                        case CalendarRange.BiMonthly:
+                            this.NextDate = this.NextDate.AddMonths(2);
+                            break;
+                        case CalendarRange.TriMonthly:
+                            this.NextDate = this.NextDate.AddMonths(3);
+                            break;
+                        case CalendarRange.Quarterly:
+                            this.NextDate = this.NextDate.AddMonths(4);
+                            break;
+                        case CalendarRange.SemiAnnually:
+                            this.NextDate = this.NextDate.AddMonths(6);
+                            break;
+                        case CalendarRange.Annually:
+                            this.NextDate = this.NextDate.AddYears(1);
+                            break;
+                        case CalendarRange.BiAnnually:
+                            this.NextDate = this.NextDate.AddYears(2);
+                            break;
+                    }
                 }
                 else
                 {
@@ -166,12 +198,15 @@ namespace Walkabout.Reports
                 return this.GetPredictedAmount();
             }
 
-            public bool IsRecurring
+            public bool ComputeRecurrence()
             {
-                get
-                {
-                    if (this.Transactions.Count < 3) return false;
+                this.Frequency = this.Category.Frequency;
+                if (this.Transactions.Count < 3 && this.Frequency == CalendarRange.None) return false;
+                if (this.Frequency == CalendarRange.Never) return false;
 
+                if (this.Frequency == CalendarRange.None)
+                {
+                    // try and compute the frequency.
                     List<double> daysBetween = new List<double>();
                     List<double> amounts = new List<double>();
                     Transaction previous = null;
@@ -185,7 +220,6 @@ namespace Walkabout.Reports
                         }
                         previous = t;
                     }
-
 
                     var meanDays = Math.Floor(MathHelpers.Mean(daysBetween));
                     if (meanDays < 3)
@@ -207,9 +241,11 @@ namespace Walkabout.Reports
                     var stdErrDays = Math.Abs(stdDevDays / meanDays);
                     var stdErrAmount = Math.Abs(distance / sumAmount);
 
-                    this.Monthly = meanDays > 25 && meanDays < 35;
-
-                    if (stdErrDays < TimeSensitivity && meanDays < 180 && stdErrAmount > AmountSensitivity)
+                    if (this.Category.GetFullName() == "Home:Real Estate Taxes")
+                    {
+                        Debug.WriteLine("debug");
+                    }
+                    if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
                     {
                         var predictions = new List<double>();
                         // see if the amount depends on seasonal fluxuations (like energy or water bill).
@@ -223,7 +259,7 @@ namespace Walkabout.Reports
                             table.AddRow(cyclicAmounts);
                         }
 
-                        if (table.Columns > 2)
+                        if (table.Columns > 1)
                         {
                             double stdErrCyclicalAmount = 0;
                             for (int i = 0; i <= table.Columns; i++)
@@ -244,16 +280,40 @@ namespace Walkabout.Reports
                             {
                                 stdErrAmount = stdErrCyclicalAmount;
                                 this.Predictions = predictions;
-                                if (predictions.Count == 12)
+                                switch (predictions.Count)
                                 {
-                                    this.Monthly = true;
+                                    case 1:
+                                        this.Frequency = CalendarRange.Annually;
+                                        break;
+                                    case 2:
+                                        this.Frequency = CalendarRange.SemiAnnually;
+                                        break;
+                                    case 3:
+                                        this.Frequency = CalendarRange.Quarterly;
+                                        break;
+                                    case 4:
+                                        this.Frequency = CalendarRange.TriMonthly;
+                                        break;
+                                    case 12:
+                                        this.Frequency = CalendarRange.Monthly;
+                                        break;
+                                    case 52 / 2:
+                                        this.Frequency = CalendarRange.BiWeekly;
+                                        break;
+                                    case 52:
+                                        this.Frequency = CalendarRange.Weekly;
+                                        break;
+                                    case 364:
+                                    case 365:
+                                    case 366:
+                                        this.Frequency = CalendarRange.Daily;
+                                        break;
                                 }
                             }
                         }
                     }
 
-                    if (this.Category.Frequency != CalendarRange.None ||  // user provided input that this is a recurring bill payment!
-                        (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity))
+                    if ((stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity))
                     {
                         var today = DateTime.Today;
                         var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
@@ -275,8 +335,8 @@ namespace Walkabout.Reports
                         this.MeanDays = meanDays;
                         return true;
                     }
-                    return false;
                 }
+                return false;
             }
 
             public Payments()
@@ -397,7 +457,7 @@ namespace Walkabout.Reports
             {
                 var key = pair.Key;
                 var payments = pair.Value;
-                if (payments.IsRecurring)
+                if (payments.ComputeRecurrence())
                 {
                     string sortName = key.Payee.Name + ":" + key.Category.GetFullName();
                     recurring[sortName] = payments;

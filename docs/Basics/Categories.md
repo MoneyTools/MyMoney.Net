@@ -13,14 +13,18 @@ The drop down is automatically filtered to show you matching categories and you 
 
 When you enter a new category that has not been seen before the following dialog will appear:
 
-![](../Images/Categories2.png)
+![](../Images/CategoriesDialog.png)
 
-Most of these fields are optional, except the name and Type.  The Tax Category field is used by the [Tax Report](../Reports/TaxReport.md) and is important if you want to export tax information to Turbo Tax.
+Most of these fields are optional, except the name and Type. 
+The recurring frequency field can be set to provide information on
+categories that represent recurring incomes or expenses which is useful
+on the [Future Bills Report](../Reports/FutureBillsReport.md).
+
+The Tax Category field is used by the [Tax Report](../Reports/TaxReport.md) and is important if you want to export tax information to Turbo Tax.
 
 When you select the "CATEGORIES" panel on the left you will see all your categories in a Tree view where you can manage them (add, delete, rename, merge, etc).
 
-![](../Images/Categories3.png)
-
+![](../Images/CategoriesTree.png)
 
 When you select a category from this Categories Panel it will instantly show you all transactions that are assigned that category together with a [chart of historical](../Charts/HistoryChart.md) spending :
 

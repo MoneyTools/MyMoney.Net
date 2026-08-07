@@ -7624,7 +7624,8 @@ namespace Walkabout.Data
 
     public enum CalendarRange
     {
-        None,
+        None, // undefined
+        Never, // is never recurring!
         Daily,
         Weekly,
         BiWeekly,

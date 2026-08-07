@@ -108,6 +108,7 @@ namespace Walkabout.Dialogs
             this.comboBoxType.Items.Add(CategoryType.Investments);
 
             this.comboBoxRecurring.Items.Add(CalendarRange.None);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Never);
             this.comboBoxRecurring.Items.Add(CalendarRange.Daily);
             this.comboBoxRecurring.Items.Add(CalendarRange.Weekly);
             this.comboBoxRecurring.Items.Add(CalendarRange.BiWeekly);
