@@ -101,7 +101,7 @@ namespace Walkabout.Reports
 
         internal class Payments
         {
-            internal const double AmountSensitivity = 4; // % stderr allow for inflation.
+            internal const double AmountSensitivity = 1; // % stderr allow for inflation.
             internal const double TimeSensitivity = 0.5; // % stderr on date
 
             public Payee Payee { get; internal set; }
@@ -112,42 +112,10 @@ namespace Walkabout.Reports
             public TimeSpan Interval { get; set; }
             public DateTime NextDate { get; set; }
             public double MeanDays { get; internal set; }
-            private List<double> Predictions { get; set; }
-            private int NextIndex { get; set; }
             private CalendarRange Frequency { get; set; }
-
-            private List<int> years;
-
-            private List<int> GetOrCreateYears()
-            {
-                if (this.years == null)
-                {
-                    this.years = new List<int>();
-                    foreach (var t in this.Transactions)
-                    {
-                        int year = t.Date.Year;
-                        if (!this.years.Contains(year))
-                        {
-                            this.years.Add(year);
-                        }
-                    }
-                }
-                return this.years;
-            }
 
             private double GetPredictedAmount()
             {
-                int index = this.NextIndex;
-                if (this.Predictions != null && this.Predictions.Count > index)
-                {
-                    this.NextIndex++;
-                    if (this.NextIndex >= this.Predictions.Count)
-                    {
-                        this.NextIndex = 0; // wrap around.
-                    }
-                    return this.Predictions[index];
-                }
-
                 return this.Amount;
             }
 
@@ -241,75 +209,43 @@ namespace Walkabout.Reports
                     var stdErrDays = Math.Abs(stdDevDays / meanDays);
                     var stdErrAmount = Math.Abs(distance / sumAmount);
 
-                    if (this.Category.GetFullName() == "Home:Real Estate Taxes")
-                    {
-                        Debug.WriteLine("debug");
-                    }
                     if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
                     {
-                        var predictions = new List<double>();
-                        // see if the amount depends on seasonal fluxuations (like energy or water bill).
-                        var table = new PaymentTable<double>();
-
-                        // So create a table organized by rows and columns where each row is a different year
-                        // and each column is a payment within that yearly cycle.                        
-                        foreach (var year in this.GetOrCreateYears())
+                        if (meanDays == 1)
                         {
-                            var cyclicAmounts = from t in this.Transactions where t.Date.Year == year select (double)t.Account.GetNormalizedAmount(t.Amount);
-                            table.AddRow(cyclicAmounts);
+                            this.Frequency = CalendarRange.Daily;
                         }
-
-                        if (table.Columns > 1)
+                        else if (meanDays == 7)
                         {
-                            double stdErrCyclicalAmount = 0;
-                            for (int i = 0; i <= table.Columns; i++)
-                            {
-                                var cyclicAmounts = table.GetColumn(i);
-                                if (cyclicAmounts.Count() > 2)
-                                {
-                                    sumAmount = cyclicAmounts.Sum();
-                                    MathHelpers.LinearRegression(cyclicAmounts, out double ma, out double mb);
-                                    var monthlyDistance = MathHelpers.DistanceToLine(cyclicAmounts, ma, mb);
-                                    var stderr = Math.Abs(monthlyDistance / sumAmount);
-                                    stdErrCyclicalAmount += stderr;
-                                    predictions.Add(MathHelpers.Mean(cyclicAmounts));
-                                }
-                            }
-                            stdErrCyclicalAmount /= table.Columns;
-                            if (stdErrCyclicalAmount < stdErrAmount && predictions.Count > 0)
-                            {
-                                stdErrAmount = stdErrCyclicalAmount;
-                                this.Predictions = predictions;
-                                switch (predictions.Count)
-                                {
-                                    case 1:
-                                        this.Frequency = CalendarRange.Annually;
-                                        break;
-                                    case 2:
-                                        this.Frequency = CalendarRange.SemiAnnually;
-                                        break;
-                                    case 3:
-                                        this.Frequency = CalendarRange.Quarterly;
-                                        break;
-                                    case 4:
-                                        this.Frequency = CalendarRange.TriMonthly;
-                                        break;
-                                    case 12:
-                                        this.Frequency = CalendarRange.Monthly;
-                                        break;
-                                    case 52 / 2:
-                                        this.Frequency = CalendarRange.BiWeekly;
-                                        break;
-                                    case 52:
-                                        this.Frequency = CalendarRange.Weekly;
-                                        break;
-                                    case 364:
-                                    case 365:
-                                    case 366:
-                                        this.Frequency = CalendarRange.Daily;
-                                        break;
-                                }
-                            }
+                            this.Frequency = CalendarRange.Weekly;
+                        }
+                        else if (meanDays == 14)
+                        {
+                            this.Frequency = CalendarRange.BiWeekly;
+                        }
+                        else if (meanDays >= 28 && meanDays <= 31)
+                        {
+                            this.Frequency = CalendarRange.Monthly;
+                        }
+                        else if (meanDays >= 58 && meanDays <= 62)
+                        {
+                            this.Frequency = CalendarRange.BiMonthly;
+                        }
+                        else if (meanDays >= 88 && meanDays <= 93)
+                        {
+                            this.Frequency = CalendarRange.TriMonthly;
+                        }
+                        else if (meanDays >= 120 && meanDays <= 124)
+                        {
+                            this.Frequency = CalendarRange.Quarterly;
+                        }
+                        else if (meanDays >= 180 && meanDays <= 185)
+                        {
+                            this.Frequency = CalendarRange.SemiAnnually;
+                        }
+                        else if (meanDays >= 720 && meanDays <= 740)
+                        {
+                            this.Frequency = CalendarRange.BiAnnually;
                         }
                     }
 
@@ -328,7 +264,6 @@ namespace Walkabout.Reports
                             nextDate = nextDate + TimeSpan.FromDays(meanDays);
                         }
 
-                        this.NextIndex = 0;
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);
                         this.NextDate = nextDate;

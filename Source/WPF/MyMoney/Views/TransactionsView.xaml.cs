@@ -6641,7 +6641,10 @@ namespace Walkabout.Views
             {
                 this.adorner = new TransactionConnectorAdorner(this.grid);
                 this.layer = AdornerLayer.GetAdornerLayer(this.grid);
-                this.layer.Add(this.adorner);
+                if (this.layer != null)
+                {
+                    this.layer.Add(this.adorner);
+                }
                 // relay these events up
                 this.adorner.MergeButton.Click += this.OnMainButtonClick;
                 this.adorner.CloseBox.Click += this.OnCloseBoxClick;
