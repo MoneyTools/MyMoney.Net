@@ -33,6 +33,8 @@
                 <RowDefinition Height="Auto" />
                 <!-- 2 Type -->
                 <RowDefinition Height="Auto" />
+                <!-- 2 Recurrence -->
+                <RowDefinition Height="Auto" />
                 <!-- 3 Color -->
                 <RowDefinition Height="Auto" />
                 <!-- 4 Taxe Category -->
@@ -52,11 +54,15 @@
             <TextBlock Grid.Column="0" Grid.Row="2" Text="Type:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ComboBox x:Name="comboBoxType" Grid.Column="1" Grid.Row="2" IsTextSearchCaseSensitive="True" Margin="10" MinWidth="200"/>
 
+            <!-- Recurrence -->
+            <TextBlock Grid.Column="0" Grid.Row="3" Text="Recurring:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <ComboBox x:Name="comboBoxRecurring" Grid.Column="1" Grid.Row="3" IsTextSearchCaseSensitive="True" Margin="10" MinWidth="200"/>
+
             <!-- Color -->
-            <TextBlock Grid.Column="0" Grid.Row="3" Text="Color:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Grid.Row="4" Text="Color:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ui:DropDownButton
                         x:Name="ColorDropDown"
-                        Grid.Column="1" Grid.Row="3" 
+                        Grid.Column="1" Grid.Row="4" 
                         AutomationProperties.Name="ColorDropDown"
                         VerticalAlignment="Center" HorizontalAlignment="Left"
                         Margin="10"
@@ -77,11 +83,11 @@
             </ui:DropDownButton>
 
             <!-- Tax association-->
-            <TextBlock Grid.Column="0" Grid.Row="4" Text="Tax Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Grid.Row="5" Text="Tax Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <local2:FilteringComboBox 
                 x:Name="comboTaxCategory" 
                 Grid.Column="1" 
-                Grid.Row="4" 
+                Grid.Row="5" 
                 Margin="10" 
                 MinHeight="24" 
                 MinWidth="200"
@@ -100,8 +106,8 @@
             </local2:FilteringComboBox>
 
             <!-- Description -->
-            <TextBlock Grid.Column="0" Grid.Row="5" Text="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Name="textBoxDescription"  Grid.Column="1"  Grid.Row="5" Height="80" Margin="10"/>
+            <TextBlock Grid.Column="0" Grid.Row="6" Text="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Name="textBoxDescription"  Grid.Column="1"  Grid.Row="6" Height="80" Margin="10"/>
 
         </Grid >
 

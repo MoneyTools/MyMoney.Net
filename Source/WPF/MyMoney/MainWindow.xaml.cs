@@ -3899,6 +3899,11 @@ namespace Walkabout
             this.myMoney.RemoveUnusedSecurities();
         }
 
+        private void OnResetCategoryFrequencies(object sender, RoutedEventArgs e)
+        {
+            this.myMoney.ResetCategoryFrequencies();
+        }
+
         private void OnCommandFileNew(object sender, ExecutedRoutedEventArgs e)
         {
             this.NewDatabase();

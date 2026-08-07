@@ -2283,6 +2283,16 @@ namespace Walkabout.Data
         {
             this.ClearDownloadedState();
         }
+
+        internal void ResetCategoryFrequencies()
+        {
+            this.BeginUpdate(this);
+            foreach (var c in this.Categories.GetCategories())
+            {
+                c.Frequency = CalendarRange.None;
+            }
+            this.EndUpdate();
+        }
     }
 
     public class ErrorEventArgs : EventArgs
@@ -7439,7 +7449,7 @@ namespace Walkabout.Data
                 c = this.GetOrCreateCategory(newname, category.Type);
                 c.Color = category.Color;
                 c.Budget = category.Budget;
-                c.BudgetRange = category.BudgetRange;
+                c.Frequency = category.Frequency;
                 c.Balance = category.Balance;
                 c.Description = category.Description;
                 c.TaxRefNum = category.TaxRefNum;
@@ -7609,7 +7619,7 @@ namespace Walkabout.Data
         Reserved, // this is not used (but hard to delete because of database).
         Transfer, // special category only used by pie charts
         Investments, // so you can separate out investment income and expenditures.
-        RecurringExpense, // so you can clearly mark bills that are repeatable.
+        RecurringExpense, // Deprecated: use "Frequency" instead.
     }
 
     public enum CalendarRange
@@ -7623,7 +7633,8 @@ namespace Walkabout.Data
         TriMonthly,
         Quarterly,
         SemiAnnually,
-        Annually
+        Annually,
+        BiAnnually
     }
 
     //================================================================================
@@ -7908,6 +7919,11 @@ namespace Walkabout.Data
             get { return this.type; }
             set
             {
+                // remove depricated category type.
+                if (value == CategoryType.RecurringExpense)
+                {
+                    value = CategoryType.Expense;
+                }
                 if (this.type != value)
                 {
                     this.type = value; this.OnChanged("Type");
@@ -8032,9 +8048,10 @@ namespace Walkabout.Data
             }
         }
 
+        // Expense or income frequency for this category.
         [DataMember]
         [ColumnMapping(ColumnName = "Frequency", SqlType = typeof(SqlInt32), AllowNulls = true)]
-        public CalendarRange BudgetRange
+        public CalendarRange Frequency
         {
             get { return this.range; }
             set

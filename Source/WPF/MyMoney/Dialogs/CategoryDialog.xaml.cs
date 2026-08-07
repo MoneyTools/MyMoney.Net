@@ -104,9 +104,20 @@ namespace Walkabout.Dialogs
             this.comboBoxType.Items.Add(CategoryType.None);
             this.comboBoxType.Items.Add(CategoryType.Income);
             this.comboBoxType.Items.Add(CategoryType.Expense);
-            this.comboBoxType.Items.Add(CategoryType.RecurringExpense);
             this.comboBoxType.Items.Add(CategoryType.Savings);
             this.comboBoxType.Items.Add(CategoryType.Investments);
+
+            this.comboBoxRecurring.Items.Add(CalendarRange.None);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Daily);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Weekly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.BiWeekly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Monthly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.BiMonthly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.TriMonthly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Quarterly);
+            this.comboBoxRecurring.Items.Add(CalendarRange.SemiAnnually);
+            this.comboBoxRecurring.Items.Add(CalendarRange.Annually);
+            this.comboBoxRecurring.Items.Add(CalendarRange.BiAnnually);
 
             this.categories = money.Categories;
 
@@ -238,12 +249,14 @@ namespace Walkabout.Dialogs
                 this.textBoxDescription.Text = string.Empty;
                 this.comboBoxType.Text = string.Empty;
                 this.comboTaxCategory.SelectedItem = null;
+                this.comboBoxRecurring.SelectedItem = null;
                 this.ColorPicker.Color = Colors.Transparent;
             }
             else
             {
                 this.textBoxDescription.Text = this.category.Description;
                 this.comboBoxType.SelectedItem = this.category.Type;
+                this.comboBoxRecurring.SelectedItem = this.category.Frequency;
                 this.comboBoxCategory.Text = c.Name;
 
                 this.comboTaxCategory.SelectedItem = this.taxCategories.Find(c.TaxRefNum);
@@ -268,6 +281,7 @@ namespace Walkabout.Dialogs
             this.transfer = a;
             this.category = null;
             this.comboBoxType.Text = string.Empty;
+            this.comboBoxRecurring.SelectedItem = null;
             this.textBoxDescription.Text = string.Empty;
             this.comboBoxType.IsEnabled = this.textBoxDescription.IsEnabled = false;
             if (this.transfer != null)
@@ -334,6 +348,9 @@ namespace Walkabout.Dialogs
                 {
                     this.category = this.categories.GetOrCreateCategory(text, type);
                 }
+
+                CalendarRange frequency = (CalendarRange)StringHelpers.ParseEnum(typeof(CalendarRange), this.comboBoxRecurring.Text, (int)CalendarRange.None);
+                this.category.Frequency = frequency;
 
                 TaxCategory tc = this.comboTaxCategory.SelectedItem as TaxCategory;
                 if (tc != null)

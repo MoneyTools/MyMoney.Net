@@ -340,7 +340,7 @@ namespace Walkabout.Charts
                     }
                     break;
                 case CategoryType.Expense:
-                    if (c.Type != Data.CategoryType.Expense && c.Type != Data.CategoryType.RecurringExpense)
+                    if (c.Type != Data.CategoryType.Expense)
                     {
                         return false;
                     }
@@ -396,7 +396,7 @@ namespace Walkabout.Charts
                         }
                         break;
                     case CategoryType.Expense:
-                        if (c.Type != Data.CategoryType.Expense && c.Type != CategoryType.RecurringExpense)
+                        if (c.Type != Data.CategoryType.Expense)
                         {
                             return false;
                         }

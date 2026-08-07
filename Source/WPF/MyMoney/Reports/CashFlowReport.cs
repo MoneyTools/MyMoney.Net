@@ -165,9 +165,8 @@ namespace Walkabout.Reports
                 case CategoryType.Income:
                 case CategoryType.Savings:
                     return b == CategoryType.Income || b == CategoryType.Savings;
-                case CategoryType.RecurringExpense:
                 case CategoryType.Expense:
-                    return b == CategoryType.Expense || b == CategoryType.RecurringExpense;
+                    return b == CategoryType.Expense;
                 case CategoryType.Reserved:
                     return false;
                 case CategoryType.Transfer:
@@ -207,7 +206,7 @@ namespace Walkabout.Reports
             {
                 return this.IsExpense(c.ParentCategory);
             }
-            return c.Type == CategoryType.Expense || c.Type == CategoryType.RecurringExpense;
+            return c.Type == CategoryType.Expense;
         }
 
         private bool IsIncome(Category c)

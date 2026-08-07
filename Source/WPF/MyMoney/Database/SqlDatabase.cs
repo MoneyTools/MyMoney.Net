@@ -2053,7 +2053,7 @@ namespace Walkabout.Data
                 }
                 if (!reader.IsDBNull(6))
                 {
-                    c.BudgetRange = (CalendarRange)reader.GetInt32(6);
+                    c.Frequency = (CalendarRange)reader.GetInt32(6);
                 }
                 if (!reader.IsDBNull(7))
                 {
@@ -2098,7 +2098,7 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",Type={0}", (int)c.Type));
                     sb.Append(string.Format(",ParentId={0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
                     sb.Append(string.Format(",Budget={0}", c.Budget));
-                    sb.Append(string.Format(",Frequency={0}", (int)c.BudgetRange));
+                    sb.Append(string.Format(",Frequency={0}", (int)c.Frequency));
                     sb.Append(string.Format(",Balance={0}", c.Balance));
                     sb.Append(string.Format(",Color='{0}'", c.Color));
                     sb.Append(string.Format(",TaxRefNum='{0}'", c.TaxRefNum));
@@ -2115,7 +2115,7 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",{0}", (int)c.Type));
                     sb.Append(string.Format(",{0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
                     sb.Append(string.Format(",{0}", c.Budget.ToString()));
-                    sb.Append(string.Format(",{0}", (int)c.BudgetRange));
+                    sb.Append(string.Format(",{0}", (int)c.Frequency));
                     sb.Append(string.Format(",{0}", c.Balance));
                     sb.Append(string.Format(",'{0}'", c.Color));
                     sb.Append(string.Format(",'{0}'", c.TaxRefNum));

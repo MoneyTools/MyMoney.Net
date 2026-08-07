@@ -252,7 +252,7 @@ namespace Walkabout.Reports
                         }
                     }
 
-                    if (this.Category.Type == CategoryType.RecurringExpense ||  // user provided input that this is a recurring bill payment!
+                    if (this.Category.Frequency != CalendarRange.None ||  // user provided input that this is a recurring bill payment!
                         (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity))
                     {
                         var today = DateTime.Today;
@@ -337,7 +337,7 @@ namespace Walkabout.Reports
             {
                 if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Account == null ||
                     t.Date < start || t.Date > today || t.Payee == null || t.Category == null
-                    || (t.Category.Type != CategoryType.Expense && t.Category.Type != CategoryType.RecurringExpense))
+                    || (t.Category.Type != CategoryType.Expense))
                 {
                     continue;
                 }

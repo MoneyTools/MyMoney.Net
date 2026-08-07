@@ -105,8 +105,6 @@
             <Separator />
             <MenuItem Header="_Expand all" Command="local:CategoriesControl.CommandExpandAll" />
             <MenuItem Header="_Collapse all" Command="local:CategoriesControl.CommandCollapseAll" />
-            <Separator />
-            <MenuItem Header="_Reset budget" Command="local:CategoriesControl.CommandResetBudget" />
         </ContextMenu>
     </UserControl.ContextMenu>
 

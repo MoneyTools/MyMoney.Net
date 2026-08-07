@@ -172,13 +172,14 @@
             <MenuItem x:Name="MenuEditDelete" Header="_Delete" Command="Delete"/>
             <Separator/>
             <MenuItem Header="C_leanup">
-              <MenuItem x:Name="MnuRemoveUnusedSecurities" Header="_Remove unused securities" Click="OnRemovedUnusedSecurities"/>
+              <MenuItem x:Name="MenuRemoveUnusedSecurities" Header="_Remove unused securities" Click="OnRemovedUnusedSecurities"/>
               <MenuItem x:Name="MenuTroubleshootCheckTransfer" Header="_Check Transfers" Command="p:AppCommands.CommandTroubleshootCheckTransfer"/>
               <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
               <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
               <MenuItem x:Name="MenuFixPayees" Header="Remove Duplicate _Payees" Click="MenuRemoveDuplicatePayees_Click"/>
               <MenuItem x:Name="MenuGCCollect" Header="_GC.Collect" Click="MenuGCCollect_Click"/>
               <MenuItem x:Name="MenuEnvironment" Header="_Environment" Click="MenuEnvironment_Click"/>
+              <MenuItem x:Name="MenuRemoveCategoryFrequencies" Header="Reset all category frequencies" Click="OnResetCategoryFrequencies"/>
             </MenuItem>
           </MenuItem>
 

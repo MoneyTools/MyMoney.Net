@@ -32,7 +32,6 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandMergeCategory;
         public static RoutedUICommand CommandExpandAll;
         public static RoutedUICommand CommandCollapseAll;
-        public static RoutedUICommand CommandResetBudget;
 
         static CategoriesControl()
         {
@@ -43,7 +42,6 @@ namespace Walkabout.Views.Controls
             CommandMergeCategory = new RoutedUICommand("Merge", "CommandMergeCategory", typeof(AccountsControl));
             CommandExpandAll = new RoutedUICommand("Expand All", "CommandExpandAll", typeof(AccountsControl));
             CommandCollapseAll = new RoutedUICommand("Collapse All", "CommandCollapseAll", typeof(AccountsControl));
-            CommandResetBudget = new RoutedUICommand("Reset Budget", "CommandResetBudget", typeof(AccountsControl));
         }
 
         #endregion 
@@ -208,12 +206,6 @@ namespace Walkabout.Views.Controls
                         }
 
                         var type = c.Type;
-                        if (type == CategoryType.RecurringExpense)
-                        {
-                            // bundle these together with Expense.
-                            type = CategoryType.Expense;
-                        }
-
                         if (type == t || (c.Type == CategoryType.Savings && t == CategoryType.Income))
                         {
                             balance += c.Balance;
@@ -327,10 +319,6 @@ namespace Walkabout.Views.Controls
                         }
 
                         var type = c.Type;
-                        if (type == CategoryType.RecurringExpense)
-                        {
-                            type = CategoryType.Expense;
-                        }
 
                         if (type == t || (type == CategoryType.Savings && t == CategoryType.Income))
                         {
