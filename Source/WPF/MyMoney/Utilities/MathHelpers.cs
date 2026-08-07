@@ -90,16 +90,14 @@ namespace Walkabout.Utilities
             return covariance;
         }
 
-        public static double DistanceToLine(IEnumerable<double> pts, double a, double b)
+        public static IEnumerable<double> DistancesToLine(IEnumerable<double> pts, double a, double b)
         {
             double x = 1;
-            double sum = 0;
             foreach (double y in pts)
             {
                 var y2 = a + (b * x++);
-                sum += Math.Abs(y - y2);
+                yield return Math.Abs(y - y2);
             }
-            return sum;
         }
 
         /// <summary>
