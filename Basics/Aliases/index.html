@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Basics/Aliases/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Aliases - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Aliases", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Attachments/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Attachments/" class="btn btn-xs btn-link">
+        Attachments
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Queries/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Queries/" class="btn btn-xs btn-link">
+        Queries
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="aliases">Aliases<a class="headerlink" href="#aliases" title="Permanent link">#</a></h1>
+<p>When you rename a payee and select the "<strong>Auto-Rename</strong> " checkbox in the Payee Rename dialog, then
+you are creating an "<strong>Alias</strong> " for that Payee.  Aliases are important for
+<a href="../AutoCategorization/">Auto-Categorization</a> to work nicely.  Aliases make it possible for newly
+downloaded transactions to automatically pick up the nice name you prefer for a given Payee.</p>
+<p>You can manage all your Aliases using the <strong>View/Aliases</strong>  menu item:</p>
+<p><img alt="" src="../../Images/Aliases.png" /></p>
+<p>If you delete a row from this list, it will not "undo" the rename, it will simply remove the alias
+so that future auto-renames no longer take place.</p>
+<p>When you accumulate a lot of renames for a given Payee you might want to use the <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference">Regular
+Expression</a>
+feature to consolidate them.  For example, these are all the variations of Alaska Airlines one could
+accumulate over the years:</p>
+<p><img alt="" src="../../Images/AliasList.png" /></p>
+<p>You can change the <code>Name</code> of the first one here to the following pattern:</p>
+<pre><code>.*ALASKA[ ]+AIR.*
+</code></pre>
+<p>And change the <code>Type</code> column to <code>Regex</code>, then you will see the following consolidation take place:</p>
+<p><img alt="" src="../../Images/AliasConsolidation.png" /></p>
+<p>The pattern means:
+- <code>.*</code> any initial sequence of chars
+- <code>ALASKA</code> the literal string must match
+- <code>[ ]+</code> one or more space chars
+- <code>AIR</code> the literal string
+- <code>.*</code> any trailing sequence of chars</p>
+<p>So this pattern matches all the other aliases we had created and therefore it will subsume then when
+you <code>Save</code> the updated database, and it will match any future name you receive that matches this
+pattern, making the <a href="../AutoCategorization/">Auto-Categorization</a> feature work even better.</p>
+<p>See also <a href="../Payees/">Payees</a>.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Attachments/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Attachments/" class="btn btn-xs btn-link">
+        Attachments
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Queries/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Queries/" class="btn btn-xs btn-link">
+        Queries
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

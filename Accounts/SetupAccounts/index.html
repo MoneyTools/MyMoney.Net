@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/SetupAccounts/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Creating Accounts - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Creating Accounts", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../BankAccounts/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../BankAccounts/" class="btn btn-xs btn-link">
+        Bank Accounts
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../../Basics/Updates/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../Basics/Updates/" class="btn btn-xs btn-link">
+        Updates
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="creating-accounts">Creating Accounts<a class="headerlink" href="#creating-accounts" title="Permanent link">#</a></h1>
+<p>There are two ways to setup accounts.  You can add accounts manually using the following context menu item available in the accounts panel:</p>
+<p><img alt="" src="../../Images/Setup%20Accounts.png" /></p>
+<p>Once an account exists you can import data using the
+<a href="../../Basics/Importing/">File/Import</a> menu or using the
+<a href="../CsvImport/">Import Csv...</a> menu available here.</p>
+<p>The New Account dialog contains the following information.  You can also get back to this dialog by right clicking on the account and selecting <strong>Properties</strong> :</p>
+<p><img alt="" src="../../Images/Setup%20Accounts1.png" /></p>
+<p>Most of these fields are optional, except Name, and Account Number.  Name is the name of the account you would like to use, doesn't have to match your bank account name.</p>
+<p><strong>Account number</strong>  is the number that uniquely identifies this account.</p>
+<p><strong>Online Account Id</strong> :  is used to match downloaded transactions, so needs to be correct.  Sometimes these can be a bit tricky - for example Fidelity removes the "-" connector.  So if you want to use the <a href="../OnlineBanking/">Online Banking</a> feature you should "Add" the account that way to be sure the account number is correct.  See also <a href="../AccountAliases/">Account Aliases</a><strong>.</strong></p>
+<p>The <strong>Description</strong>  is entirely optional.</p>
+<p>The <strong>Account Type</strong> combo shows</p>
+<ul>
+<li>The following choices:</li>
+</ul>
+<p><img alt="image" src="../../Images/Setup%20Accounts2.png" /></p>
+<ul>
+<li>
+<p><strong>Savings</strong>  and <strong>Checking</strong>  are designed for <a href="../BankAccounts/">Bank Accounts</a>.   MoneyMarket is just another kind of savings account.</p>
+</li>
+<li>
+<p><strong>Cash</strong>  is like a bank account, and can be used to track petty cash,</p>
+</li>
+<li>
+<p><strong>Credit</strong>  is for credit cards but is very similar to bank accounts.  See <a href="../CreditCardAccounts/">Credit Card Accounts</a>.</p>
+</li>
+<li>
+<p><strong>Brokerage</strong> is for brokerage accounts.  See <a href="../InvestmentAccounts/">Investment Accounts</a>.</p>
+</li>
+<li>
+<p><strong>Retirement</strong>  is for retirement accounts like 401k, 403b, and Roth IRA. See <a href="../InvestmentAccounts/">Investment Accounts</a>.</p>
+</li>
+<li>
+<p><strong>Asset</strong>  is an account that you can deposit assets into just so they get added to your net worth statement.  See <a href="../Assets/">Assets</a><strong>.</strong></p>
+</li>
+</ul>
+<p>The <strong>Tax Status</strong> combo allows you to specify if the account is Taxable, Tax Deferred or Tax Free.  This impacts how
+taxable gains are computed in the <a href="../../Reports/NetworthReport/">Networth</a> and <a href="../../Reports/InvestmentPortfolio/">Investment Portfolio</a>. 
+For example, create a Tax Deferred 401k account or a Tax Free Roth IRA account.</p>
+<p>The <strong>Opening Balance</strong>  is the amount that you need to enter in order to start balancing the account, so whatever month you want start from, grab the ending balance from your previous bank statement.</p>
+<p>The <strong>Online Account</strong>  field is how you connect your account to <a href="../OnlineBanking/">Online Banking</a>. </p>
+<p>The <strong>Currency</strong>  is optional and is only needed if you plan to have multiple accounts with different currencies. See <a href="../../Basics/Currencies/">Currencies</a>.</p>
+<p>The <strong>Web Site</strong>  is a URL link to the website for your bank or credit card and the "&gt;&gt;" button will bring this up in your web browser.</p>
+<p>The <strong>Aliases</strong>  are the strings you want to match this account with when downloading OFX or QFX transactions from your bank, see <a href="../AccountAliases/">Account Aliases</a><strong>.</strong></p>
+<p>The <strong>Reconcile Warning</strong>  field helps you remember to balance your accounts before your bank removes the online statements.  See <a href="../BalancingAccounts/">Balancing Accounts</a>.</p>
+<p>The <strong>Closed</strong>  checkbox simply removes the account from the default view to cleanup the list of accounts.  Keeping these around can help with transfers from accounts that are still open.  Closing an account does not remove any data.  You can hide and show closed accounts using this "Display Closed Accounts" command on the Accounts Panel context menu:</p>
+<p>You probably never need to delete any data.  15 years of transactions for a single family is about 15 megabytes.  So with the size of hard drives these days, you can easily store all your transactions for life, including <a href="../../Basics/Attachments/">Attachments</a>.  Of course, I would then recommend the SQL Lite database which will be able to handle bigger databases than the XML file formats.</p>
+<p>The <strong>Last Download</strong>  date can be used to reset the Online Account synchronization date. </p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../BankAccounts/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../BankAccounts/" class="btn btn-xs btn-link">
+        Bank Accounts
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../../Basics/Updates/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../Basics/Updates/" class="btn btn-xs btn-link">
+        Updates
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
