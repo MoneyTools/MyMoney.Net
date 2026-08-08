@@ -40,11 +40,11 @@ namespace Walkabout.Reports
         private int socialSecurityAge = 67;
         private int spousalSocialSecurityFullRetirementAge = 67;
         private decimal socialSecurityAdjustment = 0.04M; // for inflation
+        private bool stacked = true;
         private StockQuoteCache cache;
 
         public static string TaxDeferredStrategyNone = "None";
         public static string TaxDeferredStrategyRoth = "Roth Conversion";
-
 
         public RetirementPlanReport(FlowDocumentView view)
         {
@@ -77,6 +77,7 @@ namespace Walkabout.Reports
             this.panel.TaxDeferredStrategyAgeChanged += this.OnTaxDeferredStrategyAgeChanged;
             this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
             this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
+            this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
         }
 
         private void UnRegister()
@@ -96,6 +97,7 @@ namespace Walkabout.Reports
                 this.panel.TaxDeferredStrategyAgeChanged -= this.OnTaxDeferredStrategyAgeChanged;
                 this.panel.SocialSecurityAgeChanged -= this.OnSocialSecurityAgeChanged;
                 this.panel.SocialSecurityAmountChanged -= this.OnSocialSecurityAmountChanged;
+                this.panel.StackedBarsChanged -= this.OnStackedBarsChanged;
             }
         }
 
@@ -157,6 +159,12 @@ namespace Walkabout.Reports
         {
             this.socialSecurityAge = e; this.Regenerate();
         }
+
+        private void OnStackedBarsChanged(object sender, bool e)
+        {
+            this.stacked = e; this.Regenerate();
+        }
+
 
         public override void OnSiteChanged()
         {
@@ -389,9 +397,10 @@ namespace Walkabout.Reports
             // insert networth graph
             writer.WriteHeading("Networth");
 
-            AnimatingBarChart networthChart = new AnimatingBarChart();
+            AnimatingBarChart networthChart = new AnimatingBarChart() {  Stacked = this.stacked };
             networthChart.Width = 1280;
             networthChart.Height = 400;
+            networthChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             networthChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             networthChart.Padding = new Thickness(20, 0, 100, 0);
             networthChart.BorderThickness = new Thickness(0);
@@ -407,9 +416,10 @@ namespace Walkabout.Reports
             writer.WriteElement(networthChart);
 
             writer.WriteHeading("Income - adjusted for inflation");
-            AnimatingBarChart incomeChart = new AnimatingBarChart();
+            AnimatingBarChart incomeChart = new AnimatingBarChart() { Stacked = this.stacked };
             incomeChart.Width = 1280;
             incomeChart.Height = 400;
+            incomeChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             incomeChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             incomeChart.Padding = new Thickness(20, 0, 100, 0);
             incomeChart.BorderThickness = new Thickness(0);
@@ -429,9 +439,10 @@ namespace Walkabout.Reports
             writer.WriteElement(incomeChart);
 
             writer.WriteHeading("Taxes paid to get this income");
-            AnimatingBarChart taxesChart = new AnimatingBarChart();
+            AnimatingBarChart taxesChart = new AnimatingBarChart() { Stacked = this.stacked };
             taxesChart.Width = 1280;
             taxesChart.Height = 400;
+            taxesChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             taxesChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             taxesChart.Padding = new Thickness(20, 0, 100, 0);
             taxesChart.BorderThickness = new Thickness(0);
@@ -804,6 +815,7 @@ namespace Walkabout.Reports
                 this.taxDeferredStrategyAge = s.TaxDeferredStrategyAge;
                 this.socialSecurityAmount = s.SocialSecurityAmount;
                 this.socialSecurityAge = s.SocialSecurityAge;
+                this.stacked = s.Stacked;
 
                 if (this.panel != null)
                 {
@@ -821,6 +833,7 @@ namespace Walkabout.Reports
                     this.panel.TaxDeferredStrategyAge = this.taxDeferredStrategyAge;
                     this.panel.SocialSecurityAmount = this.socialSecurityAmount;
                     this.panel.SocialSecurityAge = this.socialSecurityAge;
+                    this.panel.StackedBars = this.stacked;
                     this.Register();
                 }
             }
@@ -845,6 +858,7 @@ namespace Walkabout.Reports
                 TaxDeferredStrategyAge = this.taxDeferredStrategyAge,
                 SocialSecurityAmount = this.socialSecurityAmount,
                 SocialSecurityAge = this.socialSecurityAge,
+                Stacked = this.stacked
             };
         }
 
@@ -866,6 +880,7 @@ namespace Walkabout.Reports
             public int TaxDeferredStrategyAge { get; set; }
             public decimal SocialSecurityAmount { get; set; }
             public int SocialSecurityAge { get; set; }
+            public bool Stacked { get; set; }
 
 
             public string Name => "RetirementPlan";

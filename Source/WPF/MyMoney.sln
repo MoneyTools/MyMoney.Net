@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScenarioTest", "ScenarioTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceProvider", "PerformanceProvider\PerformanceProvider.csproj", "{0189B7E0-9CB2-4DE3-A1E6-7D538AFB92DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIControlsTest", "UIControlsTest\UIControlsTest.csproj", "{DD58C810-7F92-4740-A2BC-F4405309C159}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -230,6 +232,30 @@ Global
 		{0189B7E0-9CB2-4DE3-A1E6-7D538AFB92DA}.Release|x64.Build.0 = Release|Any CPU
 		{0189B7E0-9CB2-4DE3-A1E6-7D538AFB92DA}.Release|x86.ActiveCfg = Release|Any CPU
 		{0189B7E0-9CB2-4DE3-A1E6-7D538AFB92DA}.Release|x86.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|ARM.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|x64.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Debug|x86.Build.0 = Debug|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|ARM.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|ARM.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|ARM64.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|x64.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|x64.Build.0 = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|x86.ActiveCfg = Release|Any CPU
+		{DD58C810-7F92-4740-A2BC-F4405309C159}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

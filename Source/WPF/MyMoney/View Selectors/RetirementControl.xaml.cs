@@ -326,5 +326,24 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public bool StackedBars
+        {
+            get { return this.StackedBarsCheckbox.IsChecked == true; }
+            set
+            {
+                this.StackedBarsCheckbox.IsChecked = value;
+            }
+        }
+
+        public event EventHandler<bool> StackedBarsChanged;
+
+        private void OnStackedChanged(object sender, RoutedEventArgs e)
+        {
+            if (StackedBarsChanged != null)
+            {
+                this.StackedBarsChanged(this, this.StackedBars);
+            }
+
+        }
     }
 }

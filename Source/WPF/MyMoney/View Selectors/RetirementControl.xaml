@@ -188,6 +188,11 @@
         </StackPanel>
       </Border>
 
+      <Border Style="{StaticResource Rows}" >
+        <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
+          <CheckBox x:Name="StackedBarsCheckbox" Checked="OnStackedChanged" Unchecked="OnStackedChanged">Stacked bar chart</CheckBox>
+        </Border>
+      </Border>
     </StackPanel>
   </ScrollViewer>
 </UserControl>

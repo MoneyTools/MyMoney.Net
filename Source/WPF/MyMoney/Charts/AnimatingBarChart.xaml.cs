@@ -21,7 +21,7 @@ namespace LovettSoftware.Charts
     public partial class AnimatingBarChart : UserControl
     {
         private readonly DelayedActions actions = new DelayedActions();
-        private ColumnInfo tipColumn;
+        private ChartDataValue tipColumn;
         private Point movePos;
         private ColumnInfo inside;
         private bool mouseOverAnimationCompleted = false;
@@ -116,6 +116,21 @@ namespace LovettSoftware.Charts
         {
             get { return (double)this.GetValue(LineThicknessProperty); }
             set { this.SetValue(LineThicknessProperty, value); }
+        }
+
+        public bool Stacked
+        {
+            get { return (bool)this.GetValue(StackedProperty); }
+            set { this.SetValue(StackedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Stacked.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty StackedProperty =
+            DependencyProperty.Register("Stacked", typeof(bool), typeof(AnimatingBarChart), new PropertyMetadata(false, OnStackedChanged));
+
+        private static void OnStackedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatingBarChart)d).OnDelayedUpdate();
         }
 
         // Using a DependencyProperty as the backing store for LineThickness.  This enables animation, styling, binding, etc...
@@ -268,13 +283,11 @@ namespace LovettSoftware.Charts
 
         private void OnHover()
         {
-            var info = this.tipColumn;
-            if (info == null)
+            ChartDataValue value = this.tipColumn;
+            if (value == null)
             {
                 return;
             }
-
-            ChartDataValue value = info.Data;
             var tip = this.ToolTip as ToolTip;
             var content = this.ToolTipGenerator != null ? this.ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
@@ -302,7 +315,6 @@ namespace LovettSoftware.Charts
             {
                 h(this, value);
             }
-
         }
 
         private ColumnInfo FindColumn(Point pos)
@@ -313,13 +325,10 @@ namespace LovettSoftware.Charts
             {
                 var info = this.bars[i];
                 var r = info.Bounds;
-                if (pos.X >= r.Left && pos.X <= r.Right)
+                if (r.Contains(pos))
                 {
-                    if (pos.Y >= r.Top && pos.Y <= r.Bottom)
-                    {
-                        // found it!
-                        return info;
-                    }
+                    // found it!
+                    return info;
                 }
             }
             return null;
@@ -334,7 +343,7 @@ namespace LovettSoftware.Charts
                 this.OnEnterColumn(info);
                 this.HideToolTip();
                 this.movePos = pos;
-                this.tipColumn = info;
+                this.tipColumn = info.Data;
                 this.actions.StartDelayedAction("hover", () =>
                 {
                     this.OnHover();
@@ -395,7 +404,7 @@ namespace LovettSoftware.Charts
         {
             var pos = e.GetPosition(this);
             var info = this.FindColumn(pos);
-            if (info != null)
+            if (info != null && info.Data != null)
             {
                 ChartDataValue value = info.Data;
                 if (ColumnClicked != null)
@@ -766,7 +775,7 @@ namespace LovettSoftware.Charts
 
                 PointCollection poly = new PointCollection();
                 poly.Add(new Point() { X = axisLabelGap, Y = ypos });
-                poly.Add(new Point() { X = w, Y = ypos });
+                poly.Add(new Point() { X = axisLabelGap + w, Y = ypos });
                 line.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration });
 
                 label.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
