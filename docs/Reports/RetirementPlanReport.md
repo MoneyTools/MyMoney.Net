@@ -10,7 +10,7 @@ should attempt a Roth conversion on any tax deferred accounts.
 To setup the report you need to enter some values in the RETIREMENT
 details as follows:
 
-![retirement settings](../images/RetirementSettings.png)
+![retirement settings](../Images/RetirementSettings.png)
 
 Then you will see the following if you started with:
 - $3.7 million in a taxable brokerage account (with some cost basis)
