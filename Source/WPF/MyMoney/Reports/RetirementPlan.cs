@@ -383,7 +383,11 @@ namespace Walkabout.Reports
                     taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
                     socialSecurityIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
 
-                    decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - taxFreeIncome - socialSecurityIncome;
+                    decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - socialSecurityIncome;
+                    if (grossUp < 0)
+                    {
+                        grossUp = 0;
+                    }
                     grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
 
                     taxesSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
@@ -498,6 +502,9 @@ namespace Walkabout.Reports
                 this.Taxable = this.Taxable * (1 + investmentRateOfReturn);
                 this.TaxDeferred = this.TaxDeferred * (1 + investmentRateOfReturn);
                 this.TaxFree = this.TaxFree * (1 + investmentRateOfReturn);
+
+                // as investments increased, the cost basis then also decreases by the same amount.
+                this.CostBasisRatio *= (1 - investmentRateOfReturn);
             }
 
             private static (decimal Rate, decimal Threshold)[] JointBracket = new (decimal, decimal)[]
