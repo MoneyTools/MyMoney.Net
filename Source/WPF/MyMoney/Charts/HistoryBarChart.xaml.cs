@@ -346,7 +346,7 @@ namespace Walkabout.Charts
                 var series = new ChartDataSeries() { Name = "History" };
                 foreach (var column in this.collection)
                 {
-                    series.Values.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
+                    series.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
                 }
 
                 data.AddSeries(series);

@@ -290,7 +290,7 @@ namespace Walkabout.Charts
 
                 foreach (CategoryData item in from c in this.map.Values orderby Math.Abs(c.Total) descending select c)
                 {
-                    series.Values.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
+                    series.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
                 }
 
                 this.TotalAmount.Text = string.Format("{0:C2}", this.NetAmount);

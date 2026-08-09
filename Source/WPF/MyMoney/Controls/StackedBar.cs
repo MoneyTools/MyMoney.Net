@@ -120,7 +120,7 @@ namespace Walkabout.Controls
         public void AddSegment(double length, Color color, object userData)
         {
             var moc = this.GetMouseOverColor(color);
-            infos.Add(new BarInfo { 
+            this.infos.Add(new BarInfo { 
                 Length = length, 
                 Color = color, 
                 Brush = new SolidColorBrush(color),
@@ -168,8 +168,6 @@ namespace Walkabout.Controls
 
             if (this.Orientation == Orientation.Vertical)
             {
-                double x = 0;
-                double y = 0;
                 foreach (var i in infos)
                 {
                     var seg = i.Bounds;
@@ -180,13 +178,10 @@ namespace Walkabout.Controls
                         brush = this.GetBlendBrush(i.Color, mouseOverColor, this.MouseOverBlend);
                     }
                     drawingContext.DrawRectangle(brush, null, seg);
-                    y += seg.Height;
                 }           
             } 
             else
             {
-                double x = 0;
-                double y = 0;
                 foreach (var i in infos)
                 {
                     var seg = i.Bounds;
@@ -197,7 +192,6 @@ namespace Walkabout.Controls
                         brush = this.GetBlendBrush(i.Color, mouseOverColor, this.MouseOverBlend);
                     }
                     drawingContext.DrawRectangle(brush, null, seg);
-                    x += seg.Width;
                 }
             }
         }
@@ -211,17 +205,23 @@ namespace Walkabout.Controls
             return new SolidColorBrush(blend);
         }
 
+        public double GetSegmentLength()
+        {
+            return (from i in this.infos select i.Length).Sum();
+        }
+
+
         private void LayoutSegments()
         {
-            double totalLength = (from i in this.infos select i.Length).Sum();
+            double totalLength = this.GetSegmentLength();
             if (totalLength == 0) return;
 
             if (this.Orientation == Orientation.Vertical)
             {
                 Rect bounds = this.outline.Bounds;
                 double width = bounds.Width;
-                double x = 0;
-                double y = 0;
+                double x = bounds.Left;
+                double y = bounds.Top;
                 foreach (var i in infos)
                 {
                     double height = Math.Round((i.Length / totalLength) * bounds.Height);
@@ -233,8 +233,8 @@ namespace Walkabout.Controls
             {
                 Rect bounds = this.outline.Bounds;
                 double height = bounds.Height;
-                double x = 0;
-                double y = 0;
+                double x = bounds.Left;
+                double y = bounds.Top;
                 foreach (var i in infos)
                 {
                     double width = Math.Round((i.Length / totalLength) * bounds.Width);
@@ -250,5 +250,10 @@ namespace Walkabout.Controls
             base.OnRenderSizeChanged(sizeInfo);
         }
 
+        internal void ClearSegments()
+        {
+            infos.Clear();
+            this.InvalidateVisual();
+        }
     }
 }

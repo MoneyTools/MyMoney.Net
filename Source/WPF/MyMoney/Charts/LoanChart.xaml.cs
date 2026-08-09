@@ -79,8 +79,8 @@ namespace Walkabout.Charts
                     var payment = cumulatedPayementsPerYear[year];
                     totalPrincipal += payment.Principal;
                     totalInterest += payment.Interest;
-                    interestSeries.Values.Add(new ChartDataValue() { Label = payment.Label, Value = -(double)payment.Interest, UserData = "interest" });
-                    principalSeries.Values.Add(new ChartDataValue() { Label = payment.Label, Value = -(double)payment.Principal, UserData = "principal" });
+                    interestSeries.Add(new ChartDataValue() { Label = payment.Label, Value = -(double)payment.Interest, UserData = "interest" });
+                    principalSeries.Add(new ChartDataValue() { Label = payment.Label, Value = -(double)payment.Principal, UserData = "principal" });
                 }
 
                 var data = new ChartData();

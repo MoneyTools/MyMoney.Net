@@ -66,7 +66,7 @@ namespace Walkabout.Tests
                     double.TryParse(value, out x);
                     var color = colors[i];
                     var label = rowIndex.ToString();
-                    series[i].Values.Add(new ChartDataValue(label, x, null) { Color = color });
+                    series[i].Add(new ChartDataValue(label, x, null) { Color = color });
                 }
             }
 

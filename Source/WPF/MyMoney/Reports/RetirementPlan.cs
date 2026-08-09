@@ -42,6 +42,7 @@ namespace Walkabout.Reports
         private decimal socialSecurityAdjustment = 0.04M; // for inflation
         private bool stacked = true;
         private StockQuoteCache cache;
+        private List<AnimatingBarChart> charts = new List<AnimatingBarChart>();
 
         public static string TaxDeferredStrategyNone = "None";
         public static string TaxDeferredStrategyRoth = "Roth Conversion";
@@ -161,8 +162,12 @@ namespace Walkabout.Reports
         }
 
         private void OnStackedBarsChanged(object sender, bool e)
-        {
-            this.stacked = e; this.Regenerate();
+        {            
+            this.stacked = e; 
+            foreach (var chart in this.charts)
+            {
+                chart.Stacked = e;
+            }
         }
 
 
@@ -208,11 +213,13 @@ namespace Walkabout.Reports
         private static string ChartValueTaxDeferred = "Tax Deferred";
         private static string ChartValueTaxFree = "Tax Free";
         private static string ChartValueSocialSecurity = "Social Security";
-        private static string ChartValueGross = "Gross";
+        private static string ChartValueGross = "Gross up";
 
         public override async Task Generate(IReportWriter writer)
         {
             await Task.CompletedTask;
+
+            this.charts.Clear();
 
             this.DelaySaveState();
 
@@ -254,7 +261,7 @@ namespace Walkabout.Reports
             var taxDeferredIncomeSeries = new ChartDataSeries() { Name = "Tax Deferred Income" };
             var taxFreeIncomeSeries = new ChartDataSeries() { Name = "Tax Free Income" };
             var socialSecurityIncomeSeries = new ChartDataSeries() { Name = "Social Security Income" };
-            var grossIncomeSeries = new ChartDataSeries() { Name = "Gross Income" };
+            var grossIncomeSeries = new ChartDataSeries() { Name = "Extra Income to pay taxes" };
             var taxesSeries = new ChartDataSeries() { Name = "Taxes" };
 
             decimal totalTaxes = 0;
@@ -289,9 +296,9 @@ namespace Walkabout.Reports
                         taxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
                     }
 
-                    taxableSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable});
-                    taxFreeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxFree, Color = taxFreeColor, UserData = ChartValueTaxFree });
-                    taxDeferredSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxDeferred, Color = taxDeferredColor, UserData = ChartValueTaxDeferred });
+                    taxableSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable});
+                    taxFreeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxFree, Color = taxFreeColor, UserData = ChartValueTaxFree });
+                    taxDeferredSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxDeferred, Color = taxDeferredColor, UserData = ChartValueTaxDeferred });
 
                     decimal taxableIncome = 0;
                     decimal taxDeferredIncome = 0;
@@ -335,6 +342,10 @@ namespace Walkabout.Reports
                         taxableIncome += amount;
                         income += amount;
                         funds.Taxable -= amount;
+                        if ((int)taxableIncome == 416156)
+                        {
+                            // debug me
+                        }
                         taxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, amount);
                     }
 
@@ -367,13 +378,15 @@ namespace Walkabout.Reports
                     }
 
                     totalTaxes += taxes; 
-                    taxableIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
-                    taxDeferredIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
-                    taxFreeIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
-                    socialSecurityIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
-                    grossIncomeSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)baseIncome, Color = grossIncomeColor, UserData = ChartValueGross });
+                    taxableIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
+                    taxDeferredIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
+                    taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
+                    socialSecurityIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
 
-                    taxesSeries.Values.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
+                    decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - taxFreeIncome - socialSecurityIncome;
+                    grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
+
+                    taxesSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
                     futureIncome = futureIncome * (1 + this.inflationRate);
                 }
 
@@ -403,10 +416,10 @@ namespace Walkabout.Reports
             networthChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             networthChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             networthChart.Padding = new Thickness(20, 0, 100, 0);
-            networthChart.BorderThickness = new Thickness(0);
             networthChart.VerticalAlignment = VerticalAlignment.Top;
             networthChart.HorizontalAlignment = HorizontalAlignment.Left;
             networthChart.ToolTipGenerator = this.OnGenerateToolTip;
+            this.charts.Add(networthChart);
 
             ChartData chartData = new ChartData();
             chartData.AddSeries(taxableSeries);
@@ -422,11 +435,11 @@ namespace Walkabout.Reports
             incomeChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             incomeChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             incomeChart.Padding = new Thickness(20, 0, 100, 0);
-            incomeChart.BorderThickness = new Thickness(0);
             incomeChart.VerticalAlignment = VerticalAlignment.Top;
             incomeChart.HorizontalAlignment = HorizontalAlignment.Left;
             incomeChart.HorizontalAlignment = HorizontalAlignment.Left;
             incomeChart.ToolTipGenerator = this.OnGenerateToolTip;
+            this.charts.Add(incomeChart);
 
             chartData = new ChartData();
             chartData.AddSeries(grossIncomeSeries);
@@ -445,11 +458,11 @@ namespace Walkabout.Reports
             taxesChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
             taxesChart.HorizontalContentAlignment = HorizontalAlignment.Left;
             taxesChart.Padding = new Thickness(20, 0, 100, 0);
-            taxesChart.BorderThickness = new Thickness(0);
             taxesChart.VerticalAlignment = VerticalAlignment.Top;
             taxesChart.HorizontalAlignment = HorizontalAlignment.Left;
             taxesChart.HorizontalAlignment = HorizontalAlignment.Left;
             taxesChart.ToolTipGenerator = this.OnGenerateToolTip;
+            this.charts.Add(taxesChart);
 
             chartData = new ChartData();
             chartData.AddSeries(taxesSeries);
@@ -689,7 +702,7 @@ namespace Walkabout.Reports
                         capitalGainsTax -= amount;
                         var capTax = this.GetCapitalGainsTax(income, amount);
                         capitalGainsTax += capTax;
-                        income += capTax;
+                        income += amount;
                         totalTax += capTax;
                     }
                     else if (this.TaxFree > 0)
@@ -715,7 +728,7 @@ namespace Walkabout.Reports
             private decimal GetCapitalGainsTax(decimal income, decimal amount)
             {
                 var capGains = amount * (1 - CostBasisRatio);
-                decimal stateRate = (income > 250000) ? 0.07M : 0;
+                decimal stateRate = (capGains > 250000) ? 0.07M : 0;
                 if (income + amount  > 613700)
                 {
                     return capGains * (0.20M + stateRate);

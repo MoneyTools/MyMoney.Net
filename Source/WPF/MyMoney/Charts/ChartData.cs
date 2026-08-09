@@ -94,6 +94,12 @@ namespace Walkabout.Charts
             this.Values = new List<ChartDataValue>();
         }
 
+        public void Add(ChartDataValue value)
+        {
+            value.Series = this;
+            this.Values.Add(value);
+        }
+
         public string Name { get; set; }
 
         public IList<ChartDataValue> Values { get; set; }
@@ -113,6 +119,7 @@ namespace Walkabout.Charts
         private object userdata;
         private Color? color;
         private bool hidden; // for filtering out values.
+        private ChartDataSeries series;
 
         public ChartDataValue()
         {
@@ -123,6 +130,12 @@ namespace Walkabout.Charts
             this.label = label;
             this.value = value;
             this.userdata = userdata;
+        }
+
+        public ChartDataSeries Series
+        {
+            get { return this.series; }
+            set { this.series = value; }
         }
 
         public double Value

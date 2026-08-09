@@ -190,7 +190,7 @@
 
       <Border Style="{StaticResource Rows}" >
         <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
-          <CheckBox x:Name="StackedBarsCheckbox" Checked="OnStackedChanged" Unchecked="OnStackedChanged">Stacked bar chart</CheckBox>
+          <CheckBox x:Name="StackedBarsCheckbox" Checked="OnStackedChanged" Unchecked="OnStackedChanged">Stacked bar charts</CheckBox>
         </Border>
       </Border>
     </StackPanel>

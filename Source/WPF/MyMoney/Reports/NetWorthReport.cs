@@ -341,7 +341,7 @@ namespace Walkabout.Reports
                     color = this.GetRandomColor();
                     ChartData chartData = new ChartData();
                     var chartSeries = new ChartDataSeries() { Name = "Networth History" };
-                    chartSeries.Values.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color, UserData = this.reportDate });
+                    chartSeries.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color, UserData = this.reportDate });
                     chartData.AddSeries(chartSeries);
                     historicalChart.Data = chartData;
                     historicalChart.ToolTipGenerator = this.GenerateBarChartTips;
@@ -436,7 +436,7 @@ namespace Walkabout.Reports
                 Debug.WriteLine($"Networth on {date.ToShortDateString()} is {networth:C0}");
                 lock (series.Values)
                 {
-                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)networth, Color = color, UserData=date });
+                    series.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)networth, Color = color, UserData=date });
                 }
                 chart.OnDelayedUpdate();
             }
