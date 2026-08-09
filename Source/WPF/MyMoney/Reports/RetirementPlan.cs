@@ -23,24 +23,25 @@ namespace Walkabout.Reports
         private MyMoney myMoney;
         private FlowDocumentView view;
         private RetirementControl panel;
-        private decimal investmentRateOfReturn = 0.05M;
-        private decimal inflationRate = 0.04M;
-        private string normalizedCurrency;
-        private DateTime reportDate;
-        private decimal desiredAnnualIncome = 200000;
-        private int currentAge = 60;
-        private int spouseAge = 60;
-        private bool marriedFilingJointly = false;
-        private int retirementAge = 65;
-        private int graduationAge = 95;
-        private string taxDeferredStrategy = TaxDeferredStrategyNone;
-        private int taxDeferredStrategyYears = 5;
-        private int taxDeferredStrategyAge = 65;
-        private decimal socialSecurityAmount = 0;
-        private int socialSecurityAge = 67;
-        private int spousalSocialSecurityFullRetirementAge = 67;
-        private decimal socialSecurityAdjustment = 0.04M; // for inflation
-        private bool stacked = true;
+        private const decimal SocialSecurityAdjustment = 0.04M; // for inflation
+        private RetirementPlanState state = new RetirementPlanState()
+        {
+            InvestmentRateOfReturn = 0.05M,
+            InflationRate = 0.04M,
+            DesiredAnnualIncome = 200000,
+            CurrentAge = 60,
+            SpouseAge = 60,
+            MarriedFilingJointly = false,
+            RetirementAge = 65,
+            GraduationAge = 95,
+            TaxDeferredStrategy = TaxDeferredStrategyNone,
+            TaxDeferredStrategyYears = 5,
+            TaxDeferredStrategyAge = 65,
+            SocialSecurityAmount = 3000,
+            SocialSecurityAge = 67,
+            SpousalSocialSecurityAge = 67,
+            Stacked = false
+        };
         private StockQuoteCache cache;
         private List<AnimatingBarChart> charts = new List<AnimatingBarChart>();
 
@@ -104,66 +105,66 @@ namespace Walkabout.Reports
 
         private void OnDesiredIncomeChanged(object sender, decimal e)
         {
-            this.desiredAnnualIncome = e; this.Regenerate();
+            this.state.DesiredAnnualIncome = e; this.Regenerate();
         }
 
         private void OnInflationRateChanged(object sender, decimal e)
         {
-            this.inflationRate = e; this.Regenerate();
+            this.state.InflationRate = e; this.Regenerate();
         }
 
         private void OnRateOfReturnChanged(object sender, decimal e)
         {
-            this.investmentRateOfReturn = e; this.Regenerate();
+            this.state.InvestmentRateOfReturn = e; this.Regenerate();
         }
 
         private void OnGraduationAgeChanged(object sender, int e)
         {
-            this.graduationAge = e; this.Regenerate();
+            this.state.GraduationAge = e; this.Regenerate();
         }
         private void OnCurrentAgeChanged(object sender, int e)
         {
-            this.currentAge = e; this.Regenerate();
+            this.state.CurrentAge = e; this.Regenerate();
         }
         private void OnSpouseAgeChanged(object sender, int e)
         {
-            this.spouseAge = e; this.Regenerate();
+            this.state.SpouseAge = e; this.Regenerate();
         }
         private void OnMarriedFilingJointlyChanged(object sender, bool e)
         {
-            this.marriedFilingJointly = e; this.Regenerate();
+            this.state.MarriedFilingJointly = e; this.Regenerate();
         }
 
         private void OnRetirementAgeChanged(object sender, int e)
         {
-            this.retirementAge = e; this.Regenerate();
+            this.state.RetirementAge = e; this.Regenerate();
         }
         private void OnTaxDeferredStrategyChanged(object sender, string e)
         {
-            this.taxDeferredStrategy = e; this.Regenerate();
+            this.state.TaxDeferredStrategy = e; this.Regenerate();
         }
         private void OnTaxDeferredStrategyYearsChanged(object sender, int e)
         {
-            this.taxDeferredStrategyYears = e; this.Regenerate();
+            this.state.TaxDeferredStrategyYears = e; this.Regenerate();
         }
         private void OnTaxDeferredStrategyAgeChanged(object sender, int e)
         {
-            this.taxDeferredStrategyAge = e; this.Regenerate();
+            this.state.TaxDeferredStrategyAge = e; this.Regenerate();
         }
 
         private void OnSocialSecurityAmountChanged(object sender, decimal e)
         {
-            this.socialSecurityAmount = e; this.Regenerate();
+            this.state.SocialSecurityAmount = e; this.Regenerate();
         }
 
         private void OnSocialSecurityAgeChanged(object sender, int e)
         {
-            this.socialSecurityAge = e; this.Regenerate();
+            this.state.SocialSecurityAge = e; this.Regenerate();
         }
 
         private void OnStackedBarsChanged(object sender, bool e)
         {            
-            this.stacked = e; 
+            this.state.Stacked = e; 
             foreach (var chart in this.charts)
             {
                 chart.Stacked = e;
@@ -188,23 +189,11 @@ namespace Walkabout.Reports
                 box.Items.Clear();
                 box.Items.Add(TaxDeferredStrategyNone);
                 box.Items.Add(TaxDeferredStrategyRoth);
-                box.SelectedItem = this.taxDeferredStrategy;
+                box.SelectedItem = this.state.TaxDeferredStrategy;
             }
 
-            this.reportDate = DateTime.Today;
-            this.panel.RateOfReturn = this.investmentRateOfReturn;
-            this.panel.InflationRate = this.inflationRate;
-            this.panel.DesiredIncome = this.desiredAnnualIncome;
-            this.panel.GraduationAge = this.graduationAge;
-            this.panel.CurrentAge = this.currentAge;
-            this.panel.SpouseAge = this.spouseAge;
-            this.panel.MarriedFilingJointly = this.marriedFilingJointly;
-            this.panel.RetirementAge = this.retirementAge;
-            this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
-            this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
-            this.panel.TaxDeferredStrategyAge = this.taxDeferredStrategyAge;
-            this.panel.SocialSecurityAge = this.socialSecurityAge;
-            this.panel.SocialSecurityAmount = this.socialSecurityAmount;
+            this.state.ReportDate = DateTime.Today;
+            this.ApplyState(this.state);
             this.UnRegister();
             this.Register();
         }
@@ -223,9 +212,9 @@ namespace Walkabout.Reports
 
             this.DelaySaveState();
 
-            this.SetDefaultCurrency(writer, this.normalizedCurrency);
+            this.SetDefaultCurrency(writer, this.state.NormalizedCurrency);
 
-            writer.WriteHeading("Retirement Plan as of " + this.reportDate.ToString("D"));
+            writer.WriteHeading("Retirement Plan as of " + this.state.ReportDate.ToString("D"));
             writer.WriteSubHeading("Currency " + this.DefaultCurrency.Symbol);
 
             Transaction first = this.myMoney.Transactions.GetAllTransactionsByDate().FirstOrDefault();
@@ -233,13 +222,13 @@ namespace Walkabout.Reports
             {
                 return;
             }
-            var date = this.reportDate;
+            var date = state.ReportDate;
             Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
             var cashBalance = this.myMoney.GetCashBalanceNormalized(date, notLoans);
             decimal loanBalance = this.GetTotalLoansBalance(date);
             var funds = await this.CalculatePortfolioBalance(date);
             
-            decimal futureIncome = this.desiredAnnualIncome;
+            decimal futureIncome = this.state.DesiredAnnualIncome;
 
             var taxableColor = Colors.Green;
             var taxFreeColor = Colors.LightGreen;
@@ -266,32 +255,32 @@ namespace Walkabout.Reports
 
             decimal totalTaxes = 0;
             decimal conversionAmount = 0;
-            decimal socialSecurity = this.socialSecurityAmount;
+            decimal socialSecurity = this.state.SocialSecurityAmount;
 
 
-            for (int age = this.currentAge; age <= this.graduationAge; age++)
+            for (int age = this.state.CurrentAge; age <= this.state.GraduationAge; age++)
             {
-                int spouseAge = age + this.spouseAge - this.currentAge;
-                if (age == this.taxDeferredStrategyAge)
+                int spouseAge = age + this.state.SpouseAge - this.state.CurrentAge;
+                if (age == this.state.TaxDeferredStrategyAge)
                 {
-                    if (this.taxDeferredStrategy == TaxDeferredStrategyRoth)
+                    if (this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                     {
-                        if (this.taxDeferredStrategyYears < 1)
+                        if (this.state.TaxDeferredStrategyYears < 1)
                         {
-                            this.taxDeferredStrategyYears = 1;
+                            this.state.TaxDeferredStrategyYears = 1;
                         }
                    
-                        conversionAmount = funds.TaxDeferred / this.taxDeferredStrategyYears;
+                        conversionAmount = funds.TaxDeferred / this.state.TaxDeferredStrategyYears;
                     }
                 }
 
-                if (age >= this.retirementAge)
+                if (age >= this.state.RetirementAge)
                 {
                     decimal income = 0;
                     decimal taxes = 0;
                     decimal baseIncome = 0;
 
-                    if (age >= this.taxDeferredStrategyAge && this.taxDeferredStrategy == TaxDeferredStrategyRoth)
+                    if (age >= this.state.TaxDeferredStrategyAge && this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                     {
                         taxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
                     }
@@ -305,11 +294,11 @@ namespace Walkabout.Reports
                     decimal taxFreeIncome = 0;
                     decimal socialSecurityIncome = 0;
 
-                    if (age >= this.socialSecurityAge)
+                    if (age >= this.state.SocialSecurityAge)
                     {
                         socialSecurityIncome = socialSecurity * 12;
-                        socialSecurity *= (1 + this.socialSecurityAdjustment);
-                        if (marriedFilingJointly && spouseAge >= this.spousalSocialSecurityFullRetirementAge)
+                        socialSecurity *= (1 + SocialSecurityAdjustment);
+                        if (this.state.MarriedFilingJointly && spouseAge >= this.state.SpousalSocialSecurityAge)
                         {
                             // To receive the full spousal benefit of up to 50%, she must wait until her own Full Retirement Age (FRA).
                             // For someone born in 1960 or later, FRA is 67.
@@ -391,14 +380,14 @@ namespace Walkabout.Reports
                     grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
 
                     taxesSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
-                    futureIncome = futureIncome * (1 + this.inflationRate);
+                    futureIncome = futureIncome * (1 + this.state.InflationRate);
                 }
 
-                funds.Appreciate(this.investmentRateOfReturn);
+                funds.Appreciate(this.state.InvestmentRateOfReturn);
             }
 
             var totalAssets = funds.Taxable + funds.TaxDeferred + funds.TaxFree;
-            writer.WriteParagraph($"Assets remaining at age : {this.graduationAge} = { totalAssets.ToString("C0")}");
+            writer.WriteParagraph($"Assets remaining at age : {this.state.GraduationAge} = { totalAssets.ToString("C0")}");
             writer.WriteParagraph($"Taxable assets = {funds.Taxable.ToString("C0")}");
 
             if (funds.TaxDeferred > 0)
@@ -414,7 +403,7 @@ namespace Walkabout.Reports
             // insert networth graph
             writer.WriteHeading("Networth");
 
-            AnimatingBarChart networthChart = new AnimatingBarChart() {  Stacked = this.stacked };
+            AnimatingBarChart networthChart = new AnimatingBarChart() {  Stacked = this.state.Stacked };
             networthChart.Width = 1280;
             networthChart.Height = 400;
             networthChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
@@ -433,7 +422,7 @@ namespace Walkabout.Reports
             writer.WriteElement(networthChart);
 
             writer.WriteHeading("Income - adjusted for inflation");
-            AnimatingBarChart incomeChart = new AnimatingBarChart() { Stacked = this.stacked };
+            AnimatingBarChart incomeChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
             incomeChart.Width = 1280;
             incomeChart.Height = 400;
             incomeChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
@@ -456,7 +445,7 @@ namespace Walkabout.Reports
             writer.WriteElement(incomeChart);
 
             writer.WriteHeading("Taxes paid to get this income");
-            AnimatingBarChart taxesChart = new AnimatingBarChart() { Stacked = this.stacked };
+            AnimatingBarChart taxesChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
             taxesChart.Width = 1280;
             taxesChart.Height = 400;
             taxesChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
@@ -769,7 +758,7 @@ namespace Walkabout.Reports
         {
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
             var funds = new RetirementFunds();
-            funds.MarriedFilingJointly = this.marriedFilingJointly;
+            funds.MarriedFilingJointly = this.state.MarriedFilingJointly;
             decimal totalCostBasis = 0;
             foreach (var accountHolding in calc.GetAccountHoldings())
             {
@@ -821,39 +810,25 @@ namespace Walkabout.Reports
         {
             if (state is RetirementPlanState s)
             {
-                this.reportDate = s.ReportDate;
-                this.normalizedCurrency = s.NormalizedCurrency;
-                this.investmentRateOfReturn = s.InvestmentRateOfReturn;
-                this.desiredAnnualIncome = s.DesiredAnnualIncome;
-                this.currentAge = s.CurrentAge;
-                this.spouseAge = s.SpouseAge;
-                this.marriedFilingJointly = s.MarriedFilingJointly;
-                this.graduationAge = s.GraduationAge;
-                this.retirementAge = s.RetirementAge;
-                this.taxDeferredStrategy = s.TaxDeferredStrategy;
-                this.taxDeferredStrategyYears = s.TaxDeferredStrategyYears;
-                this.taxDeferredStrategyAge = s.TaxDeferredStrategyAge;
-                this.socialSecurityAmount = s.SocialSecurityAmount;
-                this.socialSecurityAge = s.SocialSecurityAge;
-                this.stacked = s.Stacked;
+                this.state = s.Copy();
 
                 if (this.panel != null)
                 {
                     this.UnRegister();
-                    this.panel.RateOfReturn = this.investmentRateOfReturn;
-                    this.panel.InflationRate = this.inflationRate;
-                    this.panel.DesiredIncome = this.desiredAnnualIncome;
-                    this.panel.CurrentAge = this.currentAge;
-                    this.panel.SpouseAge = this.spouseAge;
-                    this.panel.MarriedFilingJointly = this.marriedFilingJointly;
-                    this.panel.GraduationAge = this.graduationAge;
-                    this.panel.RetirementAge = this.retirementAge;
-                    this.panel.TaxDeferredStrategy = this.taxDeferredStrategy;
-                    this.panel.TaxDeferredStrategyYears = this.taxDeferredStrategyYears;
-                    this.panel.TaxDeferredStrategyAge = this.taxDeferredStrategyAge;
-                    this.panel.SocialSecurityAmount = this.socialSecurityAmount;
-                    this.panel.SocialSecurityAge = this.socialSecurityAge;
-                    this.panel.StackedBars = this.stacked;
+                    this.panel.RateOfReturn = s.InvestmentRateOfReturn;
+                    this.panel.InflationRate = s.InflationRate;
+                    this.panel.DesiredIncome = s.DesiredAnnualIncome;
+                    this.panel.CurrentAge = s.CurrentAge;
+                    this.panel.SpouseAge = s.SpouseAge;
+                    this.panel.MarriedFilingJointly = s.MarriedFilingJointly;
+                    this.panel.GraduationAge = s.GraduationAge;
+                    this.panel.RetirementAge = s.RetirementAge;
+                    this.panel.TaxDeferredStrategy = s.TaxDeferredStrategy;
+                    this.panel.TaxDeferredStrategyYears = s.TaxDeferredStrategyYears;
+                    this.panel.TaxDeferredStrategyAge = s.TaxDeferredStrategyAge;
+                    this.panel.SocialSecurityAmount = s.SocialSecurityAmount;
+                    this.panel.SocialSecurityAge = s.SocialSecurityAge;
+                    this.panel.StackedBars = s.Stacked;
                     this.Register();
                 }
             }
@@ -861,25 +836,7 @@ namespace Walkabout.Reports
 
         public override IReportState GetState()
         {
-            return new RetirementPlanState()
-            {
-                ReportDate = this.reportDate,
-                NormalizedCurrency = this.normalizedCurrency,
-                InvestmentRateOfReturn = this.investmentRateOfReturn,
-                InflationRate = this.inflationRate,
-                DesiredAnnualIncome = this.desiredAnnualIncome,
-                CurrentAge = this.currentAge,
-                SpouseAge = this.spouseAge,
-                MarriedFilingJointly = this.marriedFilingJointly,
-                GraduationAge = this.graduationAge,
-                RetirementAge = this.retirementAge,
-                TaxDeferredStrategy = this.taxDeferredStrategy,
-                TaxDeferredStrategyYears = this.taxDeferredStrategyYears,
-                TaxDeferredStrategyAge = this.taxDeferredStrategyAge,
-                SocialSecurityAmount = this.socialSecurityAmount,
-                SocialSecurityAge = this.socialSecurityAge,
-                Stacked = this.stacked
-            };
+            return this.state.Copy();
         }
 
         public class RetirementPlanState : IReportState
@@ -900,6 +857,7 @@ namespace Walkabout.Reports
             public int TaxDeferredStrategyAge { get; set; }
             public decimal SocialSecurityAmount { get; set; }
             public int SocialSecurityAge { get; set; }
+            public int SpousalSocialSecurityAge { get; set; }
             public bool Stacked { get; set; }
 
 
@@ -913,6 +871,29 @@ namespace Walkabout.Reports
             public Type GetReportType()
             {
                 return typeof(RetirementPlanReport);
+            }
+            public RetirementPlanState Copy()
+            {
+                return new RetirementPlanState()
+                {
+                    ReportDate = this.ReportDate,
+                    NormalizedCurrency = this.NormalizedCurrency,
+                    InvestmentRateOfReturn = this.InvestmentRateOfReturn,
+                    InflationRate = this.InflationRate,
+                    DesiredAnnualIncome = this.DesiredAnnualIncome,
+                    CurrentAge = this.CurrentAge,
+                    SpouseAge = this.SpouseAge,
+                    MarriedFilingJointly = this.MarriedFilingJointly,
+                    GraduationAge = this.GraduationAge,
+                    RetirementAge = this.RetirementAge,
+                    TaxDeferredStrategy = this.TaxDeferredStrategy,
+                    TaxDeferredStrategyYears = this.TaxDeferredStrategyYears,
+                    TaxDeferredStrategyAge = this.TaxDeferredStrategyAge,
+                    SocialSecurityAmount = this.SocialSecurityAmount,
+                    SocialSecurityAge = this.SocialSecurityAge,
+                    SpousalSocialSecurityAge = this.SpousalSocialSecurityAge,
+                    Stacked = this.Stacked
+                };
             }
         }
 
