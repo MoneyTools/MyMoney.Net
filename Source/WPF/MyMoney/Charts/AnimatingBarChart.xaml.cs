@@ -605,7 +605,7 @@ namespace LovettSoftware.Charts
                 PointCollection poly = new PointCollection();
                 poly.Add(new Point() { X = xpos, Y = 0 });
                 poly.Add(new Point() { X = xpos, Y = h });
-                line.BeginAnimation(StackedBar.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration });
+                line.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration });
 
                 label.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
                 {
@@ -789,7 +789,7 @@ namespace LovettSoftware.Charts
                 PointCollection poly = new PointCollection();
                 poly.Add(new Point() { X = axisLabelGap, Y = ypos });
                 poly.Add(new Point() { X = axisLabelGap + w, Y = ypos });
-                line.BeginAnimation(StackedBar.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration });
+                line.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration });
 
                 label.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
                 {

@@ -5,7 +5,7 @@
         Title="Performance Viewer" Height="600" Width="1000">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="6">
-            <Button Name="btnClear" Click="BtnClear_Click" Margin="4">Clear</Button>
+            <Button Name="btnClear" Click="BtnClear_Click" Margin="4" MinWidth="80" MinHeight="30">Clear</Button>
             <TextBlock VerticalAlignment="Center" Margin="8,0">Zoom:</TextBlock>
             <Slider Name="zoomSlider" Minimum="0.001" Maximum="1.0" Value="1.0" Width="300" Margin="4" ValueChanged="ZoomSlider_ValueChanged"/>
             <TextBlock Name="txtScale" VerticalAlignment="Center" Margin="8,0"/>

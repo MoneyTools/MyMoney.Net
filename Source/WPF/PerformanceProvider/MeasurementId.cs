@@ -17,6 +17,8 @@
         GraphGenerate = 300,
         GraphPrepare = 301,
         UpdateCharts = 302,
+        ReportPrepare = 303,
+        ReportGenerate = 304,
 
         SecuritiesControlInitialize = 400,
         ScanAttachments = 401,
