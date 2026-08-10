@@ -102,6 +102,8 @@ namespace Walkabout.Charts
 
         public string Name { get; set; }
 
+        public string XAxisLabel { get; set; }
+
         public IList<ChartDataValue> Values { get; set; }
 
         public ChartCategory Category { get; set; }

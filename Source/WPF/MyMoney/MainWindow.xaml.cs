@@ -1259,25 +1259,32 @@ namespace Walkabout
             }
             else
             {
-                DependencyObject d = f as DependencyObject;
-                while (d != null)
+                try
                 {
-                    if (d is IClipboardClient c)
+                    DependencyObject d = f as DependencyObject;
+                    while (d != null)
                     {
-                        return c;
+                        if (d is IClipboardClient c)
+                        {
+                            return c;
+                        }
+                        else if (d is FlowDocumentView view)
+                        {
+                            return new FlowDocumentViewClipboardClient(view);
+                        }
+                        else if (d is Inline inline)
+                        {
+                            d = inline.Parent;
+                        }
+                        else
+                        {
+                            d = VisualTreeHelper.GetParent(d);
+                        }
                     }
-                    else if (d is FlowDocumentView view)
-                    {
-                        return new FlowDocumentViewClipboardClient(view);
-                    }
-                    else if (d is Inline inline)
-                    {
-                        d = inline.Parent;
-                    }
-                    else
-                    {
-                        d = VisualTreeHelper.GetParent(d);
-                    }
+                } 
+                catch (Exception)
+                {
+                    // broken UI heirarchy?
                 }
             }
             return null;

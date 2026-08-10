@@ -111,7 +111,7 @@
       </Border>
       <Border Style="{StaticResource Rows}" >
         <StackPanel>
-          <TextBlock Text="Inflation Rate:" />
+          <TextBlock Text="Inflation Rate (%):" />
           <Border Style="{StaticResource ValueAreaBorder}">
             <c:HandyTextBox x:Name="InflationRateText" HorizontalAlignment="Stretch"
                         ToolTip="Enter the estimated average inflation rate to apply to your desired income"
@@ -122,7 +122,7 @@
 
       <Border Style="{StaticResource Rows}" >
         <StackPanel>
-          <TextBlock Text="Rate of Return:" />
+          <TextBlock Text="Rate of Return (%)" />
           <Border Style="{StaticResource ValueAreaBorder}">
             <c:HandyTextBox x:Name="RateOfReturnText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the estimated average rate of return on your investments"

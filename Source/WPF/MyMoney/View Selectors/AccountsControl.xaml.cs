@@ -121,6 +121,7 @@ namespace Walkabout.Views.Controls
                     this.myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
                 }
                 this.myMoney = value;
+                this.Select(null);
 
                 if (value != null)
                 {
@@ -128,10 +129,6 @@ namespace Walkabout.Views.Controls
                     this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                     this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
                     this.OnAccountsChanged(this, new ChangeEventArgs(this.myMoney.Accounts, null, ChangeType.Reloaded));
-                }
-                else
-                {
-                    this.Select(null);
                 }
             }
         }

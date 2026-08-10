@@ -12,16 +12,16 @@ To setup the report you need to enter some values in the RETIREMENT details as f
 Then you will see the following if you started with:
 
 - $3.7 million in a taxable brokerage account (with some cost basis)
-- $1.4 million in a 401k account
+- $1.4 million in a 401k tax deferred account
 - $2 million in a Roth IRA tax free account.
 
 The first part of the report shows a summary of assets remaining at the end date (in this case age 90):
 
-- Assets remaining at age : 90 = $8,226,330
-- Taxable assets = $2,462,679
-- Tax deferred assets = $992,868
-- Tax free assets = $1,696,707
-- Total taxes paid during retirement = $1,407,349
+- Assets remaining at age 90 = $6,777,737
+- Taxable assets = 0
+- Tax deferred assets = 0
+- Tax free assets = $6,777,737
+- Total taxes paid during retirement = $2,016,593
 
 And then it shows some charts, the first one is a chart showing how each class of asset grows and/or is drawn down over
 the years as follows:
@@ -37,9 +37,9 @@ income. The darker brown bar is the additional income you need to take in order 
 
 This shows that you start off tapping into taxable assets until age 75 when required minimum distribution kicks in on
 your tax deferred accounts.
-Then by 89 the taxable account is empty and you have to take more from your tax deferred assets which causes a jump in taxes because those are taxed as income.
+Then by 88 the taxable account is empty and you have to take more from your tax deferred assets which causes a jump in taxes because those are taxed as income.
 
-The next chart shows how much tax you had to pay each year, which is paid from your retirement funds (over and above the desired income):
+The next chart shows how much tax you had to pay each year, which is paid from your retirement funds also:
 
 ![retirement taxes](../Images/RetirementTaxes.png)
 
@@ -52,7 +52,8 @@ The final chart runs a Roth conversion simulation passing in diffferent years to
 
 This can help you figure out the optimal roth conversion strategy to maximize assets
 and minimize taxes.  In this case the plot shows that minimal taxes happen with a
-10 year conversion, but the maximum net worth happens with a 15 year conversion.
+11 year conversion, but the maximum net worth happens with a 15 year conversion which shows that just minimizing taxes is not always the best
+strategy.
 
 You can then plug these numbers into the settings panel here:
 

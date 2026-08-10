@@ -39,9 +39,9 @@ namespace Walkabout.Views.Controls
             {
                 decimal result = 0;
                 decimal.TryParse(this.InflationRateText.Text, out result);
-                return result;
+                return result / 100.0M;
             }
-            set { this.InflationRateText.Text = value.ToString(); }
+            set { this.InflationRateText.Text = (value * 100.0M).ToString(); }
         }
 
         public event EventHandler<decimal> InflationRateChanged;
@@ -60,9 +60,9 @@ namespace Walkabout.Views.Controls
             {
                 decimal result = 0;
                 decimal.TryParse(this.RateOfReturnText.Text, out result);
-                return result;
+                return result / 100.0M;
             }
-            set { this.RateOfReturnText.Text = value.ToString(); }
+            set { this.RateOfReturnText.Text = (value * 100.0M).ToString(); }
         }
 
         public event EventHandler<decimal> RateOfReturnChanged;

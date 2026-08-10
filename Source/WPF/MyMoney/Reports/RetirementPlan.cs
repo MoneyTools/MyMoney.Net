@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Xps.Serialization;
 using Walkabout.Charts;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
@@ -19,6 +21,21 @@ using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
+    internal static class TableHelper
+    {
+        public static void WriteRow(this IReportWriter writer, string label, decimal amount)
+        {
+            writer.StartRow();
+            writer.StartCell();
+            writer.WriteParagraph(label);
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber(amount.ToString("C0"));
+            writer.EndCell();
+            writer.EndRow();
+        }
+    }
+
     public class RetirementPlanReport : Report
     {
         private MyMoney myMoney;
@@ -203,22 +220,25 @@ namespace Walkabout.Reports
         private static string ChartValueSocialSecurity = "Social Security";
         private static string ChartValueGross = "Gross up";
 
+        private static string ChartValueIncomeTaxes = "Income Tax";
+        private static string ChartValueCapitalGainsTaxes = "Capital Gains Tax";
         private static string ChartValueTaxes = "Taxes";
         private static string ChartValueAssets = "Networth";
 
         class Simulation
         {
-            public ChartDataSeries taxDeferredSeries = new ChartDataSeries() { Name = "Tax Deferred" };
-            public ChartDataSeries taxableSeries = new ChartDataSeries() { Name = "Taxable" };
-            public ChartDataSeries taxFreeSeries = new ChartDataSeries() { Name = "Tax Free" };
-            public ChartDataSeries taxableIncomeSeries = new ChartDataSeries() { Name = "Taxable Income" };
-            public ChartDataSeries taxDeferredIncomeSeries = new ChartDataSeries() { Name = "Tax Deferred Income" };
-            public ChartDataSeries taxFreeIncomeSeries = new ChartDataSeries() { Name = "Tax Free Income" };
-            public ChartDataSeries socialSecurityIncomeSeries = new ChartDataSeries() { Name = "Social Security Income" };
-            public ChartDataSeries grossIncomeSeries = new ChartDataSeries() { Name = "Extra Income to pay taxes" };
-            public ChartDataSeries taxesSeries = new ChartDataSeries() { Name = "Taxes" };
-            public ChartDataSeries rothAssetsSeries = new ChartDataSeries() { Name = "Networth" };
-            public ChartDataSeries rothTaxSeries = new ChartDataSeries() { Name = "Taxes" };
+            public ChartDataSeries taxDeferredSeries = new ChartDataSeries() { Name = "Tax Deferred", XAxisLabel = "Age"};
+            public ChartDataSeries taxableSeries = new ChartDataSeries() { Name = "Taxable", XAxisLabel = "Age" };
+            public ChartDataSeries taxFreeSeries = new ChartDataSeries() { Name = "Tax Free", XAxisLabel = "Age" };
+            public ChartDataSeries taxableIncomeSeries = new ChartDataSeries() { Name = "Taxable Income", XAxisLabel = "Age" };
+            public ChartDataSeries taxDeferredIncomeSeries = new ChartDataSeries() { Name = "Tax Deferred Income", XAxisLabel = "Age" };
+            public ChartDataSeries taxFreeIncomeSeries = new ChartDataSeries() { Name = "Tax Free Income", XAxisLabel = "Age" };
+            public ChartDataSeries socialSecurityIncomeSeries = new ChartDataSeries() { Name = "Social Security Income", XAxisLabel = "Age" };
+            public ChartDataSeries grossIncomeSeries = new ChartDataSeries() { Name = "Extra Income to pay taxes", XAxisLabel = "Age" };
+            public ChartDataSeries incomeTaxSeries = new ChartDataSeries() { Name = "Income Tax", XAxisLabel = "Age" };
+            public ChartDataSeries capitalGainsTaxSeries = new ChartDataSeries() { Name = "Capital Gains Taxes", XAxisLabel = "Age" };
+            public ChartDataSeries rothAssetsSeries = new ChartDataSeries() { Name = "Networth", XAxisLabel = "Year" };
+            public ChartDataSeries rothTaxSeries = new ChartDataSeries() { Name = "Taxes", XAxisLabel = "Year" };
 
             public List<AnimatingBarChart> charts = new List<AnimatingBarChart>();
             private MyMoney myMoney;
@@ -226,6 +246,7 @@ namespace Walkabout.Reports
             private Report report;
             private StockQuoteCache cache;
             private RetirementFunds funds;
+            private RetirementFunds finalFunds;
             private decimal totalAssets;
             private decimal totalTaxes;
             private CostBasisCalculator calc;
@@ -297,6 +318,7 @@ namespace Walkabout.Reports
 #endif
                 decimal futureIncome = this.state.DesiredAnnualIncome;
                 var funds = this.funds.Copy(); // make a modifiable copy.
+                this.finalFunds = funds;
 
                 var taxableColor = Colors.Green;
                 var taxFreeColor = Colors.LightGreen;
@@ -308,7 +330,8 @@ namespace Walkabout.Reports
                 var socialSecurityIncomeColor = Colors.Yellow;
                 var grossIncomeColor = Color.FromRgb(0xB6, 0x49, 0x00);
 
-                var taxColor = Colors.Salmon;
+                var incomeTaxColor = Color.FromRgb(0xFE, 0x77, 0x6C);
+                var capitalGainsTaxColor = Color.FromRgb(0xD3, 0x45, 0x5B);
 
                 this.totalTaxes = 0;
                 decimal conversionAmount = 0;
@@ -333,12 +356,13 @@ namespace Walkabout.Reports
                     if (age >= this.state.RetirementAge)
                     {
                         decimal income = 0;
-                        decimal taxes = 0;
+                        decimal incomeTaxes = 0;
+                        decimal capitalGainsTaxes = 0;
                         decimal baseIncome = 0;
 
                         if (age >= this.state.TaxDeferredStrategyAge && this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                         {
-                            taxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
+                            incomeTaxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
                         }
 
                         taxableSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable });
@@ -374,7 +398,7 @@ namespace Walkabout.Reports
                             taxDeferredIncome += amount;
                             income += amount;
                             // Now to pay to taxes on this we need to take out more.                        
-                            taxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
+                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
                         }
                         if (income < futureIncome && funds.Taxable > 0)
                         {
@@ -391,7 +415,7 @@ namespace Walkabout.Reports
                             {
                                 // debug me
                             }
-                            taxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, amount);
+                            capitalGainsTaxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, amount);
                         }
 
                         // if we still have amount needed then take early withdrawal from tax deferred
@@ -406,7 +430,7 @@ namespace Walkabout.Reports
                             income += amount;
                             taxDeferredIncome += amount;
                             // Now to pay to taxes on this we need to take out more.                        
-                            taxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
+                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
                             baseIncome += amount;
                         }
 
@@ -422,7 +446,14 @@ namespace Walkabout.Reports
                             funds.TaxFree -= amount;
                         }
 
-                        this.totalTaxes += taxes;
+                        // also may have to pay taxes on socialsecurityincome
+                        if (socialSecurityIncome > 0)
+                        {
+                            var sst = funds.PaySocialSecurityTax(ref baseIncome, socialSecurityIncome);
+                            incomeTaxes += sst;
+                        }
+
+                        this.totalTaxes += incomeTaxes + capitalGainsTaxes;
                         taxableIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
                         taxDeferredIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
                         taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
@@ -435,11 +466,16 @@ namespace Walkabout.Reports
                         }
                         grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
 
-                        taxesSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxes, Color = taxColor });
+                        incomeTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)incomeTaxes, Color = incomeTaxColor, UserData = ChartValueIncomeTaxes });
+                        capitalGainsTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)capitalGainsTaxes, Color = capitalGainsTaxColor, UserData = ChartValueCapitalGainsTaxes });
+
                         futureIncome = futureIncome * (1 + this.state.InflationRate);
                     }
 
-                    funds.Appreciate(this.state.InvestmentRateOfReturn);
+                    if (age < this.state.GraduationAge)
+                    {
+                        funds.Appreciate(this.state.InvestmentRateOfReturn);
+                    }
                 }
 
                 this.totalAssets = funds.Taxable + funds.TaxDeferred + funds.TaxFree;
@@ -505,27 +541,62 @@ namespace Walkabout.Reports
                 return funds;
             }
 
+            internal UIElement CreateLegend(AnimatingBarChart chart, double width)
+            {
+                Grid grid = new Grid();
+                grid.Width = width;
+                grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+
+                StackPanel legend = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal
+                };
+                grid.Children.Add(legend);
+                Grid.SetColumn(legend, 1);
+                var margin = new Thickness(4);
+                foreach (var series in chart.Data.Series)
+                {
+                    legend.Children.Add(new Rectangle() { Margin= margin, Fill = new SolidColorBrush(series.Values[0].Color.Value), Width = 20, Height = 16 });
+                    legend.Children.Add(new TextBlock() { Margin = margin, VerticalAlignment = VerticalAlignment.Center, Text = series.Name });
+                }
+                return grid;
+            }
+
             public void Render(IReportWriter writer)
             {
                 charts.Clear();
-                writer.WriteParagraph($"Assets remaining at age : {this.state.GraduationAge} = {this.totalAssets.ToString("C0")}");
-                writer.WriteParagraph($"Taxable assets = {funds.Taxable.ToString("C0")}");
+
+                // write top level summary table then the charts
+                writer.StartTable();
+                writer.StartColumnDefinitions();
+                writer.WriteColumnDefinition("450", 450, 450);
+                writer.WriteColumnDefinition("100", 100, 620);
+                writer.EndColumnDefinitions();
+
+                writer.WriteRow($"Assets remaining at age {this.state.GraduationAge}", this.totalAssets);
+                writer.WriteRow("    Taxable assets", finalFunds.Taxable);
 
                 if (funds.TaxDeferred > 0)
                 {
-                    writer.WriteParagraph($"Tax deferred assets = {funds.TaxDeferred.ToString("C0")}");
+                    writer.WriteRow("    Tax deferred assets", finalFunds.TaxDeferred);
                 }
                 if (funds.TaxFree > 0)
                 {
-                    writer.WriteParagraph($"Tax free assets = {funds.TaxFree.ToString("C0")}");
+                    writer.WriteRow("    Tax free assets", finalFunds.TaxFree);
                 }
-                writer.WriteParagraph($"Total taxes paid during retirement = {this.totalTaxes.ToString("C0")}");
+                writer.WriteRow("Total taxes paid during retirement", this.totalTaxes);
+                writer.EndTable();
+
+                double chartWidth = 1280;
+                double chartHeight = 400;
 
                 //--------------------------------------------------------------------------------------
                 writer.WriteHeading($"Net worth at age {this.state.GraduationAge}");
                 AnimatingBarChart networthChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
-                networthChart.Width = 1280;
-                networthChart.Height = 400;
+                networthChart.Width = chartWidth;
+                networthChart.Height = chartHeight;
                 networthChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
                 networthChart.HorizontalContentAlignment = HorizontalAlignment.Left;
                 networthChart.Padding = new Thickness(20, 0, 100, 0);
@@ -539,13 +610,14 @@ namespace Walkabout.Reports
                 chartData.AddSeries(taxFreeSeries);
                 chartData.AddSeries(taxDeferredSeries);
                 networthChart.Data = chartData;
+                writer.WriteElement(this.CreateLegend(networthChart, chartWidth));
                 writer.WriteElement(networthChart);
 
                 //--------------------------------------------------------------------------------------
                 writer.WriteHeading("Income - adjusted for inflation");
                 AnimatingBarChart incomeChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
-                incomeChart.Width = 1280;
-                incomeChart.Height = 400;
+                incomeChart.Width = chartWidth;
+                incomeChart.Height = chartHeight;
                 incomeChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
                 incomeChart.HorizontalContentAlignment = HorizontalAlignment.Left;
                 incomeChart.Padding = new Thickness(20, 0, 100, 0);
@@ -563,13 +635,14 @@ namespace Walkabout.Reports
                 chartData.AddSeries(socialSecurityIncomeSeries);
                 incomeChart.Data = chartData;
 
+                writer.WriteElement(this.CreateLegend(incomeChart, chartWidth));
                 writer.WriteElement(incomeChart);
 
                 //--------------------------------------------------------------------------------------
                 writer.WriteHeading("Taxes paid to get this income");
                 AnimatingBarChart taxesChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
-                taxesChart.Width = 1280;
-                taxesChart.Height = 400;
+                taxesChart.Width = chartWidth;
+                taxesChart.Height = chartHeight;
                 taxesChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
                 taxesChart.HorizontalContentAlignment = HorizontalAlignment.Left;
                 taxesChart.Padding = new Thickness(20, 0, 100, 0);
@@ -580,16 +653,18 @@ namespace Walkabout.Reports
                 this.charts.Add(taxesChart);
 
                 chartData = new ChartData();
-                chartData.AddSeries(taxesSeries);
+                chartData.AddSeries(incomeTaxSeries);
+                chartData.AddSeries(capitalGainsTaxSeries);
                 taxesChart.Data = chartData;
 
+                writer.WriteElement(this.CreateLegend(taxesChart, chartWidth));
                 writer.WriteElement(taxesChart);
 
                 //--------------------------------------------------------------------------------------
                 writer.WriteHeading("Roth Simulation with different years");
-                AnimatingBarChart rothChart = new AnimatingBarChart() { Stacked = this.state.Stacked };
-                rothChart.Width = 1280;
-                rothChart.Height = 400;
+                AnimatingBarChart rothChart = new AnimatingBarChart() { Stacked = false }; //  no point stacking this one
+                rothChart.Width = chartWidth;
+                rothChart.Height = chartHeight;
                 rothChart.LineBrush = AppTheme.Instance.GetThemedBrush("GridLineBrush");
                 rothChart.HorizontalContentAlignment = HorizontalAlignment.Left;
                 rothChart.Padding = new Thickness(20, 0, 100, 0);
@@ -604,6 +679,7 @@ namespace Walkabout.Reports
                 chartData.AddSeries(rothTaxSeries);
                 rothChart.Data = chartData;
 
+                writer.WriteElement(this.CreateLegend(rothChart, chartWidth));
                 writer.WriteElement(rothChart);
             }
 
@@ -616,13 +692,17 @@ namespace Walkabout.Reports
                 {
                     prefix += " ";
                 }
-                tip.Children.Add(new TextBlock() { Text = "Age: " + age, FontWeight = FontWeights.Bold });
+                var title = value.Series?.XAxisLabel;
+                if (string.IsNullOrEmpty(title))
+                {
+                    title = "Item";
+                }
+                tip.Children.Add(new TextBlock() { Text = title + ": " + age, FontWeight = FontWeights.Bold });
                 tip.Children.Add(new TextBlock() { Text = prefix + "Amount: " + value.Value.ToString("C0") });
                 return tip;
             }
 
         }
-
         Simulation simulation;
 
         public override async Task Generate(IReportWriter writer)
@@ -941,6 +1021,41 @@ namespace Walkabout.Reports
                     tax = this.PayIncomeTaxRecursively(ref baseIncome, amount);
                 }
                 return tax;
+            }
+
+            private static (decimal Rate, decimal Threshold)[] JointSocialBracket = new (decimal, decimal)[]
+            {
+                    (0.85M, 44000M),
+                    (0.50M, 32000M),
+                    (0.0M, 0M), // floor
+            };
+            private static (decimal Rate, decimal Threshold)[] SingleSocialBrackets = new (decimal, decimal)[]
+            {
+                    (0.85M, 34000M),
+                    (0.50M, 25000M),
+                    (0.0M, 0M), // floor
+            };
+
+            internal decimal PaySocialSecurityTax(ref decimal baseIncome, decimal socialSecurityIncome)
+            {
+                // See https://www.aarp.org/social-security/faq/how-are-benefits-taxed
+                decimal percentage = 0;
+                var brackets = this.MarriedFilingJointly ? JointSocialBracket : SingleSocialBrackets;
+                foreach (var (rate, bracket) in brackets)
+                {
+                    if (baseIncome + socialSecurityIncome > bracket)
+                    {
+                        percentage = rate;
+                        break;
+                    }
+                }
+
+                var taxable = socialSecurityIncome * percentage;
+                if (taxable > 0)
+                {
+                    return this.PayIncomeTaxRecursively(ref baseIncome, taxable);
+                }
+                return 0;
             }
         }
 

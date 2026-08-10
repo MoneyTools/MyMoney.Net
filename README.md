@@ -23,7 +23,8 @@ Learn  how to use the app by reading the [MyMoney.Net Documentation](https://mon
 
 This program is provided with [MIT license](https://opensource.org/licenses/MIT). 
 This program optionally uses Stock Quote
-Services from [TwelveData](https://api.twelvedata.com) and [Polygon.io](https://polygon.io/) which are 
+Services from [Marksetstack](https://marketstack.com) and 
+[TwelveData](https://api.twelvedata.com) and [Polygon.io](https://polygon.io/) which are 
 subject to their respective licenses. It also uses Currency Rates from
 [fastforex.io](https://fastforex.io/).
 It uses online Banking information (OFX) using the [OFX 1.0 and 2.0 specifications](http://www.ofx.net/). 

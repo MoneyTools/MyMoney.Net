@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.72" date="8/9/2026">
+		- Feature: Add roth simulation chart to retirement plan report and add chart legends.
+		- Bug: Fix bug in remembering "Display Closed Accounts" when switching databases.
+	</change>
 	<change version="2.1.0.71" date="7/28/2026">
 		- Feature: Remove "RecurringExpense" category type and add "Frequency" instead.
 		- Feature: Add bar chart stacking feature for the charts in the retirement plan report.
