@@ -65,6 +65,10 @@ Roth strategy is complicated and you will not always see these benefits. It depe
 Roth conversion probably helps by reducing any additional taxes incurred by RMD's. The Roth conversion is also great for
 estate planning as tax free accounts do not pass on a tricky tax burden to your beneficiaries.
 
+But before settling on a Roth strategy you should also experiment with different returns on investment rates.  You will
+notice that if the market returns are very low or negative, then Roth conversion usually does not make sense, while high
+market ROI usually means a Roth conversion is a good idea.
+
 Note that all of this is just an `estimate` based on the inflation rate and rate of return predictions you provided and it
 does not compute your real cost basis for capital gains taxes, it uses an estimated capital gains based on your current
 holdings.  This simulation also assumes today's (2026) tax brackets, and does not modify them over the years which we know
