@@ -359,20 +359,22 @@ namespace Walkabout.Reports
                         decimal incomeTaxes = 0;
                         decimal capitalGainsTaxes = 0;
                         decimal baseIncome = 0;
+                        decimal taxableIncome = 0;
+                        decimal taxDeferredIncome = 0;
+                        decimal taxFreeIncome = 0;
+                        decimal socialSecurityIncome = 0;
+
 
                         if (age >= this.state.TaxDeferredStrategyAge && this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                         {
-                            incomeTaxes += funds.ConvertToRoth(ref baseIncome, conversionAmount);
+                            var (tax, amount) = funds.ConvertToRoth(ref baseIncome, conversionAmount);
+                            incomeTaxes += tax;
+                            taxDeferredIncome += amount;
                         }
 
                         taxableSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable });
                         taxFreeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxFree, Color = taxFreeColor, UserData = ChartValueTaxFree });
                         taxDeferredSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxDeferred, Color = taxDeferredColor, UserData = ChartValueTaxDeferred });
-
-                        decimal taxableIncome = 0;
-                        decimal taxDeferredIncome = 0;
-                        decimal taxFreeIncome = 0;
-                        decimal socialSecurityIncome = 0;
 
                         if (age >= this.state.SocialSecurityAge)
                         {
@@ -1006,7 +1008,7 @@ namespace Walkabout.Reports
                 return 0;
             }
 
-            internal decimal ConvertToRoth(ref decimal baseIncome, decimal amountToConvert)
+            internal Tuple<decimal, decimal> ConvertToRoth(ref decimal baseIncome, decimal amountToConvert)
             {
                 decimal tax = 0;
                 if (this.TaxDeferred > 0)
@@ -1019,8 +1021,9 @@ namespace Walkabout.Reports
                     this.TaxDeferred -= amount;
                     this.TaxFree += amount;
                     tax = this.PayIncomeTaxRecursively(ref baseIncome, amount);
+                    return Tuple.Create(tax, amount);
                 }
-                return tax;
+                return Tuple.Create(0M, 0M);
             }
 
             private static (decimal Rate, decimal Threshold)[] JointSocialBracket = new (decimal, decimal)[]
