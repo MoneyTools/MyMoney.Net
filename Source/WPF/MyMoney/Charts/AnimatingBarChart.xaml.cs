@@ -281,6 +281,7 @@ namespace LovettSoftware.Charts
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
+            this.HideToolTip();
             this.actions.CancelDelayedAction("hover");
             this.tipColumn = null;
             base.OnMouseLeave(e);
@@ -359,7 +360,7 @@ namespace LovettSoftware.Charts
                 this.tipColumn = null;
             }
             base.OnPreviewMouseMove(e);
-        }
+        }        
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
