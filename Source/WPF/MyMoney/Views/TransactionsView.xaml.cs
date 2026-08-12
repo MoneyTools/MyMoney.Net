@@ -2872,6 +2872,13 @@ namespace Walkabout.Views
             }
         }
 
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            // Make sure the transaction grid is never visible underneath the portfolio report.
+            this.InvestmentPortfolioView.MinHeight = sizeInfo.NewSize.Height;
+        }
+
         private void Border_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             int minWidthForQuickFilter = 300;

@@ -18,6 +18,7 @@ namespace Walkabout.Reports
 
         public UnacceptedReport()
         {
+            this.ReportDate = DateTime.Now;
         }
 
         ~UnacceptedReport()
@@ -45,6 +46,7 @@ namespace Walkabout.Reports
 
         public class UnacceptedReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public UnacceptedReportState() { }
 
             public Type GetReportType()

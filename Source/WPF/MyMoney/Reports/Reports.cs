@@ -28,6 +28,8 @@ namespace Walkabout.Reports
         private MyMoney myMoney;
         private DelayedActions actions = new DelayedActions();
 
+        public DateTime ReportDate { get; set; }
+
         public IServiceProvider ServiceProvider
         {
             get => serviceProvider;
@@ -78,6 +80,7 @@ namespace Walkabout.Reports
                         using (var fs = System.IO.File.OpenRead(fullPath))
                         {
                             var newState = serializer.Deserialize(fs) as IReportState;
+                            newState.Source = StateSource.Disk;
                             this.ApplyState(newState);
                         }
                     }

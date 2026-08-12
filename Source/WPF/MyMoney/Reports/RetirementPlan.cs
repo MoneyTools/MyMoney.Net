@@ -68,6 +68,7 @@ namespace Walkabout.Reports
 
         public RetirementPlanReport(FlowDocumentView view)
         {
+            this.ReportDate = DateTime.Today;
             this.view = view;
         }
 
@@ -1097,6 +1098,7 @@ namespace Walkabout.Reports
 
         public class RetirementPlanState : IReportState
         {
+            public StateSource Source { get; set; }
             public DateTime ReportDate { get; set; }
             public string NormalizedCurrency { get; set; }
 

@@ -32,7 +32,6 @@ namespace Walkabout.Reports
         private MyMoney myMoney;
         private readonly Random rand = new Random(Environment.TickCount);
         private readonly byte minRandColor, maxRandColor;
-        private DateTime reportDate;
         private string normalizedCurrency;
         private StockQuoteCache cache;
         private bool generating;
@@ -46,7 +45,7 @@ namespace Walkabout.Reports
         public NetWorthReport(FlowDocumentView view)
         {
             this.view = view;
-            this.reportDate = DateTime.Today;
+            this.ReportDate = DateTime.Today;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
         }
@@ -71,12 +70,19 @@ namespace Walkabout.Reports
             }
             this.panel.ReportDateChanged -= this.OnReportDateChanged;
             this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
+            this.panel.ReportExport -= this.OnReportExport;
         }
 
         private void Register()
         {
             this.panel.ReportDateChanged += this.OnReportDateChanged;
             this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
+            this.panel.ReportExport -= this.OnReportExport;
+        }
+
+        private void OnReportExport(object sender, bool e)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnNormalizedCurrencyChanged(object sender, string e)
@@ -87,7 +93,7 @@ namespace Walkabout.Reports
 
         private void OnReportDateChanged(object sender, DateTime e)
         {
-            this.reportDate = e;
+            this.ReportDate = e;
             this.Regenerate();
         }
 
@@ -97,13 +103,14 @@ namespace Walkabout.Reports
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
             // this also makes the panel visible!
             this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
-            panel.ReportDate = this.reportDate;
+            panel.ReportDate = this.ReportDate;
             this.Unregister();
             this.Register();
         }
 
         public class NetworthReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public DateTime ReportDate { get; set; }
             public string NormalizedCurrency { get; set; }
 
@@ -124,20 +131,23 @@ namespace Walkabout.Reports
 
         public override IReportState GetState()
         {
-            return new NetworthReportState(this.reportDate, this.normalizedCurrency);
+            return new NetworthReportState(this.ReportDate, this.normalizedCurrency);
         }
 
         public override void ApplyState(IReportState state)
         {
             if (state is NetworthReportState networthReportState)
             {
-                this.reportDate = networthReportState.ReportDate;
+                if (state.Source != StateSource.Disk)
+                {
+                    this.ReportDate = networthReportState.ReportDate;
+                }
                 this.normalizedCurrency = networthReportState.NormalizedCurrency;
                 if (this.panel != null)
                 {
                     this.Unregister();
                     this.panel.NormalizedCurrency = this.normalizedCurrency;
-                    this.panel.ReportDate = this.reportDate;
+                    this.panel.ReportDate = this.ReportDate;
                     this.Register();
                 }
             }
@@ -157,7 +167,7 @@ namespace Walkabout.Reports
             {
                 try
                 {
-                    writer.WriteHeading("Net Worth Statement as of " + this.reportDate.ToString("D"));
+                    writer.WriteHeading("Net Worth Statement as of " + this.ReportDate.ToString("D"));
 
                     this.WriteCurrencyHeading(writer, this.DefaultCurrency);
                     var series = new ChartDataSeries() { Name = "Net Worth" };
@@ -201,8 +211,8 @@ namespace Walkabout.Reports
                     }
 
                     Predicate<Account> bankAccountFilter = (a) => { return this.IsBankAccount(a); };
-                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, bankAccountFilter);
-                    var cashGroup = new AccountGroup() { Filter = bankAccountFilter, Date = this.reportDate, Title = "Bank Account" };
+                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, bankAccountFilter);
+                    var cashGroup = new AccountGroup() { Filter = bankAccountFilter, Date = this.ReportDate, Title = "Bank Account" };
 
                     // Non-investment Cash
                     var color = this.GetRandomColor();
@@ -212,10 +222,10 @@ namespace Walkabout.Reports
 
                     // Investment Cash
                     Predicate<Account> investmentAccountFilter = (a) => { return this.IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; };
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, investmentAccountFilter);
+                    balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, investmentAccountFilter);
                     if (balance != 0)
                     {
-                        var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
+                        var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.ReportDate, Title = "Investment Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
                         this.WriteRow(writer, color, "Investment Cash", balance, () => this.OnSelectCashGroup(investmentCashGroup));
@@ -224,10 +234,10 @@ namespace Walkabout.Reports
 
                     // Tax-Deferred Cash
                     Predicate<Account> taxDeferredAccountFilter = (a) => { return this.IsInvestmentAccount(a) && a.IsTaxDeferred; };
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxDeferredAccountFilter);
+                    balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, taxDeferredAccountFilter);
                     if (balance != 0)
                     {
-                        var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = this.reportDate, Title = "Tax-Deferred Account" };
+                        var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = this.ReportDate, Title = "Tax-Deferred Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Tax-Deferred Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxDeferredCashGroup });
                         this.WriteRow(writer, color, "Tax-Deferred Cash", balance, () => this.OnSelectCashGroup(taxDeferredCashGroup));
@@ -236,10 +246,10 @@ namespace Walkabout.Reports
 
                     // Tax-Free Cash
                     Predicate<Account> taxFreeAccountFilter = (a) => { return this.IsInvestmentAccount(a) && a.IsTaxFree; };
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxFreeAccountFilter);
+                    balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, taxFreeAccountFilter);
                     if (balance != 0)
                     {
-                        var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = this.reportDate, Title = "Tax-Free Account" };
+                        var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = this.ReportDate, Title = "Tax-Free Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Tax-Free Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxFreeCashGroup });
                         this.WriteRow(writer, color, "Tax-Free Cash", balance, () => this.OnSelectCashGroup(taxFreeCashGroup));
@@ -280,9 +290,9 @@ namespace Walkabout.Reports
                     WriteHeader(writer, "Liabilities");
 
                     Predicate<Account> creditAccountFilter = (a) => a.Type == AccountType.Credit;
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, creditAccountFilter);
+                    balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, creditAccountFilter);
                     totalBalance += balance;
-                    var creditGroup = new AccountGroup() { Filter = creditAccountFilter, Date = this.reportDate, Title = "Credit Accounts" };
+                    var creditGroup = new AccountGroup() { Filter = creditAccountFilter, Date = this.ReportDate, Title = "Credit Accounts" };
                     color = this.GetRandomColor();
                     this.WriteRow(writer, color, "Credit", balance, () => this.OnSelectCashGroup(creditGroup));
                     totalBalance += this.WriteLoanAccountRows(writer, data, color, true);
@@ -341,7 +351,7 @@ namespace Walkabout.Reports
                     color = this.GetRandomColor();
                     ChartData chartData = new ChartData();
                     var chartSeries = new ChartDataSeries() { Name = "Networth History" };
-                    chartSeries.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color, UserData = this.reportDate });
+                    chartSeries.Add(new ChartDataValue() { Label = this.ReportDate.Year.ToString(), Value = (double)totalBalance, Color = color, UserData = this.ReportDate });
                     chartData.AddSeries(chartSeries);
                     historicalChart.Data = chartData;
                     historicalChart.ToolTipGenerator = this.GenerateBarChartTips;
@@ -356,7 +366,7 @@ namespace Walkabout.Reports
                             System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
                     }
 
-                    this.WriteTrailer(writer, this.reportDate);
+                    this.WriteTrailer(writer, this.ReportDate);
                 }
                 finally
                 {
@@ -367,7 +377,7 @@ namespace Walkabout.Reports
 
         private void OnBarChartColumnClicked(object sender, ChartDataValue e)
         {
-            this.reportDate = (DateTime)e.UserData;
+            this.ReportDate = (DateTime)e.UserData;
             this.Regenerate();
         }
 
@@ -415,7 +425,7 @@ namespace Walkabout.Reports
             }
 
             SortedDictionary<DateTime, decimal> cashBalances = new SortedDictionary<DateTime, decimal>();
-            for (DateTime date = this.reportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
+            for (DateTime date = this.ReportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
             {
                 cashBalances.Add(date, 0);
             }
@@ -423,7 +433,7 @@ namespace Walkabout.Reports
             Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
             this.myMoney.GetCashBalanceNormalizedBatch(cashBalances, notLoans);
 
-            for (DateTime date = this.reportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
+            for (DateTime date = this.ReportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
             {
                 if (this.historicalChart != chart)
                 {
@@ -470,7 +480,7 @@ namespace Walkabout.Reports
             {
                 if (a.Type == AccountType.Asset)
                 {
-                    var balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
+                    var balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, (x) => x == a);
                     if (balance != 0)
                     {
                         var color = this.GetRandomColor();
@@ -493,7 +503,7 @@ namespace Walkabout.Reports
                     var loan = this.myMoney.GetOrCreateLoanAccount(a);
                     if (loan != null && loan.IsLiability == liabilities)
                     {
-                        decimal balance = loan.ComputeLoanAccountBalance(this.reportDate);
+                        decimal balance = loan.ComputeLoanAccountBalance(this.ReportDate);
                         if (balance != 0)
                         {
                             color = this.GetRandomColor();
@@ -589,7 +599,7 @@ namespace Walkabout.Reports
                     break;
             }
 
-            CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, this.reportDate);
+            CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, this.ReportDate);
 
             // compute summary
             foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
@@ -603,7 +613,7 @@ namespace Walkabout.Reports
                 foreach (SecurityPurchase sp in securityTypeGroup.Purchases)
                 {
                     // load the Stock Quote history from the download log. 
-                    var price = await this.cache.GetSecurityMarketPrice(this.reportDate, sp.Security);
+                    var price = await this.cache.GetSecurityMarketPrice(this.ReportDate, sp.Security);
                     sb += sp.FuturesFactor * sp.UnitsRemaining * price;
                 }
                 byType[stype] = sb;

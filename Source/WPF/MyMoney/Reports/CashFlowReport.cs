@@ -34,6 +34,7 @@ namespace Walkabout.Reports
 
         public CashFlowReport()
         {
+            this.ReportDate = DateTime.Today;
             this.startDate = new DateTime(DateTime.Now.Year, 1, 1);
             this.endDate = this.startDate.AddYears(1);
             this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
@@ -64,6 +65,7 @@ namespace Walkabout.Reports
             this.panel.ReportEndDateChanged -= this.OnReportEndDateChanged;
             this.panel.NormalizedCurrencyChanged -= this.OnNormalizedCurrencyChanged;
             this.panel.ReportIntervalChanged -= this.OnReportIntervalChanged;
+            this.panel.ReportExport -= this.OnReportExport;
         }
 
         private void Register()
@@ -72,8 +74,14 @@ namespace Walkabout.Reports
             this.panel.ReportEndDateChanged += this.OnReportEndDateChanged;
             this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
             this.panel.ReportIntervalChanged += this.OnReportIntervalChanged;
+            this.panel.ReportExport += this.OnReportExport;
+            this.panel.ShowExportButton();
         }
 
+        private void OnReportExport(object sender, bool e)
+        {
+            this.ExportReportAsCsv();
+        }
 
         public override void OnSiteChanged()
         {
@@ -97,6 +105,7 @@ namespace Walkabout.Reports
 
         public class CashFlowReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public int FiscalYearStart { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
@@ -263,13 +272,6 @@ namespace Walkabout.Reports
 
             this.byCategory = new Dictionary<Category, CashFlowColumns>();
 
-            if (writer is FlowDocumentReportWriter fwriter)
-            {
-                writer.WriteParagraph("");
-                Paragraph heading = fwriter.CurrentParagraph;
-                this.AddInline(heading, this.CreateExportReportButton());
-            }
-
             writer.WriteHeading("Cash Flow Report ");
             writer.WriteParagraph("from " + this.startDate.ToString("d") + " to " + this.endDate.ToString("d"));
 
@@ -360,19 +362,6 @@ namespace Walkabout.Reports
         {
             var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
             _ = view.Generate(this);
-        }
-
-        private Button CreateExportReportButton()
-        {
-            Button button = this.CreateReportButton("Icons/Excel.png", "Export", "Export .csv spreadsheet file format");
-
-            button.HorizontalAlignment = HorizontalAlignment.Left;
-            button.Margin = new Thickness(10, 0, 10, 0);
-            button.Click += new RoutedEventHandler((s, args) =>
-            {
-                this.ExportReportAsCsv();
-            });
-            return button;
         }
 
         private string GetCategoryCaption(Category c)

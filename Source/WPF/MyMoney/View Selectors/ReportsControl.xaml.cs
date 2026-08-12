@@ -39,6 +39,7 @@ namespace Walkabout.Views.Controls
             this.FiscalYearRow.Visibility = Visibility.Collapsed;
             this.ReportEndDateRow.Visibility = Visibility.Collapsed;
             this.ReportIntervalRow.Visibility = Visibility.Collapsed;
+            this.HideExportButton();
         }
 
         public static string ConsolidationDateAcquired = "Date Acquired";
@@ -187,6 +188,26 @@ namespace Walkabout.Views.Controls
             {
                 string newValue = (string)e.AddedItems[0];
                 ReportIntervalChanged(this, newValue);
+            }
+        }
+
+        public void HideExportButton()
+        {
+            this.ExportButtonRow.Visibility = Visibility.Collapsed;
+        }
+
+        public void ShowExportButton()
+        {
+            this.ExportButtonRow.Visibility = Visibility.Visible;
+        }
+
+        public event EventHandler<bool> ReportExport;
+
+        private void OnExportButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (this.ReportExport != null)
+            {
+                this.ReportExport(this, true);
             }
         }
     }

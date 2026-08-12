@@ -36,6 +36,7 @@ namespace Walkabout.Reports
 
         public TaxReport()
         {
+            this.ReportDate = DateTime.Now;
         }
 
         ~TaxReport()
@@ -90,6 +91,7 @@ namespace Walkabout.Reports
 
         public class TaxReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public int FiscalYearStart { get; set; }
             public bool InvestmentsOnly { get; set; }
             public bool ConsolidateOnDateSold { get; set; }

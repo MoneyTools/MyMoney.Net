@@ -26,8 +26,15 @@ namespace Walkabout.Interfaces.Reports
         void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e);
     }
 
+    public enum StateSource
+    {
+        Disk,
+        View
+    }
+
     public interface IReportState
     {
+        StateSource Source { get; set; }
         Type GetReportType();
     }
 

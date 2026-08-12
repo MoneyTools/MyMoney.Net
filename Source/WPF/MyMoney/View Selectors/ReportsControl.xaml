@@ -124,6 +124,15 @@
           </Border>
         </StackPanel>
       </Border>
+
+      <Border x:Name="ExportButtonRow" Style="{StaticResource Rows}">
+        <Button x:Name="ExportButton" Click="OnExportButtonClicked" ToolTip="Export .csv spreadsheet file format">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Icons/Excel.png" Width="16" Height="16"></Image>
+            <TextBlock Text="Export..." Margin="5,0,0,0"/>
+          </StackPanel>
+        </Button>
+      </Border>
     </StackPanel>
   </ScrollViewer>
 </UserControl>

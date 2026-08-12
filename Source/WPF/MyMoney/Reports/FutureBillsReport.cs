@@ -22,6 +22,7 @@ namespace Walkabout.Reports
 
         public FutureBillsReport()
         {
+            this.ReportDate = DateTime.Now;
         }
 
         ~FutureBillsReport()
@@ -46,11 +47,19 @@ namespace Walkabout.Reports
 
         public override void ApplyState(IReportState state)
         {
+            if (state.Source != StateSource.Disk && state is FutureBillReportState s)
+            {
+                this.ReportDate = s.ReportDate;
+            }
         }
 
         public class FutureBillReportState : IReportState
         {
+            public StateSource Source { get; set; }
+
             public FutureBillReportState() { }
+
+            public DateTime ReportDate { get; set; }
 
             public Type GetReportType()
             {

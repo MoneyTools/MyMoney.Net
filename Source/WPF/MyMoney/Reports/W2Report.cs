@@ -33,6 +33,7 @@ namespace Walkabout.Taxes
 
         public W2Report()
         {
+            this.ReportDate = DateTime.Now;
         }
 
         ~W2Report()
@@ -78,6 +79,7 @@ namespace Walkabout.Taxes
 
         public class W2ReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public int FiscalYearStart { get; set; }
             public int Year { get; set; }
 

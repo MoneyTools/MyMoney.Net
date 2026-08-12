@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,15 +31,13 @@ namespace Walkabout.Reports
         private CostBasisCalculator calc;
         private Paragraph mouseDownPara;
         private Point downPos;
-        private DateTime reportDate;
         private StockQuoteCache cache;
         private SecurityGroup selectedGroup;
         private AccountGroup accountGroup;
         private readonly Random rand = new Random(Environment.TickCount);
         private bool generating;
         private FlowDocumentView view;
-        private ReportsControl panel;
-
+        private ReportsControl panel;        
         public event EventHandler<SecurityGroup> DrillDown;
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace Walkabout.Reports
         /// </summary>
         public PortfolioReport(FlowDocumentView view)
         {
+            this.ReportDate = DateTime.Now;
             this.view = view;
         }
 
@@ -67,14 +68,21 @@ namespace Walkabout.Reports
             if (this.panel != null)
             {
                 this.panel.ReportDateChanged -= this.OnReportDateChanged;
+                this.panel.ReportExport -= this.OnReportExport;
             }
         }
 
         private void Register()
         {
             this.panel.ReportDateChanged += this.OnReportDateChanged;
+            this.panel.ReportExport += this.OnReportExport;
+            this.panel.ShowExportButton();
         }
 
+        private void OnReportExport(object sender, bool e)
+        {
+            this.ExportReportAsCsv();
+        }
 
         public Account Account
         {
@@ -94,12 +102,6 @@ namespace Walkabout.Reports
             set => this.selectedGroup = value;
         }
 
-        public DateTime ReportDate
-        {
-            get => reportDate;
-            set { reportDate = value;  } 
-        }
-
         public override void OnSiteChanged()
         {
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
@@ -107,13 +109,14 @@ namespace Walkabout.Reports
             this.Unregister();
             // this also makes the panel visible!
             this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
-            this.panel.ReportDate = this.reportDate;
+            this.panel.ReportDate = this.ReportDate;
             this.Unregister();
             this.Register();
         }
 
         public class PortfolioReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public DateTime ReportDate { get; set; }
             public Account Account { get; set; }
             public AccountGroup AccountGroup { get; set; }
@@ -137,7 +140,7 @@ namespace Walkabout.Reports
         {
             return new PortfolioReportState()
             {
-                ReportDate = this.reportDate,
+                ReportDate = this.ReportDate,
                 Account = this.account,
                 AccountGroup = this.accountGroup,
                 SelectedGroup = this.selectedGroup,
@@ -148,14 +151,17 @@ namespace Walkabout.Reports
         {
             if (state is PortfolioReportState taxReportState)
             {
-                this.reportDate = taxReportState.ReportDate;
+                if (state.Source != StateSource.Disk)
+                {
+                    this.ReportDate = taxReportState.ReportDate;
+                }
                 this.account = taxReportState.Account;
                 this.accountGroup = taxReportState.AccountGroup;
                 this.selectedGroup = taxReportState.SelectedGroup;
                 if (this.panel != null)
                 {
                     this.Unregister();
-                    this.panel.ReportDate = this.reportDate;
+                    this.panel.ReportDate = this.ReportDate;
                     this.Register();
                 }
             }
@@ -181,6 +187,15 @@ namespace Walkabout.Reports
             this.mouseDownPara = (Paragraph)sender;
             this.downPos = e.GetPosition(view);
         }
+
+        public override void Export(string filename)
+        {
+            using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
+            {
+                this.InternalGenerate(new CsvReportWriter(writer));
+            }
+        }
+
 
         private decimal totalMarketValue;
         private decimal totalGainLoss;
@@ -242,13 +257,13 @@ namespace Walkabout.Reports
         private async Task InternalGenerate(IReportWriter writer)
         {
             this.DelaySaveState();
-            if (this.reportDate == DateTime.MinValue)
+            if (this.ReportDate == DateTime.MinValue)
             {
-                this.reportDate = DateTime.Now;
+                this.ReportDate = DateTime.Now;
             }
             this.flowwriter = writer as FlowDocumentReportWriter;
 
-            this.calc = new CostBasisCalculator(this.myMoney, this.reportDate);
+            this.calc = new CostBasisCalculator(this.myMoney, this.ReportDate);
             if (this.selectedGroup != null)
             {
                 bool found = false;
@@ -267,7 +282,7 @@ namespace Walkabout.Reports
                 if (!found)
                 {
                     this.selectedGroup.Purchases.Clear();
-                    this.selectedGroup.Date = this.reportDate;
+                    this.selectedGroup.Date = this.ReportDate;
                 }
             }
 
@@ -307,17 +322,17 @@ namespace Walkabout.Reports
                 System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
                 // byYearCombo.SelectionChanged += OnYearChanged;
                 picker.Margin = new Thickness(10, 0, 0, 0);
-                picker.SelectedDate = this.reportDate;
-                picker.DisplayDate = this.reportDate;
+                picker.SelectedDate = this.ReportDate;
+                picker.DisplayDate = this.ReportDate;
                 picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
                 this.AddInline(pheading, picker);
             }
 
             this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
-            if (this.reportDate.Date != DateTime.Today)
+            if (this.ReportDate.Date != DateTime.Today)
             {
-                writer.WriteSubHeading("As of " + this.reportDate.Date.AddDays(-1).ToLongDateString());
+                writer.WriteSubHeading("As of " + this.ReportDate.Date.AddDays(-1).ToLongDateString());
             }
 
             this.totalMarketValue = 0;
@@ -431,7 +446,7 @@ namespace Walkabout.Reports
                 }
             }
 
-            this.WriteTrailer(writer, this.reportDate);
+            this.WriteTrailer(writer, this.ReportDate);
         }
 
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -451,9 +466,9 @@ namespace Walkabout.Reports
         {
             if (!this.generating)
             {
-                if (newDate != this.reportDate)
+                if (newDate != this.ReportDate)
                 {
-                    this.reportDate = newDate;
+                    this.ReportDate = newDate;
                     if (this.selectedGroup != null)
                     {
                         this.selectedGroup.Date = newDate;
@@ -555,7 +570,7 @@ namespace Walkabout.Reports
                 if (!priceFound || (current != previous))
                 {
                     priceFound = true;
-                    price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    price = await this.cache.GetSecurityMarketPrice(this.ReportDate, i.Security);
                     previous = current;
                 }
                 costBasis += i.TotalCostBasis;
@@ -581,7 +596,7 @@ namespace Walkabout.Reports
             writer.StartExpandableRowGroup();
 
             decimal averageUnitPrice = currentQuantity == 0 ? 0 : costBasis / currentQuantity;
-            this.WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
+            this.WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Symbol, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
 
             foreach (SecurityPurchase i in bySecurity)
             {
@@ -589,14 +604,14 @@ namespace Walkabout.Reports
                 if (!priceFound || (current != previous))
                 {
                     priceFound = true;
-                    price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    price = await this.cache.GetSecurityMarketPrice(this.ReportDate, i.Security);
                     previous = current;
                 }
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 marketValue = i.FuturesFactor * i.UnitsRemaining * price;
                 gainLoss = (i.CostBasisPerUnit == 0) ? 0 : marketValue - i.TotalCostBasis;
-                this.WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name,
+                this.WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Symbol, i.Security.Name,
                     i.UnitsRemaining, price, marketValue, i.CostBasisPerUnit, i.TotalCostBasis, gainLoss);
             }
 
@@ -683,6 +698,7 @@ namespace Walkabout.Reports
                             foreach (var minwidth in new double[] { 20,  //Expander
                                 80,        // Date Acquired
                                 300,       // Description
+                                100,       // Symbol
                                 100,       // Quantity
                                 100,       // Price
                                 100,       // Market Value
@@ -707,7 +723,7 @@ namespace Walkabout.Reports
             }
 
             writer.StartFooterRow();
-            this.WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
+            this.WriteRow(writer, true, true, FontWeights.Bold, null, "Total", "", null, null, null, marketValue, null, costBasis, gainLoss);
             writer.EndFooterRow();
             // only close the table 
             writer.EndTable();
@@ -721,7 +737,7 @@ namespace Walkabout.Reports
             {
                 if (this.accountGroup.Filter(account))
                 {
-                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a == account);
+                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, (a) => a == account);
                     if (balance != 0)
                     {
                         var caption = account.Name;
@@ -781,7 +797,7 @@ namespace Walkabout.Reports
                         if (!hasPrice || (i.Security != previous))
                         {
                             hasPrice = true;
-                            price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                            price = await this.cache.GetSecurityMarketPrice(this.ReportDate, i.Security);
                             previous = i.Security;
                         }
                         var value = i.FuturesFactor * i.UnitsRemaining * price;
@@ -836,7 +852,7 @@ namespace Walkabout.Reports
 
             if (includeCashBalance)
             {
-                decimal cashBalance = this.myMoney.GetCashBalanceNormalized(this.reportDate, filter);
+                decimal cashBalance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, filter);
                 var color = this.GetRandomColor();
                 data.Add(new ChartDataValue()
                 {
@@ -876,6 +892,10 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
+            writer.WriteParagraph("Symbol");
+            writer.EndCell();
+
+            writer.StartCell();
             writer.WriteNumber("Quantity");
             writer.EndCell();
 
@@ -905,7 +925,7 @@ namespace Walkabout.Reports
             writer.EndHeaderRow();
         }
 
-        private void WriteRow(IReportWriter writer, bool expandable, bool header, FontWeight weight, DateTime? aquired, string description, string descriptionUrl, decimal? quantity, decimal? price, decimal marketValue, decimal? unitCost, decimal costBasis, decimal gainLoss)
+        private void WriteRow(IReportWriter writer, bool expandable, bool header, FontWeight weight, DateTime? aquired, string description, string symbol, string descriptionUrl, decimal? quantity, decimal? price, decimal marketValue, decimal? unitCost, decimal costBasis, decimal gainLoss)
         {
             if (header)
             {
@@ -931,6 +951,10 @@ namespace Walkabout.Reports
 
             writer.StartCell();
             writer.WriteHyperlink(description, FontStyles.Normal, weight, this.OnReportCellMouseDown);
+            writer.EndCell();
+
+            writer.StartCell();
+            writer.WriteParagraph(symbol);
             writer.EndCell();
 
             writer.StartCell();
@@ -980,29 +1004,6 @@ namespace Walkabout.Reports
                 writer.EndRow();
             }
 
-        }
-
-        private static void WriteHeader(IReportWriter writer, string caption)
-        {
-            writer.StartHeaderRow();
-            writer.StartCell(1, 2);
-            writer.WriteParagraph(caption);
-            writer.EndCell();
-            writer.EndHeaderRow();
-        }
-
-        private void WriteRow(IReportWriter writer, string name, decimal balance)
-        {
-            writer.StartRow();
-            writer.StartCell();
-            writer.WriteParagraph(name);
-            writer.EndCell();
-
-            writer.StartCell();
-            writer.WriteNumber(this.GetFormattedNormalizedAmount(balance));
-            writer.EndCell();
-
-            writer.EndRow();
         }
 
         private Color GetRandomColor()

@@ -21,7 +21,6 @@ namespace Walkabout.Reports
     {
         private MyMoney myMoney;
         private FlowDocumentView view;
-        private DateTime reportDate;
         private bool generating;
         private StockQuoteCache cache;
         private string normalizeCurrency;
@@ -33,12 +32,12 @@ namespace Walkabout.Reports
         public AccountSummaryReport(FlowDocumentView view)
         {
             this.view = view;
-            this.reportDate = DateTime.Today;
+            this.ReportDate = DateTime.Today;
         }
 
         private void OnReportDateChanged(object sender, DateTime e)
         {
-            this.reportDate = e;
+            this.ReportDate = e;
             this.Regenerate();
         }
 
@@ -79,12 +78,6 @@ namespace Walkabout.Reports
             this.panel.NormalizedCurrencyChanged += this.OnNormalizedCurrencyChanged;
         }
 
-        public DateTime ReportDate
-        {
-            get => reportDate;
-            set => reportDate = value;
-        }
-
         public override void OnSiteChanged()
         {
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
@@ -92,13 +85,14 @@ namespace Walkabout.Reports
             // this also makes the panel visible!
             this.Unregister();
             this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
-            panel.ReportDate = this.reportDate;
+            panel.ReportDate = this.ReportDate;
             this.Unregister();
             this.Register();
         }
 
         public class AccountSummaryReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public DateTime ReportDate { get; set; }
             public string NormalizeCurrency { get; set; }
 
@@ -116,7 +110,7 @@ namespace Walkabout.Reports
         {
             return new AccountSummaryReportState()
             {
-                ReportDate = this.reportDate,
+                ReportDate = this.ReportDate,
                 NormalizeCurrency = this.normalizeCurrency,
             };
         }
@@ -125,12 +119,15 @@ namespace Walkabout.Reports
         {
             if (state is AccountSummaryReportState reportState)
             {
-                this.reportDate = reportState.ReportDate;
+                if (state.Source != StateSource.Disk)
+                {
+                    this.ReportDate = reportState.ReportDate;
+                }
                 this.normalizeCurrency = reportState.NormalizeCurrency;
                 if (this.panel != null)
                 {
                     this.Unregister();
-                    this.panel.ReportDate = this.reportDate;
+                    this.panel.ReportDate = this.ReportDate;
                     this.panel.NormalizedCurrency = this.normalizeCurrency;
                     this.Register();
                 }
@@ -157,14 +154,14 @@ namespace Walkabout.Reports
 
             this.DelaySaveState();
 
-            if (this.reportDate == DateTime.MinValue)
+            if (this.ReportDate == DateTime.MinValue)
             {
-                this.reportDate = DateTime.Now;
+                this.ReportDate = DateTime.Now;
             }
 
             this.commonSymbol = null;
-            var calc = new CostBasisCalculator(this.myMoney, this.reportDate);
-            writer.WriteHeading("Account Summary as of " + this.reportDate.ToString("D"));
+            var calc = new CostBasisCalculator(this.myMoney, this.ReportDate);
+            writer.WriteHeading("Account Summary as of " + this.ReportDate.ToString("D"));
 
             this.SetDefaultCurrency(writer, this.normalizeCurrency);
             Currency currency = this.DefaultCurrency;
@@ -191,7 +188,7 @@ namespace Walkabout.Reports
             }
             writer.EndTable();
 
-            this.WriteTrailer(writer, this.reportDate);
+            this.WriteTrailer(writer, this.ReportDate);
         }
 
         private static void WriteHeader(IReportWriter writer, string caption)

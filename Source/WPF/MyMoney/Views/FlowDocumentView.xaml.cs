@@ -378,6 +378,7 @@ namespace Walkabout.Views
         public ReportViewState(IReportState reportState)
         {
             this.ReportState = reportState;
+            reportState.Source = StateSource.View;
         }
     }
 

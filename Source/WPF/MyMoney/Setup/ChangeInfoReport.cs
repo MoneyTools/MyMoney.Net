@@ -65,6 +65,7 @@ namespace Walkabout.Setup
 
         public class ChangeInfoReportState : IReportState
         {
+            public StateSource Source { get; set; }
             public string PreviousVersion { get; set; }
             public bool InstallButton { get; set; }
             public XDocument Document { get; set; }
