@@ -42,7 +42,6 @@ namespace Walkabout.Reports
         private StockQuoteCache cache;
         private FlowDocumentView view;
         private RetirementControl panel;
-        private const decimal SocialSecurityAdjustment = 0.04M; // for inflation
         private RetirementPlanState state = new RetirementPlanState()
         {
             InvestmentRateOfReturn = 0.05M,
@@ -58,10 +57,16 @@ namespace Walkabout.Reports
             TaxDeferredStrategyAge = 65,
             SocialSecurityAmount = 3000,
             SocialSecurityAge = 67,
-            SpousalSocialSecurityAge = 67,
+            SocialSecuritySpouseAge = 67,
+            SocialSecuritySpouseAmount = 0,
             Stacked = true
         };
         private DelayedActions actions = new DelayedActions();
+
+        // To receive the full spousal benefit of up to 50%, she must wait until her own Full Retirement Age (FRA).
+        // For someone born in 1960 or later, FRA is 67.
+        const int SpousalSocialSecurityAge = 67;
+        private const decimal SocialSecurityCostOfLivingAdjustment = 0.025M; // 2.5 % for inflation
 
         public static string TaxDeferredStrategyNone = "None";
         public static string TaxDeferredStrategyRoth = "Roth Conversion";
@@ -94,6 +99,8 @@ namespace Walkabout.Reports
             this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
             this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
             this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
+            this.panel.SocialSecuritySpouseAmountChanged -= this.OnSocialSecuritySpouseAmountChanged;
+            this.panel.SocialSecuritySpouseAgeChanged -= this.OnSocialSecuritySpouseAgeChanged;
         }
 
         private void UnRegister()
@@ -114,6 +121,8 @@ namespace Walkabout.Reports
                 this.panel.SocialSecurityAgeChanged -= this.OnSocialSecurityAgeChanged;
                 this.panel.SocialSecurityAmountChanged -= this.OnSocialSecurityAmountChanged;
                 this.panel.StackedBarsChanged -= this.OnStackedBarsChanged;
+                this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
+                this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
             }
         }
 
@@ -174,6 +183,16 @@ namespace Walkabout.Reports
         private void OnSocialSecurityAgeChanged(object sender, int e)
         {
             this.state.SocialSecurityAge = e; this.Regenerate();
+        }
+
+        private void OnSocialSecuritySpouseAgeChanged(object sender, int e)
+        {
+            this.state.SocialSecuritySpouseAge = e; this.Regenerate();
+        }
+
+        private void OnSocialSecuritySpouseAmountChanged(object sender, decimal e)
+        {
+            this.state.SocialSecuritySpouseAmount = e; this.Regenerate();
         }
 
         private void OnStackedBarsChanged(object sender, bool e)
@@ -337,10 +356,17 @@ namespace Walkabout.Reports
                 this.totalTaxes = 0;
                 decimal conversionAmount = 0;
                 decimal socialSecurity = this.state.SocialSecurityAmount;
+                decimal spousalSocialSecurity = this.ComputeSpousalSocialSecurity();
+                int spousalSocialSecurityAge = SpousalSocialSecurityAge; // the optimal for spousal social security.
+                if (this.state.SocialSecuritySpouseAmount > 0)
+                {
+                    // then spouse has their own social security and can start whenever they want.
+                    spousalSocialSecurity = this.state.SocialSecuritySpouseAmount;
+                    spousalSocialSecurityAge = this.state.SocialSecuritySpouseAge;
+                }
 
                 for (int age = this.state.CurrentAge; age <= this.state.GraduationAge; age++)
                 {
-                    int spouseAge = age + this.state.SpouseAge - this.state.CurrentAge;
                     if (age == this.state.TaxDeferredStrategyAge)
                     {
                         if (this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
@@ -365,7 +391,6 @@ namespace Walkabout.Reports
                         decimal taxFreeIncome = 0;
                         decimal socialSecurityIncome = 0;
 
-
                         if (age >= this.state.TaxDeferredStrategyAge && this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                         {
                             var (tax, amount) = funds.ConvertToRoth(ref baseIncome, conversionAmount);
@@ -380,16 +405,19 @@ namespace Walkabout.Reports
                         if (age >= this.state.SocialSecurityAge)
                         {
                             socialSecurityIncome = socialSecurity * 12;
-                            socialSecurity *= (1 + SocialSecurityAdjustment);
-                            if (this.state.MarriedFilingJointly && spouseAge >= this.state.SpousalSocialSecurityAge)
+                            if (this.state.MarriedFilingJointly)
                             {
-                                // To receive the full spousal benefit of up to 50%, she must wait until her own Full Retirement Age (FRA).
-                                // For someone born in 1960 or later, FRA is 67.
-                                socialSecurityIncome *= 1.5M;
+                                int spouseAge = age + this.state.SpouseAge - this.state.CurrentAge;
+                                if (spouseAge >= spousalSocialSecurityAge)
+                                {
+                                    // Ok, how that spouse has started we can also apply COLA to spousal amount.
+                                    socialSecurityIncome += (spousalSocialSecurity * 12);
+                                    spousalSocialSecurity *= (1 + SocialSecurityCostOfLivingAdjustment);
+                                }
                             }
                             baseIncome += socialSecurityIncome;
                             income += socialSecurityIncome;
-                            // TODO: also have to pay taxes on this, but how much?
+                            socialSecurity *= (1 + SocialSecurityCostOfLivingAdjustment);
                         }
 
                         // Now figure out where to draw the income from and how to pay taxes on it.
@@ -482,6 +510,31 @@ namespace Walkabout.Reports
                 }
 
                 this.totalAssets = funds.Taxable + funds.TaxDeferred + funds.TaxFree;
+            }
+
+            private decimal ComputeSpousalSocialSecurity()
+            {
+                // Spousal social security is based on primary Full Retirement Age (67) amount, but we 
+                // may not have that number, so we must compute it.
+                var primaryAge = this.state.SocialSecurityAge;
+                var primaryAmount = this.state.SocialSecurityAmount;
+                if (primaryAge >= 67)
+                {
+                    for (int age = Math.Min(70, primaryAge); age > 67; age--)
+                    {
+                        primaryAmount *= 0.93M; // reduce it by 7% per year.
+                    }
+                }
+                else 
+                {
+                    // we are taking early amount but spouse cannot start till 67, so
+                    // compute our FRA amount.
+                    for (int age = Math.Max(62, primaryAge); age < 67; age++)
+                    {
+                        primaryAmount *= 1.075M; // increase it by 7.5% per year.
+                    }
+                }
+                return primaryAmount * 0.50M; // spousal gets 50% of FRA
             }
 
             private decimal GetNormalizedAmount(decimal amount)
@@ -704,9 +757,9 @@ namespace Walkabout.Reports
                 tip.Children.Add(new TextBlock() { Text = prefix + "Amount: " + value.Value.ToString("C0") });
                 return tip;
             }
-
         }
-        Simulation simulation;
+        Simulation simulation = null;
+
 
         public override async Task Generate(IReportWriter writer)
         {
@@ -719,22 +772,24 @@ namespace Walkabout.Reports
             writer.WriteHeading("Retirement Plan as of " + this.state.ReportDate.ToString("D"));
             writer.WriteSubHeading("Currency " + this.DefaultCurrency.Symbol);
 
-            if (simulation == null)
+            var sim = this.simulation;
+            if (sim == null)
             {
                 writer.WriteParagraph("Running simulation...");
                 _ = Task.Run(this.Simulate); // in the background (do not wait!)
             }
             else
             {
-                this.simulation.Render(writer);
+                sim.Render(writer);
             }
         }
 
         private async Task Simulate()
         {
-            this.simulation = new Simulation(this.MyMoney, this.state, (Report)this, this.cache);
-            await this.simulation.Run();
-            await this.simulation.RunRothSimulation();
+            var simulation = new Simulation(this.MyMoney, this.state, (Report)this, this.cache);
+            this.simulation = simulation;
+            await simulation.Run();
+            await simulation.RunRothSimulation();
             this.actions.StartDelayedAction("ShowSimulation", this.RenderReport, TimeSpan.FromSeconds(0.01));
         }
 
@@ -1086,6 +1141,8 @@ namespace Walkabout.Reports
                     this.panel.SocialSecurityAmount = s.SocialSecurityAmount;
                     this.panel.SocialSecurityAge = s.SocialSecurityAge;
                     this.panel.StackedBars = s.Stacked;
+                    this.panel.SocialSecuritySpouseAge = s.SocialSecuritySpouseAge;
+                    this.panel.SocialSecuritySpouseAmount = s.SocialSecuritySpouseAmount;
                     this.Register();
                 }
             }
@@ -1115,12 +1172,13 @@ namespace Walkabout.Reports
             public int TaxDeferredStrategyAge { get; set; }
             public decimal SocialSecurityAmount { get; set; }
             public int SocialSecurityAge { get; set; }
-            public int SpousalSocialSecurityAge { get; set; }
+            public int SocialSecuritySpouseAge { get; set; }
+            public decimal SocialSecuritySpouseAmount { get; set; }
+
             public bool Stacked { get; set; }
 
 
             public string Name => "RetirementPlan";
-
 
             public RetirementPlanState()
             {
@@ -1149,7 +1207,8 @@ namespace Walkabout.Reports
                     TaxDeferredStrategyAge = this.TaxDeferredStrategyAge,
                     SocialSecurityAmount = this.SocialSecurityAmount,
                     SocialSecurityAge = this.SocialSecurityAge,
-                    SpousalSocialSecurityAge = this.SpousalSocialSecurityAge,
+                    SocialSecuritySpouseAge = this.SocialSecuritySpouseAge,
+                    SocialSecuritySpouseAmount = this.SocialSecuritySpouseAmount,
                     Stacked = this.Stacked
                 };
             }

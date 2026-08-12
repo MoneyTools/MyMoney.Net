@@ -21,7 +21,7 @@ namespace Walkabout.Views.Controls
     {
         public RetirementControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             TaxDeferredRow.Visibility = Visibility.Collapsed;
             this.UpdateVisibility();
         }
@@ -31,6 +31,7 @@ namespace Walkabout.Views.Controls
             var visibility = this.MarriedFilingJointly ? Visibility.Visible : Visibility.Collapsed;
             SpouseAgeLabel.Visibility = SpouseAgeBorder.Visibility = visibility;
             TaxDeferredDetails.Visibility = this.TaxDeferredStrategy != "None" ? Visibility.Visible : Visibility.Collapsed;
+            SocialSecuritySpouseDetails.Visibility = this.MarriedFilingJointly ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public decimal InflationRate
@@ -339,11 +340,62 @@ namespace Walkabout.Views.Controls
 
         private void OnStackedChanged(object sender, RoutedEventArgs e)
         {
-            if (StackedBarsChanged != null)
+            if (this.StackedBarsChanged != null)
             {
                 this.StackedBarsChanged(this, this.StackedBars);
             }
 
+        }
+
+        public decimal SocialSecuritySpouseAmount
+        {
+            get
+            {
+                decimal result = 0;
+                decimal.TryParse(this.SocialSecuritySpouseText.Text, out result);
+                return result;
+            }
+            set
+            {
+                this.SocialSecuritySpouseText.Text = value.ToString();
+            }
+        }
+
+        public event EventHandler<decimal> SocialSecuritySpouseAmountChanged;
+
+
+        private void OnSocialSecuritySpouseTextChanged(object sender, string e)
+        {
+            if (this.SocialSecuritySpouseAmountChanged != null)
+            {
+                this.SocialSecuritySpouseAmountChanged(this, this.SocialSecuritySpouseAmount);
+            }
+        }
+
+        public int SocialSecuritySpouseAge
+        {
+            get
+            {
+                int result = 0;
+                int.TryParse(this.SocialSecuritySpouseAgeText.Text, out result);
+                return result;
+            }
+            set
+            {
+                this.SocialSecuritySpouseAgeText.Text = value.ToString();
+            }
+        }
+
+        public event EventHandler<int> SocialSecuritySpouseAgeChanged;
+
+
+        private void OnSocialSecuritySpouseAgeTextChanged(object sender, string e)
+        {
+
+            if (this.SocialSecuritySpouseAgeChanged != null)
+            {
+                this.SocialSecuritySpouseAgeChanged(this, this.SocialSecuritySpouseAge);
+            }
         }
     }
 }

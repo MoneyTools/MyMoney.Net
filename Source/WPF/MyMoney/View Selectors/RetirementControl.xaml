@@ -152,7 +152,7 @@
                         />
           </Border>
 
-          <StackPanel x:Name="TaxDeferredDetails" >
+          <StackPanel x:Name="TaxDeferredDetails" Margin="10,0,0,0">
             <TextBlock Text="Years to implement strategy:" />
             <Border Style="{StaticResource ValueAreaBorder}">
               <c:HandyTextBox x:Name="TaxDeferredStrategyYearsText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
@@ -172,19 +172,40 @@
 
       <Border x:Name="SocialSecurityRow" Style="{StaticResource Rows}" >
         <StackPanel>
-          <TextBlock Text="Social security payment per month:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
+          <TextBlock Text="Social security:" Margin="0,0,0,10"/>
+          
+          <StackPanel x:Name="SocialSecurityDetails" Margin="10,0,0,0">
+            <TextBlock Text="Social security payment per month:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
             <c:HandyTextBox x:Name="SocialSecurityText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the amount you expect to get from social security"
                         Committed="OnSocialSecurityTextChanged"/>
           </Border>
 
-          <TextBlock Text="Age to start social security:" />
-          <Border Style="{StaticResource ValueAreaBorder}">
-            <c:HandyTextBox x:Name="SocialSecurityAgeText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+            <TextBlock Text="Age to start social security:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="SocialSecurityAgeText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the age at which you want to start receiving social security"
                         Committed="OnSocialSecurityAgeTextChanged"/>
-          </Border>
+            </Border>
+          </StackPanel>
+
+          <StackPanel x:Name="SocialSecuritySpouseDetails" Margin="10,0,0,0">
+
+            <TextBlock Text="Spouse Social security payment per month:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="SocialSecuritySpouseText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the amount your spouse will expect to get from social security (enter zero to enable spousal social security if filing jointly)"
+                        Committed="OnSocialSecuritySpouseTextChanged"/>
+            </Border>
+            
+            <TextBlock Text="Spouse age to start social security:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="SocialSecuritySpouseAgeText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the age at which you want your spouse to start receiving social security (enter 67 if your want to maximize spousal social security)"
+                        Committed="OnSocialSecuritySpouseAgeTextChanged"/>
+            </Border>
+          </StackPanel>
         </StackPanel>
       </Border>
 
