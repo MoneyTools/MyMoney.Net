@@ -2,9 +2,10 @@
 <changes>
 	<change version="2.1.0.72" date="8/9/2026">
 		- Feature: Add roth simulation chart to retirement plan report and add chart legends.
+		- Feature: Add dividend simulation to retirement plan report.
 		- Bug: Fix bug in remembering "Display Closed Accounts" when switching databases.
 		- Bug: Fix transparent background on portfolio view so you never see the transaction grid behind the portfolio view.
-		- But: Fix how report date is preserved in reports so that state restored from disk does not preserve the date, but the report date preserved in ViewState for the back button is preserved, this way new reports always get the latest date (today) except for more complicated reports that have a start/end date like CashFlowReport and the tax reports where you usually don't want the latest year anyway because it is not yet completed.
+		- Bug: Fix how report date is preserved in reports so that state restored from disk does not preserve the date, but the report date preserved in ViewState for the back button is preserved, this way new reports always get the latest date (today) except for more complicated reports that have a start/end date like CashFlowReport and the tax reports where you usually don't want the latest year anyway because it is not yet completed.
 	</change>
 	<change version="2.1.0.71" date="7/28/2026">
 		- Feature: Remove "RecurringExpense" category type and add "Frequency" instead.
