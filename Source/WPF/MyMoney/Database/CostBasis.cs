@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Navigation;
 
 namespace Walkabout.Data
 {
@@ -39,6 +40,28 @@ namespace Walkabout.Data
         public decimal TotalCostBasis { get { return this.CostBasisPerUnit * this.UnitsRemaining; } }
 
         /// <summary>
+        /// Return a simulated future cost basis ratio, a ratio of 1 means no capital gains yet.
+        /// </summary>
+        public decimal FutureCostBasisRatio => this.TotalCostBasis / this.FutureMarketValue;
+
+        /// <summary>
+        /// For simulation only.
+        /// </summary>
+        public decimal FuturePrice;
+
+        public SecurityPurchase Copy()
+        {
+            return new SecurityPurchase()
+            {
+                Security = this.Security,
+                DatePurchased = this.DatePurchased,
+                UnitsRemaining = this.UnitsRemaining,
+                CostBasisPerUnit = this.CostBasisPerUnit,
+                FuturePrice = Security.Price, // start with current price.
+            };
+        }
+
+        /// <summary>
         /// Get market value of remaining units.
         /// </summary>
         public decimal LatestMarketValue
@@ -48,6 +71,18 @@ namespace Walkabout.Data
                 return this.FuturesFactor * this.UnitsRemaining * this.Security.Price;
             }
         }
+
+        /// <summary>
+        /// Get market value of remaining units at the simulated future price
+        /// </summary>
+        public decimal FutureMarketValue
+        {
+            get
+            {
+                return this.FuturesFactor * this.UnitsRemaining * this.FuturePrice;
+            }
+        }
+
         public decimal FuturesFactor
         {
             get

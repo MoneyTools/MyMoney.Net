@@ -270,6 +270,7 @@ namespace Walkabout.Reports
             private decimal totalAssets;
             private decimal totalTaxes;
             private CostBasisCalculator calc;
+            private decimal rmdAge;
 
             public Simulation(MyMoney money, RetirementPlanState state, Report report, StockQuoteCache cache)
             {
@@ -277,6 +278,9 @@ namespace Walkabout.Reports
                 this.state = state;
                 this.report = report;
                 this.cache = cache;
+
+                int born = DateTime.Now.Year - state.CurrentAge;
+                this.rmdAge = born >= 1960 ? 75 : 73;
             }
 
             public async Task RunRothSimulation()
@@ -301,6 +305,7 @@ namespace Walkabout.Reports
                     var temp = new Simulation(this.myMoney, modifiedState, this.report, this.cache);
                     temp.calc = this.calc;
                     temp.funds = this.funds;
+                    temp.rmdAge = this.rmdAge;
                     await temp.Run();
                     rothAssetsSeries.Add(new ChartDataValue() { Label = i.ToString(), Value = (double)temp.totalAssets, Color = rothAssetsColor, UserData = ChartValueAssets });
                     rothTaxSeries.Add(new ChartDataValue() { Label = i.ToString(), Value = (double)temp.totalTaxes, Color = rothTaxColor, UserData = ChartValueTaxes }); 
@@ -326,7 +331,7 @@ namespace Walkabout.Reports
                         Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
                         var cashBalance = this.myMoney.GetCashBalanceNormalized(date, notLoans);
                         decimal loanBalance = this.GetTotalLoansBalance(date);
-                        this.funds = await this.CalculatePortfolioBalance(date);
+                        this.funds = await this.CalculatePortfolioBalance(date);                        
 #if PerformanceBlocks
                     }
 #endif
@@ -364,6 +369,8 @@ namespace Walkabout.Reports
                     spousalSocialSecurity = this.state.SocialSecuritySpouseAmount;
                     spousalSocialSecurityAge = this.state.SocialSecuritySpouseAge;
                 }
+                funds.SimulatedDate = DateTime.Today;
+                funds.CreateSortedHoldings(this.calc);
 
                 for (int age = this.state.CurrentAge; age <= this.state.GraduationAge; age++)
                 {
@@ -421,7 +428,7 @@ namespace Walkabout.Reports
                         }
 
                         // Now figure out where to draw the income from and how to pay taxes on it.
-                        if (funds.TaxDeferred > 0 && age >= 75)
+                        if (funds.TaxDeferred > 0 && age >= this.rmdAge)
                         {
                             // must take RMD distribution.
                             var amount = funds.GetMinimumDistribution(age);
@@ -431,22 +438,17 @@ namespace Walkabout.Reports
                             // Now to pay to taxes on this we need to take out more.                        
                             incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
                         }
-                        if (income < futureIncome && funds.Taxable > 0)
+                        if (income < futureIncome)
                         {
-                            // we need more from taxable or taxfree accounts.
+                            // we need more from taxable.
                             var amount = futureIncome - income;
-                            if (amount > funds.Taxable)
+                            var (amountSold, gains) = funds.SellTaxableAmount(amount);
+                            taxableIncome += amountSold;
+                            income += amountSold;
+                            if (gains > 0)
                             {
-                                amount = funds.Taxable;
+                                capitalGainsTaxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, gains);
                             }
-                            taxableIncome += amount;
-                            income += amount;
-                            funds.Taxable -= amount;
-                            if ((int)taxableIncome == 416156)
-                            {
-                                // debug me
-                            }
-                            capitalGainsTaxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, amount);
                         }
 
                         // if we still have amount needed then take early withdrawal from tax deferred
@@ -507,6 +509,7 @@ namespace Walkabout.Reports
                     {
                         funds.Appreciate(this.state.InvestmentRateOfReturn);
                     }
+                    funds.SimulatedDate = funds.SimulatedDate.AddYears(1);
                 }
 
                 this.totalAssets = funds.Taxable + funds.TaxDeferred + funds.TaxFree;
@@ -567,7 +570,6 @@ namespace Walkabout.Reports
                 }
                 var funds = new RetirementFunds();
                 funds.MarriedFilingJointly = this.state.MarriedFilingJointly;
-                decimal totalCostBasis = 0;
                 foreach (var accountHolding in this.calc.GetAccountHoldings())
                 {
                     foreach (var holding in accountHolding.GetHoldings())
@@ -583,15 +585,9 @@ namespace Walkabout.Reports
                         }
                         else
                         {
-                            funds.Taxable += this.GetNormalizedAmount(holding.FuturesFactor * holding.UnitsRemaining * price);
-                            totalCostBasis += this.GetNormalizedAmount(holding.TotalCostBasis);
+                            // we will deal with these holdings separately.
                         }
                     }
-                }
-
-                if (totalCostBasis > 0 && funds.Taxable > 0)
-                {
-                    funds.CostBasisRatio = totalCostBasis / funds.Taxable;
                 }
 
                 return funds;
@@ -799,29 +795,33 @@ namespace Walkabout.Reports
             public decimal Taxable;
             public decimal TaxDeferred;
             public decimal TaxFree;
-            public decimal CostBasisRatio;
             public bool MarriedFilingJointly;
+            public int RmdAge = 75;
+            public DateTime SimulatedDate;
+            private List<SecurityPurchase> holdings = new List<SecurityPurchase>();
 
             internal RetirementFunds Copy()
             {
                 return new RetirementFunds()
                 {
-                    Taxable = this.Taxable,
                     TaxDeferred = this.TaxDeferred,
                     TaxFree = this.TaxFree,
-                    CostBasisRatio = this.CostBasisRatio,
+                    RmdAge = this.RmdAge,                    
                     MarriedFilingJointly = this.MarriedFilingJointly
                 };
             }
 
             internal void Appreciate(decimal investmentRateOfReturn)
             {
-                this.Taxable = this.Taxable * (1 + investmentRateOfReturn);
                 this.TaxDeferred = this.TaxDeferred * (1 + investmentRateOfReturn);
                 this.TaxFree = this.TaxFree * (1 + investmentRateOfReturn);
 
-                // as investments increased, the cost basis then also decreases by the same amount.
-                this.CostBasisRatio *= (1 - investmentRateOfReturn);
+                // appreciate the taxable holdings.
+                foreach (var holding in this.holdings)
+                {
+                    holding.FuturePrice *= (1 + investmentRateOfReturn);
+                }
+                this.Taxable = this.ComputeTaxableHoldings();
             }
 
             private static (decimal Rate, decimal Threshold)[] JointBracket = new (decimal, decimal)[]
@@ -925,9 +925,9 @@ namespace Walkabout.Reports
 
             internal decimal GetRMDFactor(int age)
             {
-                if (age >= 75)
+                if (age >= RmdAge)
                 {
-                    int index = age - 75;
+                    int index = age - RmdAge;
                     if (index < RmdTable.Length)
                     {
                         return RmdTable[index];
@@ -955,6 +955,15 @@ namespace Walkabout.Reports
                 decimal totalTax = incomeTax;
                 while (incomeTax > 0)
                 {
+                    if (incomeTax > 0)
+                    {
+                        // sell taxable assets first to maximize how much of deferred assets we can convert to Roth.
+                        var (amountSold, gains) = this.SellTaxableAmount(incomeTax);
+                        capitalGains += gains;
+                        incomeTax -= amountSold;
+                        baseIncome += amountSold;
+                    }
+
                     if (this.TaxDeferred > 0 && incomeTax > 0)
                     {
                         // Sell this much to pay the incomeTax (which generates new income tax)
@@ -970,20 +979,8 @@ namespace Walkabout.Reports
                         totalTax += ic;
                         incomeTax += ic;
                     }
-                    else if (this.Taxable > 0)
-                    {
-                        // Sell this much to pay the incomeTax (which generates capital gains tax)
-                        var amount = incomeTax;
-                        if (incomeTax > this.Taxable)
-                        {
-                            amount = this.Taxable;
-                        }
-                        this.Taxable -= amount;
-                        incomeTax -= amount;
-                        baseIncome += amount;
-                        capitalGains += amount;
-                    }
-                    else if (this.TaxFree > 0)
+
+                    if (this.TaxFree > 0 && incomeTax > 0)
                     {
                         var amount = incomeTax;
                         if (incomeTax > this.TaxFree)
@@ -994,7 +991,7 @@ namespace Walkabout.Reports
                         incomeTax -= amount;
                         // no tax consequence.
                     }
-                    else
+                    else if (incomeTax > 0)
                     {
                         // crap we cannot pay out taxes!
                         break;
@@ -1003,6 +1000,10 @@ namespace Walkabout.Reports
                 if (capitalGains > 0)
                 {
                     totalTax += this.PayCapitalGainsTaxRecursively(ref baseIncome, capitalGains);
+                }
+                else 
+                {
+                    // TODO: model carry loss forward to next year...
                 }
                 return totalTax;
             }
@@ -1014,22 +1015,18 @@ namespace Walkabout.Reports
                 decimal totalTax = capitalGainsTax;
                 while (capitalGainsTax > 0)
                 {
-                    if (this.Taxable > 0.01M)
+                    if (capitalGainsTax > 0)
                     {
                         // Sell this much to pay the incomeTax (which generates capital gains tax)
-                        var amount = capitalGainsTax;
-                        if (capitalGainsTax > this.Taxable)
-                        {
-                            amount = this.Taxable;
-                        }
-                        this.Taxable -= amount;
-                        capitalGainsTax -= amount;
-                        var capTax = this.GetCapitalGainsTax(income, amount);
+                        var (amountSold, gains) = this.SellTaxableAmount(capitalGainsTax);
+                        capitalGainsTax -= amountSold;
+                        var capTax = this.GetCapitalGainsTax(income, gains);
                         capitalGainsTax += capTax;
-                        income += amount;
+                        income += amountSold;
                         totalTax += capTax;
                     }
-                    else if (this.TaxFree > 0)
+                    
+                    if (this.TaxFree > 0 && capitalGainsTax > 0)
                     {
                         var amount = capitalGainsTax;
                         if (capitalGainsTax > this.TaxFree)
@@ -1049,17 +1046,21 @@ namespace Walkabout.Reports
                 return totalTax;
             }
 
-            private decimal GetCapitalGainsTax(decimal income, decimal amount)
+            private decimal GetCapitalGainsTax(decimal income, decimal gains)
             {
-                var capGains = amount * (1 - CostBasisRatio);
-                decimal stateRate = (capGains > 250000) ? 0.07M : 0;
-                if (income + amount  > 613700)
+                if (gains < 0)
                 {
-                    return capGains * (0.20M + stateRate);
+                    return 0;
                 }
-                else if (income + amount > 98900)
+                // Add WA state gains (TODO: make this configurable).
+                decimal stateRate = (gains > 250000) ? 0.07M : 0;
+                if (income + gains > 613700)
                 {
-                    return capGains * (0.15M + stateRate);
+                    return gains * (0.20M + stateRate);
+                }
+                else if (income + gains > 98900)
+                {
+                    return gains * (0.15M + stateRate);
                 }
                 return 0;
             }
@@ -1115,6 +1116,100 @@ namespace Walkabout.Reports
                     return this.PayIncomeTaxRecursively(ref baseIncome, taxable);
                 }
                 return 0;
+            }
+
+            internal void CreateSortedHoldings(CostBasisCalculator calc)
+            { 
+                // reset the list of holdings to the original, note we will be modifying copies
+                // of the SecurityPurchase objects during the simulation.
+                this.holdings = new List<SecurityPurchase>();
+                foreach (var accountHolding in calc.GetAccountHoldings())
+                {
+                    if (accountHolding.Account.IsTaxDeferred || accountHolding.Account.IsTaxFree)
+                    {
+                        continue; // skip these ones.
+                    }
+                    foreach (var holding in accountHolding.GetHoldings())
+                    {
+                        // ignore private holdings that are not easy to sell.
+                        if (holding.Security != null && holding.Security.HasSymbol)
+                        {
+                            this.holdings.Add(holding.Copy());
+                        }
+                    }
+                }
+
+                // Now sort the list by cost basis so we sell the highest cost basis assets first.
+                // TODO: make this a settable strategy.
+                this.holdings.Sort(new Comparison<SecurityPurchase>((a, b) =>
+                {
+                    if (a.FutureCostBasisRatio == b.FutureCostBasisRatio) return 0;
+                    return (a.FutureCostBasisRatio > b.FutureCostBasisRatio) ? -1 : 1;
+                }));
+
+                // Now what does this add up to...
+                this.Taxable = this.ComputeTaxableHoldings();
+            }
+
+            /// <summary>
+            /// Try and sell some taxable assets to cover the given amount and return the total capital gains.
+            /// </summary>
+            /// <param name="amount">Amount we need to raise by sales.</param>
+            /// <returns>The amount sold and the total capital gains.</returns>
+            internal Tuple<decimal, decimal> SellTaxableAmount(decimal amount)
+            {
+                decimal covered = 0;
+                decimal totalGains = 0;
+                while (amount > 0)
+                {
+                    bool found = false;
+                    foreach (var holding in this.holdings)
+                    {
+                        decimal unitsToSell = 0;
+                        if (holding.FutureMarketValue > 0)
+                        {
+                            found = true;
+                            if (holding.FutureMarketValue < amount)
+                            {
+                                // then we must sell everything.
+                                unitsToSell = holding.UnitsRemaining;
+                            }
+                            else
+                            {
+                                unitsToSell = amount / holding.FuturePrice;
+                            }
+                        }
+                        if (unitsToSell > 0)
+                        {
+                            // we have been appreciating the sale prices each year as per investment ROI.
+                            // Debug.WriteLine($"Selling {unitsToSell} units of {holding.Security.Name}");
+                            var sale = holding.Sell(this.SimulatedDate, unitsToSell, holding.FuturePrice);
+                            var gain = sale.TotalGain;
+                            totalGains += gain;
+                            covered += sale.SaleProceeds;
+                            amount -= sale.SaleProceeds;
+                        }
+                        if ((int)amount <= 0)
+                        {
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        // we are out of holdings!
+                        break;
+                    }
+                }
+                return new Tuple<decimal, decimal>(covered, totalGains);
+            }
+
+            internal decimal ComputeTaxableHoldings()
+            {
+                decimal totalFutureValue = 0;
+                foreach (var holding in this.holdings) {
+                    totalFutureValue += holding.FutureMarketValue;
+                }
+                return totalFutureValue;
             }
         }
 
