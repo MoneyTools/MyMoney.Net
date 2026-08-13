@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security;
 using System.Windows.Navigation;
 
 namespace Walkabout.Data
@@ -125,6 +126,7 @@ namespace Walkabout.Data
                 SalePricePerUnit = unitSalePrice
             };
         }
+
     }
 
     /// <summary>
@@ -514,6 +516,7 @@ namespace Walkabout.Data
         private readonly DateTime toDate;
         private Dictionary<Account, AccountHoldings> byAccount = new Dictionary<Account, AccountHoldings>();
         private readonly List<SecuritySale> sales = new List<SecuritySale>();
+        private readonly Dictionary<Security, decimal> estimatedDividendYields = new Dictionary<Security, decimal>();
 
         /// <summary>
         /// Compute capital gains associated with stock sales and whether they are long term or short term gains.
@@ -527,7 +530,7 @@ namespace Walkabout.Data
             this.Calculate();
         }
 
-        public DateTime ToDate 
+        public DateTime ToDate
         {
             get { return this.toDate; }
         }
@@ -631,7 +634,7 @@ namespace Walkabout.Data
                 List<Investment> list = pair.Value;
 
                 List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
-                
+
                 foreach (Investment i in list)
                 {
                     // Now we need to apply any splits that are now valid as of  i.Date so we have the currect number of shares
@@ -770,6 +773,113 @@ namespace Walkabout.Data
             }
             return result;
         }
-    }
 
+        internal void ComputeEstimateDividendYield(List<SecurityPurchase> holdings)
+        {
+            if (holdings.Count == 0)
+            {
+                return;
+            }
+
+            // get all dividend transactions over the last year
+            var start = DateTime.Today.AddYears(-1);
+            var transactions = this.myMoney.Transactions.GetTransactionsByCategory(myMoney.Categories.InvestmentDividends, (i) => i.Date >= start);
+
+            // Now sort them by security
+            int missing = 0;
+            Dictionary<Security, decimal> totals = new Dictionary<Security, decimal>();
+            foreach (var t in transactions)
+            {
+                var s = t.Investment?.Security;
+                if (s == null || string.IsNullOrEmpty(s.Symbol) || s.Price <= 0)
+                {
+                    // skip securities that cannot be traded.
+                    continue;
+                }
+                if (s != null && s.Price > 0)
+                {
+                    if (!totals.ContainsKey(s))
+                    {
+                        totals.Add(s, 0);
+                    }
+                    totals[s] += t.Amount;
+                }
+                else
+                {
+                    missing++;
+                }
+            }
+
+            if (missing > 0)
+            {
+                Debug.WriteLine($"You have {missing} dividend transactions missing an associated security");
+            }
+
+            // how many shares do we hold of each security
+            Dictionary<Security, decimal> shares = new Dictionary<Security, decimal>();
+
+            foreach (var holding in holdings)
+            {
+                var s = holding.Security;
+                if (s != null)
+                {
+                    if (!shares.ContainsKey(s))
+                    {
+                        shares.Add(s, 0);
+                    }
+                    shares[s] += holding.UnitsRemaining;
+                }
+            }
+
+            this.estimatedDividendYields.Clear();
+
+            // now compute estimated dividend yields.
+            foreach (var security in shares.Keys)
+            {
+                if (totals.ContainsKey(security))
+                {
+                    decimal dividends = totals[security];
+                    decimal totalShares = shares[security];
+                    decimal perShare = dividends / totalShares;
+                    this.estimatedDividendYields[security] = (perShare / security.Price);
+                }
+            }
+        }
+
+        internal decimal ComputeEstimatedAnnualDividends(List<SecurityPurchase> holdings)
+        {
+            // how many shares do we still hold of each security
+            Dictionary<Security, decimal> shares = new Dictionary<Security, decimal>();
+
+            foreach (var holding in holdings)
+            {
+                var s = holding.Security;
+                if (s != null)
+                {
+                    if (!shares.ContainsKey(s))
+                    {
+                        shares.Add(s, 0);
+                    }
+                    shares[s] += holding.UnitsRemaining;
+                }
+            }
+
+            decimal estimatedDividends = 0;
+
+            // now compute estimated dividend yields.
+            foreach (var security in shares.Keys)
+            {
+                if (this.estimatedDividendYields.ContainsKey(security))
+                {
+                    decimal totalShares = shares[security];
+                    decimal yield = this.estimatedDividendYields[security];
+                    decimal perShare = yield * security.Price;
+                    decimal dividends = perShare * totalShares;
+                    estimatedDividends += dividends;
+                }
+            }
+
+            return estimatedDividends;
+        }
+    }
 }

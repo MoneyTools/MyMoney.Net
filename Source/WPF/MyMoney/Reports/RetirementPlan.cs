@@ -63,9 +63,6 @@ namespace Walkabout.Reports
         };
         private DelayedActions actions = new DelayedActions();
 
-        // To receive the full spousal benefit of up to 50%, she must wait until her own Full Retirement Age (FRA).
-        // For someone born in 1960 or later, FRA is 67.
-        const int SpousalSocialSecurityAge = 67;
         private const decimal SocialSecurityCostOfLivingAdjustment = 0.025M; // 2.5 % for inflation
 
         public static string TaxDeferredStrategyNone = "None";
@@ -99,8 +96,8 @@ namespace Walkabout.Reports
             this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
             this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
             this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
-            this.panel.SocialSecuritySpouseAmountChanged -= this.OnSocialSecuritySpouseAmountChanged;
-            this.panel.SocialSecuritySpouseAgeChanged -= this.OnSocialSecuritySpouseAgeChanged;
+            this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
+            this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
         }
 
         private void UnRegister()
@@ -121,8 +118,8 @@ namespace Walkabout.Reports
                 this.panel.SocialSecurityAgeChanged -= this.OnSocialSecurityAgeChanged;
                 this.panel.SocialSecurityAmountChanged -= this.OnSocialSecurityAmountChanged;
                 this.panel.StackedBarsChanged -= this.OnStackedBarsChanged;
-                this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
-                this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
+                this.panel.SocialSecuritySpouseAmountChanged -= this.OnSocialSecuritySpouseAmountChanged;
+                this.panel.SocialSecuritySpouseAgeChanged -= this.OnSocialSecuritySpouseAgeChanged;
             }
         }
 
@@ -238,6 +235,7 @@ namespace Walkabout.Reports
         private static string ChartValueTaxDeferred = "Tax Deferred";
         private static string ChartValueTaxFree = "Tax Free";
         private static string ChartValueSocialSecurity = "Social Security";
+        private static string ChartValueDividends = "Dividends";
         private static string ChartValueGross = "Gross up";
 
         private static string ChartValueIncomeTaxes = "Income Tax";
@@ -250,11 +248,14 @@ namespace Walkabout.Reports
             public ChartDataSeries taxDeferredSeries = new ChartDataSeries() { Name = "Tax Deferred", XAxisLabel = "Age"};
             public ChartDataSeries taxableSeries = new ChartDataSeries() { Name = "Taxable", XAxisLabel = "Age" };
             public ChartDataSeries taxFreeSeries = new ChartDataSeries() { Name = "Tax Free", XAxisLabel = "Age" };
+
+            public ChartDataSeries dividendIncomeSeries = new ChartDataSeries() { Name = "Dividend Income", XAxisLabel = "Age" };
             public ChartDataSeries taxableIncomeSeries = new ChartDataSeries() { Name = "Taxable Income", XAxisLabel = "Age" };
             public ChartDataSeries taxDeferredIncomeSeries = new ChartDataSeries() { Name = "Tax Deferred Income", XAxisLabel = "Age" };
             public ChartDataSeries taxFreeIncomeSeries = new ChartDataSeries() { Name = "Tax Free Income", XAxisLabel = "Age" };
             public ChartDataSeries socialSecurityIncomeSeries = new ChartDataSeries() { Name = "Social Security Income", XAxisLabel = "Age" };
             public ChartDataSeries grossIncomeSeries = new ChartDataSeries() { Name = "Extra Income to pay taxes", XAxisLabel = "Age" };
+
             public ChartDataSeries incomeTaxSeries = new ChartDataSeries() { Name = "Income Tax", XAxisLabel = "Age" };
             public ChartDataSeries capitalGainsTaxSeries = new ChartDataSeries() { Name = "Capital Gains Taxes", XAxisLabel = "Age" };
             public ChartDataSeries rothAssetsSeries = new ChartDataSeries() { Name = "Networth", XAxisLabel = "Year" };
@@ -352,6 +353,7 @@ namespace Walkabout.Reports
                 var taxableIncomeColor = Color.FromRgb(0xf0, 0x66, 0x00);
                 var taxFreeIncomeColor = Color.FromRgb(0xDA, 0x80, 0x21);
                 var taxDeferredIncomeColor = Color.FromRgb(0xF4, 0xA9, 0x01);
+                var dividendIncomeColor = Color.FromRgb(0xB5, 0x93, 0x2F);
                 var socialSecurityIncomeColor = Colors.Yellow;
                 var grossIncomeColor = Color.FromRgb(0xB6, 0x49, 0x00);
 
@@ -362,12 +364,11 @@ namespace Walkabout.Reports
                 decimal conversionAmount = 0;
                 decimal socialSecurity = this.state.SocialSecurityAmount;
                 decimal spousalSocialSecurity = this.ComputeSpousalSocialSecurity();
-                int spousalSocialSecurityAge = SpousalSocialSecurityAge; // the optimal for spousal social security.
+                int spousalSocialSecurityAge = this.state.SocialSecuritySpouseAge;
                 if (this.state.SocialSecuritySpouseAmount > 0)
                 {
                     // then spouse has their own social security and can start whenever they want.
                     spousalSocialSecurity = this.state.SocialSecuritySpouseAmount;
-                    spousalSocialSecurityAge = this.state.SocialSecuritySpouseAge;
                 }
                 funds.SimulatedDate = DateTime.Today;
                 funds.CreateSortedHoldings(this.calc);
@@ -404,10 +405,31 @@ namespace Walkabout.Reports
                             incomeTaxes += tax;
                             taxDeferredIncome += amount;
                         }
+                        decimal dividends = funds.EstimateDividends(calc);
+                        if (dividends > 0)
+                        {
+                            income += dividends;
+                            // Now pay taxes on these dividends from the dividends.
+                            decimal dividendTax = funds.GetIncomeTax(baseIncome, dividends);
+                            incomeTaxes += dividendTax;
+                            baseIncome += dividends;
+                        }
 
                         taxableSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable });
                         taxFreeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxFree, Color = taxFreeColor, UserData = ChartValueTaxFree });
                         taxDeferredSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.TaxDeferred, Color = taxDeferredColor, UserData = ChartValueTaxDeferred });
+
+                        // Now figure out where to draw the income from and how to pay taxes on it.
+                        if (funds.TaxDeferred > 0 && age >= this.rmdAge)
+                        {
+                            // must take RMD distribution.
+                            var amount = funds.GetMinimumDistribution(age);
+                            funds.TaxDeferred -= amount;
+                            taxDeferredIncome += amount;
+                            income += amount;
+                            // Now to pay to taxes on this we need to take out more.                        
+                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
+                        }
 
                         if (age >= this.state.SocialSecurityAge)
                         {
@@ -425,19 +447,14 @@ namespace Walkabout.Reports
                             baseIncome += socialSecurityIncome;
                             income += socialSecurityIncome;
                             socialSecurity *= (1 + SocialSecurityCostOfLivingAdjustment);
+
+                            // estimate taxes on social security income
+                            var sst = funds.CalcSocialSecurityTax(baseIncome, socialSecurityIncome);
+                            incomeTaxes += sst;
+                            // pay these taxes from the social security income.
+                            socialSecurityIncome -= sst;
                         }
 
-                        // Now figure out where to draw the income from and how to pay taxes on it.
-                        if (funds.TaxDeferred > 0 && age >= this.rmdAge)
-                        {
-                            // must take RMD distribution.
-                            var amount = funds.GetMinimumDistribution(age);
-                            funds.TaxDeferred -= amount;
-                            taxDeferredIncome += amount;
-                            income += amount;
-                            // Now to pay to taxes on this we need to take out more.                        
-                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
-                        }
                         if (income < futureIncome)
                         {
                             // we need more from taxable.
@@ -479,26 +496,19 @@ namespace Walkabout.Reports
                             funds.TaxFree -= amount;
                         }
 
-                        // also may have to pay taxes on socialsecurityincome
-                        if (socialSecurityIncome > 0)
-                        {
-                            var sst = funds.PaySocialSecurityTax(ref baseIncome, socialSecurityIncome);
-                            incomeTaxes += sst;
-                        }
-
                         this.totalTaxes += incomeTaxes + capitalGainsTaxes;
                         taxableIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
                         taxDeferredIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
                         taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
                         socialSecurityIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
 
-                        decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - socialSecurityIncome;
+                        decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - socialSecurityIncome - dividends;
                         if (grossUp < 0)
                         {
                             grossUp = 0;
                         }
                         grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
-
+                        dividendIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)dividends, Color = dividendIncomeColor, UserData = ChartValueDividends }); 
                         incomeTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)incomeTaxes, Color = incomeTaxColor, UserData = ChartValueIncomeTaxes });
                         capitalGainsTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)capitalGainsTaxes, Color = capitalGainsTaxColor, UserData = ChartValueCapitalGainsTaxes });
 
@@ -537,7 +547,14 @@ namespace Walkabout.Reports
                         primaryAmount *= 1.075M; // increase it by 7.5% per year.
                     }
                 }
-                return primaryAmount * 0.50M; // spousal gets 50% of FRA
+                if (this.state.SocialSecuritySpouseAge <= 62)
+                {
+                    return primaryAmount * 0.325M; // spousal gets 32.5% of FRA
+                }
+                else
+                {
+                    return primaryAmount * 0.50M; // spousal gets 50% of FRA
+                }
             }
 
             private decimal GetNormalizedAmount(decimal amount)
@@ -681,6 +698,7 @@ namespace Walkabout.Reports
 
                 chartData = new ChartData();
                 chartData.AddSeries(grossIncomeSeries);
+                chartData.AddSeries(dividendIncomeSeries);
                 chartData.AddSeries(taxableIncomeSeries);
                 chartData.AddSeries(taxFreeIncomeSeries);
                 chartData.AddSeries(taxDeferredIncomeSeries);
@@ -1096,7 +1114,7 @@ namespace Walkabout.Reports
                     (0.0M, 0M), // floor
             };
 
-            internal decimal PaySocialSecurityTax(ref decimal baseIncome, decimal socialSecurityIncome)
+            internal decimal CalcSocialSecurityTax(decimal baseIncome, decimal socialSecurityIncome)
             {
                 // See https://www.aarp.org/social-security/faq/how-are-benefits-taxed
                 decimal percentage = 0;
@@ -1113,7 +1131,7 @@ namespace Walkabout.Reports
                 var taxable = socialSecurityIncome * percentage;
                 if (taxable > 0)
                 {
-                    return this.PayIncomeTaxRecursively(ref baseIncome, taxable);
+                    return this.GetIncomeTax(baseIncome, taxable);
                 }
                 return 0;
             }
@@ -1138,6 +1156,8 @@ namespace Walkabout.Reports
                         }
                     }
                 }
+
+                calc.ComputeEstimateDividendYield(this.holdings);
 
                 // Now sort the list by cost basis so we sell the highest cost basis assets first.
                 // TODO: make this a settable strategy.
@@ -1210,6 +1230,11 @@ namespace Walkabout.Reports
                     totalFutureValue += holding.FutureMarketValue;
                 }
                 return totalFutureValue;
+            }
+
+            internal decimal EstimateDividends(CostBasisCalculator calc)
+            {
+                return calc.ComputeEstimatedAnnualDividends(this.holdings); 
             }
         }
 

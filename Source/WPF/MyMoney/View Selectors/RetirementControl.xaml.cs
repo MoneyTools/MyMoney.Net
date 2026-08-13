@@ -391,7 +391,6 @@ namespace Walkabout.Views.Controls
 
         private void OnSocialSecuritySpouseAgeTextChanged(object sender, string e)
         {
-
             if (this.SocialSecuritySpouseAgeChanged != null)
             {
                 this.SocialSecuritySpouseAgeChanged(this, this.SocialSecuritySpouseAge);
