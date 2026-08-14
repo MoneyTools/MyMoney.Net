@@ -15,6 +15,8 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        public AutomationElement Element => element;
+
         public int Count
         {
             get

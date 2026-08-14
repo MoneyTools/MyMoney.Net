@@ -6,10 +6,12 @@ namespace Walkabout.Tests.Wrappers
     public class ReportWrapper
     {
         private readonly AutomationElement e;
+        private readonly AutomationElement settings;
 
-        public ReportWrapper(AutomationElement e)
+        public ReportWrapper(AutomationElement e, AutomationElement reportSettings)
         {
             this.e = e;
+            this.settings = reportSettings;
         }
 
         public DateTime GetDate()
@@ -79,13 +81,15 @@ namespace Walkabout.Tests.Wrappers
 
         private AutomationElement GetDateField()
         {
-            AutomationElement date = this.e.FindFirstWithRetries(TreeScope.Descendants,
-               new PropertyCondition(AutomationElement.NameProperty, "ReportDate"));
-            if (date == null)
+            // get report settings panel.
+            AutomationElement datePicker = this.settings.FindFirstWithRetries(TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.AutomationIdProperty, "DatePickerReportDate"));
+            if (datePicker == null)
             {
-                throw new Exception("ReportDate field not found");
+                throw new Exception("DatePickerReportDate not found in report settings panel");
             }
-            return date;
+
+            return datePicker;
         }
 
         public void CloseReport()

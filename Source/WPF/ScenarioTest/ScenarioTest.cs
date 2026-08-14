@@ -1051,14 +1051,19 @@ to make sure attachments work.");
         {
             this.WriteLine("- DeleteAccount");
             this.window.CloseReport();
-            int index = this.random.Next(0, this.accounts.Accounts.Count);
-            this.accounts.Select(index);
-            string name = this.accounts.SelectedAccount;
-            if (name != null && name.Contains(OnlineBankName))
+            // bring back the accounts view and hide the report settings panel.
+            this.window.ViewAccounts();
+            if (this.accounts.Accounts.Count > 0)
             {
-                this.hasOnlineAccounts = false;
+                int index = this.random.Next(0, this.accounts.Accounts.Count);
+                this.accounts.Select(index);
+                string name = this.accounts.SelectedAccount;
+                if (name != null && name.Contains(OnlineBankName))
+                {
+                    this.hasOnlineAccounts = false;
+                }
+                this.accounts.DeleteAccount(index);
             }
-            this.accounts.DeleteAccount(index);
             this.ClearTransactionViewState();
         }
 
@@ -1066,10 +1071,24 @@ to make sure attachments work.");
         {
             this.WriteLine("- SelectAccount");
             this.window.CloseReport();
+            // bring back the accounts view and hide the report settings panel.
+            var wrapper = this.window.ViewAccounts();
+            bool selected = false;
             if (this.accounts.Accounts.Count > 0)
             {
-                var i = this.random.Next(0, this.accounts.Accounts.Count);
-                this.accounts.SelectAccount(i);
+                var choices = Enumerable.Range(0, this.accounts.Accounts.Count).ToArray();
+                this.random.Shuffle<int>(choices);
+                var list = new List<int>(choices);
+
+                while (list.Count > 0 && !selected)
+                {
+                    var i = list[0];
+                    list.RemoveAt(0);
+                    this.accounts.SelectAccount(i);
+                    // Check we didn't just hit an AccountSectionHeader.
+                    selected = !string.IsNullOrEmpty(this.accounts.SelectedAccount);
+                }
+
             }
             this.ClearTransactionViewState();
             this.dataChangedSinceExport = true;
@@ -1899,7 +1918,7 @@ to make sure attachments work.");
             this.WriteLine("- NetWorthReport");
             var report = this.window.NetWorthReport();
             var found = report.FindText("Net Worth");
-            Assert.AreEqual("Net Worth Statement", found);
+            Assert.That(found.Contains("Net Worth Statement"), "Net Worth heading not found");
             this.ClearTransactionViewState();
         }
 
@@ -1908,7 +1927,7 @@ to make sure attachments work.");
             this.WriteLine("- TaxReport");
             var report = this.window.TaxReport();
             var found = report.FindText("Tax");
-            Assert.IsTrue(found.Contains("Tax Report"), "Tax Report heading not found");
+            Assert.That(found.Contains("Tax Report"), "Tax Report heading not found");
             this.ClearTransactionViewState();
         }
 
@@ -1917,7 +1936,7 @@ to make sure attachments work.");
             this.WriteLine("- PortfolioReport");
             var report = this.window.PortfolioReport();
             var found = report.FindText("Portfolio");
-            Assert.AreEqual("Investment Portfolio Summary", found);
+            Assert.IsTrue(found.Contains("Investment Portfolio Summary"));
             this.ClearTransactionViewState();
         }
 

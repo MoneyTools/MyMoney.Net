@@ -4,9 +4,27 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class CategoriesWrapper : TreeViewWrapper
     {
+        private AutomationElement selector; 
+
         public CategoriesWrapper(AutomationElement e)
             : base(e)
         {
+            selector = e;
+        }
+
+        public void Expand()
+        {
+            ExpandCollapsePattern p = (ExpandCollapsePattern)this.selector.GetCurrentPattern(ExpandCollapsePattern.Pattern);
+            p.Expand();
+        }
+
+        public bool IsExpanded
+        {
+            get
+            {
+                ExpandCollapsePattern p = (ExpandCollapsePattern)this.selector.GetCurrentPattern(ExpandCollapsePattern.Pattern);
+                return p.Current.ExpandCollapseState == ExpandCollapseState.Expanded;
+            }
         }
 
         public bool HasCategories

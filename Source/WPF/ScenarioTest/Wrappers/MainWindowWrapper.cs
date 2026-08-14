@@ -82,7 +82,9 @@ namespace Walkabout.Tests.Wrappers
 
         internal AccountsWrapper ViewAccounts()
         {
+            this.CloseReport();
             this.accounts = new AccountsWrapper(this.Element.Expand("AccountsSelector"));
+            this.accounts.Expand();
             this.categories = null;
             this.payees = null;
             this.securities = null;
@@ -92,7 +94,9 @@ namespace Walkabout.Tests.Wrappers
 
         internal CategoriesWrapper ViewCategories()
         {
+            this.CloseReport();
             this.categories = new CategoriesWrapper(this.Element.Expand("CategoriesSelector"));
+            this.categories.Expand();
             //accounts = null;
             this.payees = null;
             this.securities = null;
@@ -102,7 +106,9 @@ namespace Walkabout.Tests.Wrappers
 
         internal PayeesWrapper ViewPayees()
         {
+            this.CloseReport();
             this.payees = new PayeesWrapper(this.Element.Expand("PayeesSelector"));
+            this.payees.Expand();
             //accounts = null;
             this.categories = null;
             this.securities = null;
@@ -114,6 +120,7 @@ namespace Walkabout.Tests.Wrappers
         {
             this.CloseReport();
             this.securities = new SecuritiesWrapper(this.Element.Expand("SecuritiesSelector"));
+            this.securities.Expand();
             //accounts = null;
             this.categories = null;
             this.payees = null;
@@ -301,7 +308,24 @@ namespace Walkabout.Tests.Wrappers
             {
                 throw new Exception(string.Format("Report '{0}' not found", name));
             }
-            return new ReportWrapper(report);
+
+            // get toolBox panel.
+            AutomationElement toolBox = this.window.FindFirstWithRetries(TreeScope.Children,
+                new PropertyCondition(AutomationElement.AutomationIdProperty, "toolBox"));
+            if (toolBox == null)
+            {
+                throw new Exception("Toolbox left panel not found");
+            }
+
+            // ReportsControl
+            AutomationElement reportSettings = toolBox.FindFirstWithRetries(TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.AutomationIdProperty, "ReportsControl"));
+            if (reportSettings == null)
+            {
+                throw new Exception("ReportsControl not found in toolbox");
+            }
+
+            return new ReportWrapper(report, reportSettings);
         }
 
         public ReportWrapper GetReport()

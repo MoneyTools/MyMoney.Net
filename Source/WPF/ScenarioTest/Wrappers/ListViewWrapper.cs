@@ -44,6 +44,7 @@ namespace Walkabout.Tests.Wrappers
             }
 
             SelectionItemPattern select = (SelectionItemPattern)item.GetCurrentPattern(SelectionItemPattern.Pattern);
+            select.RemoveFromSelection(); // make sure selection actually does something.
             select.Select();
             return item;
         }
