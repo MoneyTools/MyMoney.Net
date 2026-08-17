@@ -112,6 +112,7 @@ namespace Walkabout.Controls
         {
             public double Length;
             public Color Color;
+            public Color MouseOverColor;
             public Brush Brush;
             public object UserData;
             public Rect Bounds;
@@ -122,7 +123,8 @@ namespace Walkabout.Controls
             var moc = this.GetMouseOverColor(color);
             this.infos.Add(new BarInfo { 
                 Length = length, 
-                Color = color, 
+                Color = color,
+                MouseOverColor = moc,
                 Brush = new SolidColorBrush(color),
                 UserData = userData 
             });
@@ -166,33 +168,15 @@ namespace Walkabout.Controls
             double totalLength = (from i in this.infos select i.Length).Sum();
             if (totalLength == 0) return;
 
-            if (this.Orientation == Orientation.Vertical)
+            foreach (var i in infos)
             {
-                foreach (var i in infos)
+                var seg = i.Bounds;
+                Brush brush = i.Brush;
+                if (this.MouseOverBlend > 0)
                 {
-                    var seg = i.Bounds;
-                    Brush brush = i.Brush;
-                    if (this.MouseOverBlend > 0)
-                    {
-                        var mouseOverColor = this.GetMouseOverColor(i.Color);
-                        brush = this.GetBlendBrush(i.Color, mouseOverColor, this.MouseOverBlend);
-                    }
-                    drawingContext.DrawRectangle(brush, null, seg);
-                }           
-            } 
-            else
-            {
-                foreach (var i in infos)
-                {
-                    var seg = i.Bounds;
-                    Brush brush = i.Brush;
-                    if (this.MouseOverBlend > 0)
-                    {
-                        var mouseOverColor = this.GetMouseOverColor(i.Color);
-                        brush = this.GetBlendBrush(i.Color, mouseOverColor, this.MouseOverBlend);
-                    }
-                    drawingContext.DrawRectangle(brush, null, seg);
+                    brush = this.GetBlendBrush(i.Color, i.MouseOverColor, this.MouseOverBlend);
                 }
+                drawingContext.DrawRectangle(brush, null, seg);
             }
         }
 

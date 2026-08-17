@@ -205,6 +205,13 @@
                         ToolTip="Enter the age at which you want your spouse to start receiving social security (enter 67 if your want to maximize spousal social security)"
                         Committed="OnSocialSecuritySpouseAgeTextChanged"/>
             </Border>
+
+            <TextBlock Text="Average social security cost of living adjustment:" />
+            <Border Style="{StaticResource ValueAreaBorder}">
+              <c:HandyTextBox x:Name="SocialSecurityColaText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
+                        ToolTip="Enter the average social security COLA (cost of living adjustment)"
+                        Committed="OnSocialSecurityColaTextChanged"/>
+            </Border>
           </StackPanel>
         </StackPanel>
       </Border>

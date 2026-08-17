@@ -59,11 +59,10 @@ namespace Walkabout.Reports
             SocialSecurityAge = 67,
             SocialSecuritySpouseAge = 67,
             SocialSecuritySpouseAmount = 0,
+            SocialSecurityCola = 0.025M,  // 2.5 % for inflation
             Stacked = true
         };
         private DelayedActions actions = new DelayedActions();
-
-        private const decimal SocialSecurityCostOfLivingAdjustment = 0.025M; // 2.5 % for inflation
 
         public static string TaxDeferredStrategyNone = "None";
         public static string TaxDeferredStrategyRoth = "Roth Conversion";
@@ -98,6 +97,7 @@ namespace Walkabout.Reports
             this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
             this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
             this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
+            this.panel.SocialSecurityColaChanged += this.OnSocialSecurityColaChanged;
         }
 
         private void UnRegister()
@@ -120,6 +120,7 @@ namespace Walkabout.Reports
                 this.panel.StackedBarsChanged -= this.OnStackedBarsChanged;
                 this.panel.SocialSecuritySpouseAmountChanged -= this.OnSocialSecuritySpouseAmountChanged;
                 this.panel.SocialSecuritySpouseAgeChanged -= this.OnSocialSecuritySpouseAgeChanged;
+                this.panel.SocialSecurityColaChanged -= this.OnSocialSecurityColaChanged;
             }
         }
 
@@ -190,6 +191,11 @@ namespace Walkabout.Reports
         private void OnSocialSecuritySpouseAmountChanged(object sender, decimal e)
         {
             this.state.SocialSecuritySpouseAmount = e; this.Regenerate();
+        }
+
+        private void OnSocialSecurityColaChanged(object sender, decimal e)
+        {
+            this.state.SocialSecurityCola = e; this.Regenerate();
         }
 
         private void OnStackedBarsChanged(object sender, bool e)
@@ -441,12 +447,12 @@ namespace Walkabout.Reports
                                 {
                                     // Ok, how that spouse has started we can also apply COLA to spousal amount.
                                     socialSecurityIncome += (spousalSocialSecurity * 12);
-                                    spousalSocialSecurity *= (1 + SocialSecurityCostOfLivingAdjustment);
+                                    spousalSocialSecurity *= (1 + this.state.SocialSecurityCola);
                                 }
                             }
                             baseIncome += socialSecurityIncome;
                             income += socialSecurityIncome;
-                            socialSecurity *= (1 + SocialSecurityCostOfLivingAdjustment);
+                            socialSecurity *= (1 + this.state.SocialSecurityCola);
 
                             // estimate taxes on social security income
                             var sst = funds.CalcSocialSecurityTax(baseIncome, socialSecurityIncome);
@@ -1294,6 +1300,7 @@ namespace Walkabout.Reports
             public int SocialSecurityAge { get; set; }
             public int SocialSecuritySpouseAge { get; set; }
             public decimal SocialSecuritySpouseAmount { get; set; }
+            public decimal SocialSecurityCola { get; set; }
 
             public bool Stacked { get; set; }
 
@@ -1329,6 +1336,7 @@ namespace Walkabout.Reports
                     SocialSecurityAge = this.SocialSecurityAge,
                     SocialSecuritySpouseAge = this.SocialSecuritySpouseAge,
                     SocialSecuritySpouseAmount = this.SocialSecuritySpouseAmount,
+                    SocialSecurityCola = this.SocialSecurityCola,
                     Stacked = this.Stacked
                 };
             }

@@ -396,5 +396,32 @@ namespace Walkabout.Views.Controls
                 this.SocialSecuritySpouseAgeChanged(this, this.SocialSecuritySpouseAge);
             }
         }
+
+
+        public decimal SocialSecurityCola
+        {
+            get
+            {
+                decimal result = 0;
+                decimal.TryParse(this.SocialSecurityColaText.Text, out result);
+                return result / 100.0M; 
+            }
+            set
+            {
+                this.SocialSecurityColaText.Text = (value * 100).ToString();
+            }
+        }
+
+        public event EventHandler<decimal> SocialSecurityColaChanged;
+
+
+        private void OnSocialSecurityColaTextChanged(object sender, string e)
+        {
+            if (this.SocialSecurityColaChanged != null)
+            {
+                this.SocialSecurityColaChanged(this, this.SocialSecurityCola);
+            }
+        }
+
     }
 }
