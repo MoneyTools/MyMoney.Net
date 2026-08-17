@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.73" date="8/16/2026">
+		- Feature: Add setting for social security cost of living adjustment to retirement plan report.
+	</change>
 	<change version="2.1.0.72" date="8/9/2026">
 		- Feature: Add roth simulation chart to retirement plan report and add chart legends.
 		- Feature: Add dividend simulation to retirement plan report.

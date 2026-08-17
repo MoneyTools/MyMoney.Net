@@ -1,0 +1,3 @@
+
+- Feature: Add setting for social security cost of living adjustment to retirement plan report.
+
