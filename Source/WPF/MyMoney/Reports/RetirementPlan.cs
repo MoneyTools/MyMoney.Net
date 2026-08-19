@@ -1269,6 +1269,7 @@ namespace Walkabout.Reports
                     this.panel.StackedBars = s.Stacked;
                     this.panel.SocialSecuritySpouseAge = s.SocialSecuritySpouseAge;
                     this.panel.SocialSecuritySpouseAmount = s.SocialSecuritySpouseAmount;
+                    this.panel.SocialSecurityCola = s.SocialSecurityCola;
                     this.Register();
                 }
             }
