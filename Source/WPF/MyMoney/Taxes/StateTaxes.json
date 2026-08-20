@@ -1,0 +1,2691 @@
+﻿{
+	"@context": "https://schema.org/",
+	"@type": "Dataset",
+	"name": "US State Income Tax Rates Dataset 2026",
+	"description": "50 states + DC tax brackets by filing status, top marginal rates, standard deductions, capital gains treatment, property tax rates, sales tax rates. 2026 effective rates.",
+	"license": "https://creativecommons.org/licenses/by/4.0/",
+	"creator": {
+		"@type": "Organization",
+		"name": "LevyIO",
+		"url": "https://levyio.com"
+	},
+	"datePublished": "2026-04-26",
+	"version": "2026.05.25",
+	"variableMeasured": [
+		"taxSystem",
+		"topMarginalRate",
+		"brackets.single",
+		"brackets.married",
+		"stateStandardDeduction",
+		"capitalGains",
+		"propertyTaxRate",
+		"salesTaxRate"
+	],
+	"records": 51,
+	"data": [
+		{
+			"slug": "alabama",
+			"name": "Alabama",
+			"abbreviation": "AL",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 500,
+						"rate": 2
+					},
+					{
+						"min": 500,
+						"max": 3000,
+						"rate": 4
+					},
+					{
+						"min": 3000,
+						"max": 999999999,
+						"rate": 5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 1000,
+						"rate": 2
+					},
+					{
+						"min": 1000,
+						"max": 6000,
+						"rate": 4
+					},
+					{
+						"min": 6000,
+						"max": 999999999,
+						"rate": 5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2500,
+				"married": 7500
+			},
+			"capitalGains": {
+				"taxedAsIncome":  true
+			},
+			"propertyTaxRate": 0.39,
+			"salesTaxRate": 4
+		},
+		{
+			"slug": "alaska",
+			"name": "Alaska",
+			"abbreviation": "AK",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {	},
+			"propertyTaxRate": 1.04,
+			"salesTaxRate": 0
+		},
+		{
+			"slug": "arizona",
+			"name": "Arizona",
+			"abbreviation": "AZ",
+			"taxSystem": "flat",
+			"topMarginalRate": 2.5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 2.5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 2.5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": { "taxedAsIncome": true, "exlusion":  25.0},
+			"propertyTaxRate": 0.62,
+			"salesTaxRate": 5.6
+		},
+		{
+			"slug": "arkansas",
+			"name": "Arkansas",
+			"abbreviation": "AR",
+			"taxSystem": "progressive",
+			"topMarginalRate": 4.7,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 4400,
+						"rate": 0
+					},
+					{
+						"min": 4400,
+						"max": 8800,
+						"rate": 2
+					},
+					{
+						"min": 8800,
+						"max": 13100,
+						"rate": 3
+					},
+					{
+						"min": 13100,
+						"max": 22200,
+						"rate": 3.4
+					},
+					{
+						"min": 22200,
+						"max": 38500,
+						"rate": 4.4
+					},
+					{
+						"min": 38500,
+						"max": 999999999,
+						"rate": 4.7
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 4400,
+						"rate": 0
+					},
+					{
+						"min": 4400,
+						"max": 8800,
+						"rate": 2
+					},
+					{
+						"min": 8800,
+						"max": 13100,
+						"rate": 3
+					},
+					{
+						"min": 13100,
+						"max": 22200,
+						"rate": 3.4
+					},
+					{
+						"min": 22200,
+						"max": 38500,
+						"rate": 4.4
+					},
+					{
+						"min": 38500,
+						"max": 999999999,
+						"rate": 4.7
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2340,
+				"married": 4680
+			},
+			"capitalGains": {
+				"taxedAsIncome": true,
+				"exlusion": 50.0,
+				"deductionForStateOwnedAssetsOnly": true
+			},
+			"propertyTaxRate": 0.62,
+			"salesTaxRate": 6.5
+		},
+		{
+			"slug": "california",
+			"name": "California",
+			"abbreviation": "CA",
+			"taxSystem": "progressive",
+			"topMarginalRate": 13.3,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 10412,
+						"rate": 1
+					},
+					{
+						"min": 10412,
+						"max": 24684,
+						"rate": 2
+					},
+					{
+						"min": 24684,
+						"max": 38959,
+						"rate": 4
+					},
+					{
+						"min": 38959,
+						"max": 54081,
+						"rate": 6
+					},
+					{
+						"min": 54081,
+						"max": 68350,
+						"rate": 8
+					},
+					{
+						"min": 68350,
+						"max": 349137,
+						"rate": 9.3
+					},
+					{
+						"min": 349137,
+						"max": 418961,
+						"rate": 10.3
+					},
+					{
+						"min": 418961,
+						"max": 698271,
+						"rate": 11.3
+					},
+					{
+						"min": 698271,
+						"max": 1000000,
+						"rate": 12.3
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 13.3
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 20824,
+						"rate": 1
+					},
+					{
+						"min": 20824,
+						"max": 49368,
+						"rate": 2
+					},
+					{
+						"min": 49368,
+						"max": 77918,
+						"rate": 4
+					},
+					{
+						"min": 77918,
+						"max": 108162,
+						"rate": 6
+					},
+					{
+						"min": 108162,
+						"max": 136700,
+						"rate": 8
+					},
+					{
+						"min": 136700,
+						"max": 698274,
+						"rate": 9.3
+					},
+					{
+						"min": 698274,
+						"max": 837922,
+						"rate": 10.3
+					},
+					{
+						"min": 837922,
+						"max": 1396542,
+						"rate": 11.3
+					},
+					{
+						"min": 1396542,
+						"max": 2000000,
+						"rate": 12.3
+					},
+					{
+						"min": 2000000,
+						"max": 999999999,
+						"rate": 13.3
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 5540,
+				"married": 11080
+			},
+			"capitalGains": {
+				"taxedAsIncome": true,
+			},
+			"propertyTaxRate": 0.71,
+			"salesTaxRate": 7.25
+		},
+		{
+			"slug": "colorado",
+			"name": "Colorado",
+			"abbreviation": "CO",
+			"taxSystem": "flat",
+			"topMarginalRate": 4.4,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.4
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.4
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 15000,
+				"married": 30000
+			},
+			"capitalGains": {
+				"taxedAsIncome": true,
+				"deductionForStateOwnedAssetsOnly": true
+			},
+			"propertyTaxRate": 0.49,
+			"salesTaxRate": 2.9
+		},
+		{
+			"slug": "connecticut",
+			"name": "Connecticut",
+			"abbreviation": "CT",
+			"taxSystem": "progressive",
+			"topMarginalRate": 6.99,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 3
+					},
+					{
+						"min": 10000,
+						"max": 50000,
+						"rate": 5
+					},
+					{
+						"min": 50000,
+						"max": 100000,
+						"rate": 5.5
+					},
+					{
+						"min": 100000,
+						"max": 200000,
+						"rate": 6
+					},
+					{
+						"min": 200000,
+						"max": 250000,
+						"rate": 6.5
+					},
+					{
+						"min": 250000,
+						"max": 500000,
+						"rate": 6.9
+					},
+					{
+						"min": 500000,
+						"max": 999999999,
+						"rate": 6.99
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 20000,
+						"rate": 3
+					},
+					{
+						"min": 20000,
+						"max": 100000,
+						"rate": 5
+					},
+					{
+						"min": 100000,
+						"max": 200000,
+						"rate": 5.5
+					},
+					{
+						"min": 200000,
+						"max": 400000,
+						"rate": 6
+					},
+					{
+						"min": 400000,
+						"max": 500000,
+						"rate": 6.5
+					},
+					{
+						"min": 500000,
+						"max": 1000000,
+						"rate": 6.9
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 6.99
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.96,
+			"salesTaxRate": 6.35
+		},
+		{
+			"slug": "delaware",
+			"name": "Delaware",
+			"abbreviation": "DE",
+			"taxSystem": "progressive",
+			"topMarginalRate": 6.6,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 2000,
+						"rate": 0
+					},
+					{
+						"min": 2000,
+						"max": 5000,
+						"rate": 2.2
+					},
+					{
+						"min": 5000,
+						"max": 10000,
+						"rate": 3.9
+					},
+					{
+						"min": 10000,
+						"max": 20000,
+						"rate": 4.8
+					},
+					{
+						"min": 20000,
+						"max": 25000,
+						"rate": 5.2
+					},
+					{
+						"min": 25000,
+						"max": 60000,
+						"rate": 5.55
+					},
+					{
+						"min": 60000,
+						"max": 999999999,
+						"rate": 6.6
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 2000,
+						"rate": 0
+					},
+					{
+						"min": 2000,
+						"max": 5000,
+						"rate": 2.2
+					},
+					{
+						"min": 5000,
+						"max": 10000,
+						"rate": 3.9
+					},
+					{
+						"min": 10000,
+						"max": 20000,
+						"rate": 4.8
+					},
+					{
+						"min": 20000,
+						"max": 25000,
+						"rate": 5.2
+					},
+					{
+						"min": 25000,
+						"max": 60000,
+						"rate": 5.55
+					},
+					{
+						"min": 60000,
+						"max": 999999999,
+						"rate": 6.6
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 3250,
+				"married": 6500
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 0.53,
+			"salesTaxRate": 0
+		},
+		{
+			"slug": "district-of-columbia",
+			"name": "District of Columbia",
+			"abbreviation": "DC",
+			"taxSystem": "progressive",
+			"topMarginalRate": 10.75,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 4
+					},
+					{
+						"min": 10000,
+						"max": 40000,
+						"rate": 6
+					},
+					{
+						"min": 40000,
+						"max": 60000,
+						"rate": 6.5
+					},
+					{
+						"min": 60000,
+						"max": 250000,
+						"rate": 8.5
+					},
+					{
+						"min": 250000,
+						"max": 500000,
+						"rate": 9.25
+					},
+					{
+						"min": 500000,
+						"max": 1000000,
+						"rate": 9.75
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 10.75
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 4
+					},
+					{
+						"min": 10000,
+						"max": 40000,
+						"rate": 6
+					},
+					{
+						"min": 40000,
+						"max": 60000,
+						"rate": 6.5
+					},
+					{
+						"min": 60000,
+						"max": 250000,
+						"rate": 8.5
+					},
+					{
+						"min": 250000,
+						"max": 500000,
+						"rate": 9.25
+					},
+					{
+						"min": 500000,
+						"max": 1000000,
+						"rate": 9.75
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 10.75
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 0.56,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "florida",
+			"name": "Florida",
+			"abbreviation": "FL",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 0.86,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "georgia",
+			"name": "Georgia",
+			"abbreviation": "GA",
+			"taxSystem": "flat",
+			"topMarginalRate": 5.19,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5.19
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5.19
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 12000,
+				"married": 24000
+			},
+			"capitalGains": {
+				"fixedRate": 5.19
+			},
+			"propertyTaxRate": 0.87,
+			"salesTaxRate": 4
+		},
+		{
+			"slug": "hawaii",
+			"name": "Hawaii",
+			"abbreviation": "HI",
+			"taxSystem": "progressive",
+			"topMarginalRate": 11,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 2400,
+						"rate": 1.4
+					},
+					{
+						"min": 2400,
+						"max": 4800,
+						"rate": 3.2
+					},
+					{
+						"min": 4800,
+						"max": 9600,
+						"rate": 5.5
+					},
+					{
+						"min": 9600,
+						"max": 14400,
+						"rate": 6.4
+					},
+					{
+						"min": 14400,
+						"max": 19200,
+						"rate": 6.8
+					},
+					{
+						"min": 19200,
+						"max": 24000,
+						"rate": 7.2
+					},
+					{
+						"min": 24000,
+						"max": 36000,
+						"rate": 7.6
+					},
+					{
+						"min": 36000,
+						"max": 48000,
+						"rate": 7.9
+					},
+					{
+						"min": 48000,
+						"max": 150000,
+						"rate": 8.25
+					},
+					{
+						"min": 150000,
+						"max": 175000,
+						"rate": 9
+					},
+					{
+						"min": 175000,
+						"max": 200000,
+						"rate": 10
+					},
+					{
+						"min": 200000,
+						"max": 999999999,
+						"rate": 11
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 4800,
+						"rate": 1.4
+					},
+					{
+						"min": 4800,
+						"max": 9600,
+						"rate": 3.2
+					},
+					{
+						"min": 9600,
+						"max": 19200,
+						"rate": 5.5
+					},
+					{
+						"min": 19200,
+						"max": 28800,
+						"rate": 6.4
+					},
+					{
+						"min": 28800,
+						"max": 38400,
+						"rate": 6.8
+					},
+					{
+						"min": 38400,
+						"max": 48000,
+						"rate": 7.2
+					},
+					{
+						"min": 48000,
+						"max": 72000,
+						"rate": 7.6
+					},
+					{
+						"min": 72000,
+						"max": 96000,
+						"rate": 7.9
+					},
+					{
+						"min": 96000,
+						"max": 300000,
+						"rate": 8.25
+					},
+					{
+						"min": 300000,
+						"max": 350000,
+						"rate": 9
+					},
+					{
+						"min": 350000,
+						"max": 400000,
+						"rate": 10
+					},
+					{
+						"min": 400000,
+						"max": 999999999,
+						"rate": 11
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2200,
+				"married": 4400
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 0.27,
+			"salesTaxRate": 4
+		},
+		{
+			"slug": "idaho",
+			"name": "Idaho",
+			"abbreviation": "ID",
+			"taxSystem": "flat",
+			"topMarginalRate": 5.8,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5.8
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5.8
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"message": "Up to 60% exclusion on Idaho-sourced capital gains",
+			"capitalGains": {
+				"taxedAsIncome": true,
+				"deductionPercentage": 60.0,
+				"deductionForStateOwnedAssetsOnly":  true
+			},
+			"propertyTaxRate": 0.63,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "illinois",
+			"name": "Illinois",
+			"abbreviation": "IL",
+			"taxSystem": "flat",
+			"topMarginalRate": 4.95,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.95
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.95
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2925,
+				"married": 5850
+			},
+			"capitalGains": {
+				"fixedRate": 4.95
+			},
+			"propertyTaxRate": 2.07,
+			"salesTaxRate": 6.25
+		},
+		{
+			"slug": "indiana",
+			"name": "Indiana",
+			"abbreviation": "IN",
+			"taxSystem": "flat",
+			"topMarginalRate": 3.05,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.05
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.05
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"fixedRate": 3.05
+			},
+			"propertyTaxRate": 0.83,
+			"salesTaxRate": 7
+		},
+		{
+			"slug": "iowa",
+			"name": "Iowa",
+			"abbreviation": "IA",
+			"taxSystem": "flat",
+			"topMarginalRate": 3.8,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.8
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.8
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": {
+				"fixedRate": 3.8
+			},
+			"propertyTaxRate": 1.52,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "kansas",
+			"name": "Kansas",
+			"abbreviation": "KS",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.7,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 15000,
+						"rate": 3.1
+					},
+					{
+						"min": 15000,
+						"max": 30000,
+						"rate": 5.25
+					},
+					{
+						"min": 30000,
+						"max": 999999999,
+						"rate": 5.7
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 30000,
+						"rate": 3.1
+					},
+					{
+						"min": 30000,
+						"max": 60000,
+						"rate": 5.25
+					},
+					{
+						"min": 60000,
+						"max": 999999999,
+						"rate": 5.7
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 3500,
+				"married": 8000
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.33,
+			"salesTaxRate": 6.5
+		},
+		{
+			"slug": "kentucky",
+			"name": "Kentucky",
+			"abbreviation": "KY",
+			"taxSystem": "flat",
+			"topMarginalRate": 4,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 3160,
+				"married": 6320
+			},
+			"capitalGains": {
+				"fixedRate": 4.0
+			},
+			"propertyTaxRate": 0.8,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "louisiana",
+			"name": "Louisiana",
+			"abbreviation": "LA",
+			"taxSystem": "flat",
+			"topMarginalRate": 3,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": {
+				"fixedRate": 3.0
+			},
+			"propertyTaxRate": 0.55,
+			"salesTaxRate": 4.45
+		},
+		{
+			"slug": "maine",
+			"name": "Maine",
+			"abbreviation": "ME",
+			"taxSystem": "progressive",
+			"topMarginalRate": 7.15,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 24500,
+						"rate": 5.8
+					},
+					{
+						"min": 24500,
+						"max": 58050,
+						"rate": 6.75
+					},
+					{
+						"min": 58050,
+						"max": 999999999,
+						"rate": 7.15
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 49050,
+						"rate": 5.8
+					},
+					{
+						"min": 49050,
+						"max": 116100,
+						"rate": 6.75
+					},
+					{
+						"min": 116100,
+						"max": 999999999,
+						"rate": 7.15
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.24,
+			"salesTaxRate": 5.5
+		},
+		{
+			"slug": "maryland",
+			"name": "Maryland",
+			"abbreviation": "MD",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.75,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 1000,
+						"rate": 2
+					},
+					{
+						"min": 1000,
+						"max": 2000,
+						"rate": 3
+					},
+					{
+						"min": 2000,
+						"max": 3000,
+						"rate": 4
+					},
+					{
+						"min": 3000,
+						"max": 100000,
+						"rate": 4.75
+					},
+					{
+						"min": 100000,
+						"max": 125000,
+						"rate": 5
+					},
+					{
+						"min": 125000,
+						"max": 150000,
+						"rate": 5.25
+					},
+					{
+						"min": 150000,
+						"max": 250000,
+						"rate": 5.5
+					},
+					{
+						"min": 250000,
+						"max": 999999999,
+						"rate": 5.75
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 1000,
+						"rate": 2
+					},
+					{
+						"min": 1000,
+						"max": 2000,
+						"rate": 3
+					},
+					{
+						"min": 2000,
+						"max": 3000,
+						"rate": 4
+					},
+					{
+						"min": 3000,
+						"max": 150000,
+						"rate": 4.75
+					},
+					{
+						"min": 150000,
+						"max": 175000,
+						"rate": 5
+					},
+					{
+						"min": 175000,
+						"max": 225000,
+						"rate": 5.25
+					},
+					{
+						"min": 225000,
+						"max": 300000,
+						"rate": 5.5
+					},
+					{
+						"min": 300000,
+						"max": 999999999,
+						"rate": 5.75
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2550,
+				"married": 5150
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.05,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "massachusetts",
+			"name": "Massachusetts",
+			"abbreviation": "MA",
+			"taxSystem": "flat",
+			"topMarginalRate": 5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"message": "Short-term: 8.5%. Long-term: 5%. Long-term collectibles: 12%. Plus 4% surtax above $1,107,750 in 2026.",
+			"capitalGains": {
+				"fixedRate": 5.0,
+				"surcharge": 4.0,
+				"surchargeBracket": 1107750
+			},
+			"propertyTaxRate": 1.15,
+			"salesTaxRate": 6.25
+		},
+		{
+			"slug": "michigan",
+			"name": "Michigan",
+			"abbreviation": "MI",
+			"taxSystem": "flat",
+			"topMarginalRate": 4.25,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.25
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.25
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"fixedRate": 4.25
+			},
+			"propertyTaxRate": 1.38,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "minnesota",
+			"name": "Minnesota",
+			"abbreviation": "MN",
+			"taxSystem": "progressive",
+			"topMarginalRate": 9.85,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 31690,
+						"rate": 5.35
+					},
+					{
+						"min": 31690,
+						"max": 104090,
+						"rate": 6.8
+					},
+					{
+						"min": 104090,
+						"max": 193240,
+						"rate": 7.85
+					},
+					{
+						"min": 193240,
+						"max": 999999999,
+						"rate": 9.85
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 46330,
+						"rate": 5.35
+					},
+					{
+						"min": 46330,
+						"max": 184040,
+						"rate": 6.8
+					},
+					{
+						"min": 184040,
+						"max": 321450,
+						"rate": 7.85
+					},
+					{
+						"min": 321450,
+						"max": 999999999,
+						"rate": 9.85
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14575,
+				"married": 29150
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.05,
+			"salesTaxRate": 6.875
+		},
+		{
+			"slug": "mississippi",
+			"name": "Mississippi",
+			"abbreviation": "MS",
+			"taxSystem": "flat",
+			"topMarginalRate": 4,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 0
+					},
+					{
+						"min": 10000,
+						"max": 999999999,
+						"rate": 4
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 0
+					},
+					{
+						"min": 10000,
+						"max": 999999999,
+						"rate": 4
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2300,
+				"married": 4600
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 0.65,
+			"salesTaxRate": 7
+		},
+		{
+			"slug": "missouri",
+			"name": "Missouri",
+			"abbreviation": "MO",
+			"taxSystem": "progressive",
+			"topMarginalRate": 4.7,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 1313,
+						"rate": 0
+					},
+					{
+						"min": 1313,
+						"max": 2626,
+						"rate": 2
+					},
+					{
+						"min": 2626,
+						"max": 3939,
+						"rate": 2.5
+					},
+					{
+						"min": 3939,
+						"max": 5252,
+						"rate": 3
+					},
+					{
+						"min": 5252,
+						"max": 6565,
+						"rate": 3.5
+					},
+					{
+						"min": 6565,
+						"max": 7878,
+						"rate": 4
+					},
+					{
+						"min": 7878,
+						"max": 9191,
+						"rate": 4.5
+					},
+					{
+						"min": 9191,
+						"max": 999999999,
+						"rate": 4.7
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 1313,
+						"rate": 0
+					},
+					{
+						"min": 1313,
+						"max": 2626,
+						"rate": 2
+					},
+					{
+						"min": 2626,
+						"max": 3939,
+						"rate": 2.5
+					},
+					{
+						"min": 3939,
+						"max": 5252,
+						"rate": 3
+					},
+					{
+						"min": 5252,
+						"max": 6565,
+						"rate": 3.5
+					},
+					{
+						"min": 6565,
+						"max": 7878,
+						"rate": 4
+					},
+					{
+						"min": 7878,
+						"max": 9191,
+						"rate": 4.5
+					},
+					{
+						"min": 9191,
+						"max": 999999999,
+						"rate": 4.7
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 15750,
+				"married": 31500
+			},
+			"message": "Eligible individuals may subtract 100% of federally reported capital gains under current Missouri DOR guidance; verify Form MO-A.",
+			"capitalGains": {},
+			"propertyTaxRate": 0.91,
+			"salesTaxRate": 4.225
+		},
+		{
+			"slug": "montana",
+			"name": "Montana",
+			"abbreviation": "MT",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.9,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 21100,
+						"rate": 4.7
+					},
+					{
+						"min": 21100,
+						"max": 999999999,
+						"rate": 5.9
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 42200,
+						"rate": 4.7
+					},
+					{
+						"min": 42200,
+						"max": 999999999,
+						"rate": 5.9
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 16100,
+				"married": 32200
+			},
+			"message": "Separate Montana net long-term capital gains table; ordinary income uses 4.7% and 5.9% rates.",
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 0.74,
+			"salesTaxRate": 0
+		},
+		{
+			"slug": "nebraska",
+			"name": "Nebraska",
+			"abbreviation": "NE",
+			"taxSystem": "progressive",
+			"topMarginalRate": 4.55,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 4130,
+						"rate": 2.46
+					},
+					{
+						"min": 4130,
+						"max": 24760,
+						"rate": 3.51
+					},
+					{
+						"min": 24760,
+						"max": 39900,
+						"rate": 4.55
+					},
+					{
+						"min": 39900,
+						"max": 999999999,
+						"rate": 4.55
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 8250,
+						"rate": 2.46
+					},
+					{
+						"min": 8250,
+						"max": 49530,
+						"rate": 3.51
+					},
+					{
+						"min": 49530,
+						"max": 79800,
+						"rate": 4.55
+					},
+					{
+						"min": 79800,
+						"max": 999999999,
+						"rate": 4.55
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 8850,
+				"married": 17700
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 1.61,
+			"salesTaxRate": 5.5
+		},
+		{
+			"slug": "nevada",
+			"name": "Nevada",
+			"abbreviation": "NV",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 0.53,
+			"salesTaxRate": 6.85
+		},
+		{
+			"slug": "new-hampshire",
+			"name": "New Hampshire",
+			"abbreviation": "NH",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 1.86,
+			"salesTaxRate": 0
+		},
+		{
+			"slug": "new-jersey",
+			"name": "New Jersey",
+			"abbreviation": "NJ",
+			"taxSystem": "progressive",
+			"topMarginalRate": 10.75,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 20000,
+						"rate": 1.4
+					},
+					{
+						"min": 20000,
+						"max": 35000,
+						"rate": 1.75
+					},
+					{
+						"min": 35000,
+						"max": 40000,
+						"rate": 3.5
+					},
+					{
+						"min": 40000,
+						"max": 75000,
+						"rate": 5.525
+					},
+					{
+						"min": 75000,
+						"max": 500000,
+						"rate": 6.37
+					},
+					{
+						"min": 500000,
+						"max": 1000000,
+						"rate": 8.97
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 10.75
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 20000,
+						"rate": 1.4
+					},
+					{
+						"min": 20000,
+						"max": 50000,
+						"rate": 1.75
+					},
+					{
+						"min": 50000,
+						"max": 70000,
+						"rate": 2.45
+					},
+					{
+						"min": 70000,
+						"max": 80000,
+						"rate": 3.5
+					},
+					{
+						"min": 80000,
+						"max": 150000,
+						"rate": 5.525
+					},
+					{
+						"min": 150000,
+						"max": 500000,
+						"rate": 6.37
+					},
+					{
+						"min": 500000,
+						"max": 1000000,
+						"rate": 8.97
+					},
+					{
+						"min": 1000000,
+						"max": 999999999,
+						"rate": 10.75
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 2.23,
+			"salesTaxRate": 6.625
+		},
+		{
+			"slug": "new-mexico",
+			"name": "New Mexico",
+			"abbreviation": "NM",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.9,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 5500,
+						"rate": 1.7
+					},
+					{
+						"min": 5500,
+						"max": 11000,
+						"rate": 3.2
+					},
+					{
+						"min": 11000,
+						"max": 16000,
+						"rate": 4.7
+					},
+					{
+						"min": 16000,
+						"max": 210000,
+						"rate": 4.9
+					},
+					{
+						"min": 210000,
+						"max": 999999999,
+						"rate": 5.9
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 8000,
+						"rate": 1.7
+					},
+					{
+						"min": 8000,
+						"max": 16000,
+						"rate": 3.2
+					},
+					{
+						"min": 16000,
+						"max": 24000,
+						"rate": 4.7
+					},
+					{
+						"min": 24000,
+						"max": 315000,
+						"rate": 4.9
+					},
+					{
+						"min": 315000,
+						"max": 999999999,
+						"rate": 5.9
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 14600,
+				"married": 29200
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 0.67,
+			"salesTaxRate": 4.875
+		},
+		{
+			"slug": "new-york",
+			"name": "New York",
+			"abbreviation": "NY",
+			"taxSystem": "progressive",
+			"topMarginalRate": 10.9,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 8500,
+						"rate": 4
+					},
+					{
+						"min": 8500,
+						"max": 11700,
+						"rate": 4.5
+					},
+					{
+						"min": 11700,
+						"max": 13900,
+						"rate": 5.25
+					},
+					{
+						"min": 13900,
+						"max": 80650,
+						"rate": 5.5
+					},
+					{
+						"min": 80650,
+						"max": 215400,
+						"rate": 6
+					},
+					{
+						"min": 215400,
+						"max": 1077550,
+						"rate": 6.85
+					},
+					{
+						"min": 1077550,
+						"max": 5000000,
+						"rate": 9.65
+					},
+					{
+						"min": 5000000,
+						"max": 25000000,
+						"rate": 10.3
+					},
+					{
+						"min": 25000000,
+						"max": 999999999,
+						"rate": 10.9
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 17150,
+						"rate": 4
+					},
+					{
+						"min": 17150,
+						"max": 23600,
+						"rate": 4.5
+					},
+					{
+						"min": 23600,
+						"max": 27900,
+						"rate": 5.25
+					},
+					{
+						"min": 27900,
+						"max": 161550,
+						"rate": 5.5
+					},
+					{
+						"min": 161550,
+						"max": 323200,
+						"rate": 6
+					},
+					{
+						"min": 323200,
+						"max": 2155350,
+						"rate": 6.85
+					},
+					{
+						"min": 2155350,
+						"max": 5000000,
+						"rate": 9.65
+					},
+					{
+						"min": 5000000,
+						"max": 25000000,
+						"rate": 10.3
+					},
+					{
+						"min": 25000000,
+						"max": 999999999,
+						"rate": 10.9
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 8000,
+				"married": 16050
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 1.62,
+			"salesTaxRate": 4
+		},
+		{
+			"slug": "north-carolina",
+			"name": "North Carolina",
+			"abbreviation": "NC",
+			"taxSystem": "flat",
+			"topMarginalRate": 3.99,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.99
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.99
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 12750,
+				"married": 25500
+			},
+			"capitalGains": {
+				"fixedRate": 3.99
+			},
+			"propertyTaxRate": 0.8,
+			"salesTaxRate": 4.75
+		},
+		{
+			"slug": "north-dakota",
+			"name": "North Dakota",
+			"abbreviation": "ND",
+			"taxSystem": "progressive",
+			"topMarginalRate": 2.5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 48475,
+						"rate": 0
+					},
+					{
+						"min": 48475,
+						"max": 244825,
+						"rate": 1.95
+					},
+					{
+						"min": 244825,
+						"max": 999999999,
+						"rate": 2.5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 80975,
+						"rate": 0
+					},
+					{
+						"min": 80975,
+						"max": 298075,
+						"rate": 1.95
+					},
+					{
+						"min": 298075,
+						"max": 999999999,
+						"rate": 2.5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 16100,
+				"married": 32200
+			},
+			"message": "Taxed through North Dakota income tax brackets, with a 40% deduction for qualifying net long-term capital gains",
+			"capitalGains": { "taxedAsIncome":  true },
+			"propertyTaxRate": 0.94,
+			"salesTaxRate": 5
+		},
+		{
+			"slug": "ohio",
+			"name": "Ohio",
+			"abbreviation": "OH",
+			"taxSystem": "progressive",
+			"topMarginalRate": 3.5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 26050,
+						"rate": 0
+					},
+					{
+						"min": 26050,
+						"max": 100000,
+						"rate": 2.75
+					},
+					{
+						"min": 100000,
+						"max": 999999999,
+						"rate": 3.5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 26050,
+						"rate": 0
+					},
+					{
+						"min": 26050,
+						"max": 100000,
+						"rate": 2.75
+					},
+					{
+						"min": 100000,
+						"max": 999999999,
+						"rate": 3.5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 1.53,
+			"salesTaxRate": 5.75
+		},
+		{
+			"slug": "oklahoma",
+			"name": "Oklahoma",
+			"abbreviation": "OK",
+			"taxSystem": "progressive",
+			"topMarginalRate": 4.5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 3750,
+						"rate": 0
+					},
+					{
+						"min": 3750,
+						"max": 4900,
+						"rate": 2.5
+					},
+					{
+						"min": 4900,
+						"max": 7200,
+						"rate": 3.5
+					},
+					{
+						"min": 7200,
+						"max": 999999999,
+						"rate": 4.5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 7500,
+						"rate": 0
+					},
+					{
+						"min": 7500,
+						"max": 9800,
+						"rate": 2.5
+					},
+					{
+						"min": 9800,
+						"max": 14400,
+						"rate": 3.5
+					},
+					{
+						"min": 14400,
+						"max": 999999999,
+						"rate": 4.5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 6350,
+				"married": 12700
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 0.87,
+			"salesTaxRate": 4.5
+		},
+		{
+			"slug": "oregon",
+			"name": "Oregon",
+			"abbreviation": "OR",
+			"taxSystem": "progressive",
+			"topMarginalRate": 9.9,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 4550,
+						"rate": 4.75
+					},
+					{
+						"min": 4550,
+						"max": 11400,
+						"rate": 6.75
+					},
+					{
+						"min": 11400,
+						"max": 125000,
+						"rate": 8.75
+					},
+					{
+						"min": 125000,
+						"max": 999999999,
+						"rate": 9.9
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 9100,
+						"rate": 4.75
+					},
+					{
+						"min": 9100,
+						"max": 22800,
+						"rate": 6.75
+					},
+					{
+						"min": 22800,
+						"max": 250000,
+						"rate": 8.75
+					},
+					{
+						"min": 250000,
+						"max": 999999999,
+						"rate": 9.9
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 2910,
+				"married": 5820
+			},
+			"capitalGains": {
+				"taxedAsIncome": true
+			},
+			"propertyTaxRate": 0.87,
+			"salesTaxRate": 0
+		},
+		{
+			"slug": "pennsylvania",
+			"name": "Pennsylvania",
+			"abbreviation": "PA",
+			"taxSystem": "flat",
+			"topMarginalRate": 3.07,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.07
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 3.07
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"fixedRate": 3.07
+			},
+			"propertyTaxRate": 1.49,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "rhode-island",
+			"name": "Rhode Island",
+			"abbreviation": "RI",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.99,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 82050,
+						"rate": 3.75
+					},
+					{
+						"min": 82050,
+						"max": 186450,
+						"rate": 4.75
+					},
+					{
+						"min": 186450,
+						"max": 999999999,
+						"rate": 5.99
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 82050,
+						"rate": 3.75
+					},
+					{
+						"min": 82050,
+						"max": 186450,
+						"rate": 4.75
+					},
+					{
+						"min": 186450,
+						"max": 999999999,
+						"rate": 5.99
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 11200,
+				"married": 22400
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 1.4,
+			"salesTaxRate": 7
+		},
+		{
+			"slug": "south-carolina",
+			"name": "South Carolina",
+			"abbreviation": "SC",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.21,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 30000,
+						"rate": 1.99
+					},
+					{
+						"min": 30000,
+						"max": 999999999,
+						"rate": 5.21
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 30000,
+						"rate": 1.99
+					},
+					{
+						"min": 30000,
+						"max": 999999999,
+						"rate": 5.21
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 15000,
+				"married": 30000
+			},
+			"message": "44% deduction on net capital gains",
+			"capitalGains": {
+				"taxedAsIncome": true,
+				"deductionPercentage": 44.0
+			},
+			"propertyTaxRate": 0.56,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "south-dakota",
+			"name": "South Dakota",
+			"abbreviation": "SD",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 1.22,
+			"salesTaxRate": 4.2
+		},
+		{
+			"slug": "tennessee",
+			"name": "Tennessee",
+			"abbreviation": "TN",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 0.66,
+			"salesTaxRate": 7
+		},
+		{
+			"slug": "texas",
+			"name": "Texas",
+			"abbreviation": "TX",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 1.68,
+			"salesTaxRate": 6.25
+		},
+		{
+			"slug": "utah",
+			"name": "Utah",
+			"abbreviation": "UT",
+			"taxSystem": "flat",
+			"topMarginalRate": 4.5,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.5
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 999999999,
+						"rate": 4.5
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {
+				"fixedRate": 4.5
+			},
+			"propertyTaxRate": 0.57,
+			"salesTaxRate": 6.1
+		},
+		{
+			"slug": "vermont",
+			"name": "Vermont",
+			"abbreviation": "VT",
+			"taxSystem": "progressive",
+			"topMarginalRate": 8.75,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 45400,
+						"rate": 3.35
+					},
+					{
+						"min": 45400,
+						"max": 110050,
+						"rate": 6.6
+					},
+					{
+						"min": 110050,
+						"max": 229550,
+						"rate": 7.6
+					},
+					{
+						"min": 229550,
+						"max": 999999999,
+						"rate": 8.75
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 76000,
+						"rate": 3.35
+					},
+					{
+						"min": 76000,
+						"max": 183400,
+						"rate": 6.6
+					},
+					{
+						"min": 183400,
+						"max": 279450,
+						"rate": 7.6
+					},
+					{
+						"min": 279450,
+						"max": 999999999,
+						"rate": 8.75
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 7000,
+				"married": 14050
+			},
+			"message": "40% exclusion on VT business/farm gains up to $350K",
+			"capitalGains": {
+				"taxedAsIncome":  true
+			},
+			"propertyTaxRate": 1.83,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "virginia",
+			"name": "Virginia",
+			"abbreviation": "VA",
+			"taxSystem": "progressive",
+			"topMarginalRate": 5.75,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 3000,
+						"rate": 2
+					},
+					{
+						"min": 3000,
+						"max": 5000,
+						"rate": 3
+					},
+					{
+						"min": 5000,
+						"max": 17000,
+						"rate": 5
+					},
+					{
+						"min": 17000,
+						"max": 999999999,
+						"rate": 5.75
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 3000,
+						"rate": 2
+					},
+					{
+						"min": 3000,
+						"max": 5000,
+						"rate": 3
+					},
+					{
+						"min": 5000,
+						"max": 17000,
+						"rate": 5
+					},
+					{
+						"min": 17000,
+						"max": 999999999,
+						"rate": 5.75
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 8000,
+				"married": 16000
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 0.82,
+			"salesTaxRate": 5.3
+		},
+		{
+			"slug": "washington",
+			"name": "Washington",
+			"abbreviation": "WA",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"message": "7% Washington capital gains tax on taxable long-term gains, plus an additional 2.9% tier above $1 million beginning with tax year 2025",
+			"capitalGains": {
+				"fixedRate": 7.0,
+				"deductionAmount": 278000,
+				"surcharge": 2.9,
+				"surchargeBracket": 1000000
+			},
+			"propertyTaxRate": 0.87,
+			"salesTaxRate": 6.5
+		},
+		{
+			"slug": "west-virginia",
+			"name": "West Virginia",
+			"abbreviation": "WV",
+			"taxSystem": "progressive",
+			"topMarginalRate": 4.58,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 2.11
+					},
+					{
+						"min": 10000,
+						"max": 25000,
+						"rate": 2.81
+					},
+					{
+						"min": 25000,
+						"max": 40000,
+						"rate": 3.16
+					},
+					{
+						"min": 40000,
+						"max": 60000,
+						"rate": 4.22
+					},
+					{
+						"min": 60000,
+						"max": 999999999,
+						"rate": 4.58
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 10000,
+						"rate": 2.11
+					},
+					{
+						"min": 10000,
+						"max": 25000,
+						"rate": 2.81
+					},
+					{
+						"min": 25000,
+						"max": 40000,
+						"rate": 3.16
+					},
+					{
+						"min": 40000,
+						"max": 60000,
+						"rate": 4.22
+					},
+					{
+						"min": 60000,
+						"max": 999999999,
+						"rate": 4.58
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": { "taxedAsIncome": true },
+			"propertyTaxRate": 0.57,
+			"salesTaxRate": 6
+		},
+		{
+			"slug": "wisconsin",
+			"name": "Wisconsin",
+			"abbreviation": "WI",
+			"taxSystem": "progressive",
+			"topMarginalRate": 7.65,
+			"brackets": {
+				"single": [
+					{
+						"min": 0,
+						"max": 15110,
+						"rate": 3.5
+					},
+					{
+						"min": 15110,
+						"max": 51950,
+						"rate": 4.4
+					},
+					{
+						"min": 51950,
+						"max": 332720,
+						"rate": 5.3
+					},
+					{
+						"min": 332720,
+						"max": 999999999,
+						"rate": 7.65
+					}
+				],
+				"married": [
+					{
+						"min": 0,
+						"max": 20150,
+						"rate": 3.5
+					},
+					{
+						"min": 20150,
+						"max": 69260,
+						"rate": 4.4
+					},
+					{
+						"min": 69260,
+						"max": 443630,
+						"rate": 5.3
+					},
+					{
+						"min": 443630,
+						"max": 999999999,
+						"rate": 7.65
+					}
+				]
+			},
+			"stateStandardDeduction": {
+				"single": 13960,
+				"married": 25840
+			},
+			"message": "30% long-term capital gain deduction; 60% for qualifying WI farm assets",
+			"capitalGains": {
+				"taxedAsIncome": true,
+				"deductionPercentage":  30.0
+			},
+			"propertyTaxRate": 1.61,
+			"salesTaxRate": 5
+		},
+		{
+			"slug": "wyoming",
+			"name": "Wyoming",
+			"abbreviation": "WY",
+			"taxSystem": "none",
+			"topMarginalRate": 0,
+			"brackets": {
+				"single": [],
+				"married": []
+			},
+			"stateStandardDeduction": {
+				"single": 0,
+				"married": 0
+			},
+			"capitalGains": {},
+			"propertyTaxRate": 0.56,
+			"salesTaxRate": 4
+		}
+	],
+	"last_updated": "2026-05-25",
+	"dateModified": "2026-05-25"
+}

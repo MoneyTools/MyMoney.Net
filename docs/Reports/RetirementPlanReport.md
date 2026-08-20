@@ -11,17 +11,21 @@ To setup the report you need to enter some values in the RETIREMENT details as f
 
 Then you will see the following if you started with:
 
-- $3.7 million in a taxable brokerage account (with some cost basis)
-- $1.4 million in a 401k tax deferred account
-- $2 million in a Roth IRA tax free account.
+- $1.25 million in a taxable brokerage account (with some cost basis)
+- $1.2 million in a 401k tax deferred account
+- $1 million in a Roth IRA tax free account.
+
+And assuming you want a $100,000 retirement income each year and providing some
+reasonable inflation rates.
 
 The first part of the report shows a summary of assets remaining at the end date (in this case age 90):
 
-- Assets remaining at age 90	$9,029,134
-    - Taxable assets	$229,093
-    - Tax deferred assets	$1,660,061
-    - Tax free assets	$7,139,981
-- Total taxes paid during retirement	$1,162,461
+- Assets remaining at age 90	$7,158,438
+    - Taxable assets	$509,229
+    - Tax deferred assets	$1,409,389
+    - Tax free assets	$5,239,820
+- Total taxes paid during retirement	$192,536
+
 
 And then it shows some charts, the first one is a chart showing how each class of asset grows and/or is drawn down over
 the years as follows:
@@ -37,7 +41,7 @@ The report can estimate dividend income too if you have some of that in your por
 ![retirement income](../Images/RetirementIncome.png)
 
 This shows that you start off tapping into taxable assets until age 75 when required minimum distribution kicks in on
-your tax deferred accounts. Social security also kicks in at age 70 since that is what we configured in the settings.
+your tax deferred accounts. Social security also kicks in at age 67 since that is what we configured in the settings.
 It is often interesting to play with your social security age, waiting till 70 is not always the best strategy.  You may
 find that starting at 62 results in higher networth. Even though the social security amount is usually a lot lower at
 62, that income means you have to sell fewer assets to make up your desired income and usually those assets are growing
@@ -47,15 +51,16 @@ The next chart shows how much tax you had to pay each year, which is paid from y
 
 ![retirement taxes](../Images/RetirementTaxes.png)
 
-Here you normally see a jump in taxes when any Tax Deferred account required minimum distributions (RMD's) kick in or
-when you enter a new tax bracket. Retirement planning is often about managing those tax brackets.
+Here you see a jump in taxes when any Tax Deferred account required minimum distributions (RMD's) kick in or when you
+enter a new tax bracket. Retirement planning is often about managing those tax brackets.
 
 The final chart runs a Roth conversion simulation passing in different years to implement the roth conversion from 0 (no conversion which we have above) out to 15 years, plotting the networth at age 90 and the total tax paid over each simulation. as follows:
 
 ![retirement roth](../Images/RetirementRoth.png)
 
 This can help you figure out the optimal roth conversion strategy to maximize assets
-and minimize taxes.  In this case a Roth conversion will not help you, you get the highest networth by doing nothing.
+and minimize taxes.  Roth conversion can limit the RMD tax bomb, but in this case a Roth conversion did not help, so this shows a Roth conversion does not always win, unless your goal
+is to maximize your tax free account.
 
 You can then plug these numbers into the settings panel here:
 
@@ -73,6 +78,6 @@ market ROI usually means a Roth conversion is a good idea.
 
 Note that all of this is just an `estimate` based on the inflation rate and rate of return predictions you provided and it
 does not compute your real cost basis for capital gains taxes, it uses an estimated capital gains based on your current
-holdings.  This simulation also assumes today's (2026) tax brackets, and does not modify them over the years which we know
-never happens. Chances are taxes will always go up, so this should be another consideration when it comes to minimizing
+holdings.  This simulation also assumes today's (2026) tax brackets, and does not modify the tax rates over the years which we know
+never happens. Chances are tax rates will always go up, so this should be another consideration when it comes to minimizing
 future taxes which the Roth conversation also helps with.

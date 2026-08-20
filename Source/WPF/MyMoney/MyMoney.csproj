@@ -310,6 +310,8 @@
     <None Remove="Icons\Flags\za.png" />
     <None Remove="Icons\Flags\zm.png" />
     <None Remove="Icons\Flags\zw.png" />
+    <None Remove="Reports\FederalTaxes.json" />
+    <None Remove="Taxes\StateTaxes.json" />
     <None Remove="Views\ad.png" />
   </ItemGroup>
  <ItemGroup>
@@ -601,9 +603,15 @@
     <Resource Include="Icons\Flags\zw.png" />
     <Resource Include="Setup\LatestVersion.xslt" />
     <Resource Include="Icons\setup.ico" />
+    <Content Include="Taxes\FederalTaxes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Setup\changes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Taxes\StateTaxes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Taxes\TxfSpec.txt" />
     <EmbeddedResource Include="Ofx\ofx160.dtd" />

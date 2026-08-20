@@ -15,6 +15,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.PerformanceProvider;
 using Walkabout.StockQuotes;
+using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Views.Controls;
@@ -49,7 +50,8 @@ namespace Walkabout.Reports
             DesiredAnnualIncome = 200000,
             CurrentAge = 60,
             SpouseAge = 60,
-            MarriedFilingJointly = false,
+            TaxFilingStatus = TaxFilingStatus.Single,
+            TaxFilingState = "WA",
             RetirementAge = 65,
             GraduationAge = 95,
             TaxDeferredStrategy = TaxDeferredStrategyNone,
@@ -60,9 +62,11 @@ namespace Walkabout.Reports
             SocialSecuritySpouseAge = 67,
             SocialSecuritySpouseAmount = 0,
             SocialSecurityCola = 0.025M,  // 2.5 % for inflation
+            TaxBracketInflationRate = 0.03M, // currently 3%
             Stacked = true
         };
         private DelayedActions actions = new DelayedActions();
+        private StateTaxes stateTaxes;
 
         public static string TaxDeferredStrategyNone = "None";
         public static string TaxDeferredStrategyRoth = "Roth Conversion";
@@ -71,6 +75,42 @@ namespace Walkabout.Reports
         {
             this.ReportDate = DateTime.Today;
             this.view = view;
+        }
+
+        private string FindStateName(string name)
+        {
+            if (stateTaxes == null)
+            {
+                stateTaxes = StateTaxes.Load();
+            }
+
+            foreach (var state in stateTaxes.Data)
+            {
+                if (state.Abbreviation == name || state.Name == name)
+                {
+                    return state.Name;
+                }
+            }
+
+            return stateTaxes.Data[0].Name;
+        }
+
+        private StateData FindState(string name)
+        {
+            if (stateTaxes == null)
+            {
+                stateTaxes = StateTaxes.Load();
+            }
+
+            foreach (var state in stateTaxes.Data)
+            {
+                if (state.Abbreviation == name || state.Name == name)
+                {
+                    return state;
+                }
+            }
+
+            return stateTaxes.Data[0];
         }
 
         protected override void Dispose(bool disposing)
@@ -87,7 +127,8 @@ namespace Walkabout.Reports
             this.panel.GraduationAgeChanged += this.OnGraduationAgeChanged;
             this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
             this.panel.SpouseAgeChanged += this.OnSpouseAgeChanged;
-            this.panel.MarriedFilingJointlyChanged += this.OnMarriedFilingJointlyChanged;
+            this.panel.TaxFilingStatusChanged += this.OnTaxFilingStatusChanged;
+            this.panel.TaxFilingStateChanged += this.OnTaxFilingStateChanged;
             this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
             this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
             this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
@@ -98,7 +139,9 @@ namespace Walkabout.Reports
             this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
             this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
             this.panel.SocialSecurityColaChanged += this.OnSocialSecurityColaChanged;
+            this.panel.TaxBracketInflationRateChanged += this.OnTaxBracketInflationRateChanged;
         }
+
 
         private void UnRegister()
         {
@@ -110,7 +153,8 @@ namespace Walkabout.Reports
                 this.panel.GraduationAgeChanged -= this.OnGraduationAgeChanged;
                 this.panel.CurrentAgeChanged -= this.OnCurrentAgeChanged;
                 this.panel.SpouseAgeChanged -= this.OnSpouseAgeChanged;
-                this.panel.MarriedFilingJointlyChanged -= this.OnMarriedFilingJointlyChanged;
+                this.panel.TaxFilingStatusChanged -= this.OnTaxFilingStatusChanged;
+                this.panel.TaxFilingStateChanged -= this.OnTaxFilingStateChanged;
                 this.panel.RetirementAgeChanged -= this.OnRetirementAgeChanged;
                 this.panel.TaxDeferredStrategyChanged -= this.OnTaxDeferredStrategyChanged;
                 this.panel.TaxDeferredStrategyYearsChanged -= this.OnTaxDeferredStrategyYearsChanged;
@@ -121,6 +165,7 @@ namespace Walkabout.Reports
                 this.panel.SocialSecuritySpouseAmountChanged -= this.OnSocialSecuritySpouseAmountChanged;
                 this.panel.SocialSecuritySpouseAgeChanged -= this.OnSocialSecuritySpouseAgeChanged;
                 this.panel.SocialSecurityColaChanged -= this.OnSocialSecurityColaChanged;
+                this.panel.TaxBracketInflationRateChanged -= this.OnTaxBracketInflationRateChanged;
             }
         }
 
@@ -151,9 +196,14 @@ namespace Walkabout.Reports
         {
             this.state.SpouseAge = e; this.Regenerate();
         }
-        private void OnMarriedFilingJointlyChanged(object sender, bool e)
+        private void OnTaxFilingStatusChanged(object sender, TaxFilingStatus e)
         {
-            this.state.MarriedFilingJointly = e; this.Regenerate();
+            this.state.TaxFilingStatus = e; this.Regenerate();
+        }
+
+        private void OnTaxFilingStateChanged(object sender, string name)
+        {
+            this.state.TaxFilingState = name; this.Regenerate();
         }
 
         private void OnRetirementAgeChanged(object sender, int e)
@@ -197,6 +247,12 @@ namespace Walkabout.Reports
         {
             this.state.SocialSecurityCola = e; this.Regenerate();
         }
+
+        private void OnTaxBracketInflationRateChanged(object sender, decimal e)
+        {
+            this.state.TaxBracketInflationRate = e; this.Regenerate();
+        }
+
 
         private void OnStackedBarsChanged(object sender, bool e)
         {            
@@ -246,6 +302,7 @@ namespace Walkabout.Reports
 
         private static string ChartValueIncomeTaxes = "Income Tax";
         private static string ChartValueCapitalGainsTaxes = "Capital Gains Tax";
+        private static string ChartValueStateTaxes = "State Tax";
         private static string ChartValueTaxes = "Taxes";
         private static string ChartValueAssets = "Networth";
 
@@ -264,6 +321,7 @@ namespace Walkabout.Reports
 
             public ChartDataSeries incomeTaxSeries = new ChartDataSeries() { Name = "Income Tax", XAxisLabel = "Age" };
             public ChartDataSeries capitalGainsTaxSeries = new ChartDataSeries() { Name = "Capital Gains Taxes", XAxisLabel = "Age" };
+            public ChartDataSeries stateTaxSeries = new ChartDataSeries() { Name = "State Taxes", XAxisLabel = "Age" };
             public ChartDataSeries rothAssetsSeries = new ChartDataSeries() { Name = "Networth", XAxisLabel = "Year" };
             public ChartDataSeries rothTaxSeries = new ChartDataSeries() { Name = "Taxes", XAxisLabel = "Year" };
 
@@ -278,13 +336,15 @@ namespace Walkabout.Reports
             private decimal totalTaxes;
             private CostBasisCalculator calc;
             private decimal rmdAge;
+            private StateData stateTaxRates;
 
-            public Simulation(MyMoney money, RetirementPlanState state, Report report, StockQuoteCache cache)
+            public Simulation(MyMoney money, RetirementPlanState state, Report report, StockQuoteCache cache, StateData stateTaxRates)
             {
                 this.myMoney = money;
                 this.state = state;
                 this.report = report;
                 this.cache = cache;
+                this.stateTaxRates = stateTaxRates;
 
                 int born = DateTime.Now.Year - state.CurrentAge;
                 this.rmdAge = born >= 1960 ? 75 : 73;
@@ -309,7 +369,7 @@ namespace Walkabout.Reports
                     }
                     modifiedState.TaxDeferredStrategyAge = modifiedState.RetirementAge; // start right away.
 
-                    var temp = new Simulation(this.myMoney, modifiedState, this.report, this.cache);
+                    var temp = new Simulation(this.myMoney, modifiedState, this.report, this.cache, this.stateTaxRates);
                     temp.calc = this.calc;
                     temp.funds = this.funds;
                     temp.rmdAge = this.rmdAge;
@@ -350,6 +410,7 @@ namespace Walkabout.Reports
 #endif
                 decimal futureIncome = this.state.DesiredAnnualIncome;
                 var funds = this.funds.Copy(); // make a modifiable copy.
+                funds.stateTaxeRates = this.stateTaxRates;
                 this.finalFunds = funds;
 
                 var taxableColor = Colors.Green;
@@ -365,7 +426,9 @@ namespace Walkabout.Reports
 
                 var incomeTaxColor = Color.FromRgb(0xFE, 0x77, 0x6C);
                 var capitalGainsTaxColor = Color.FromRgb(0xD3, 0x45, 0x5B);
+                var stateTaxColor = Color.FromRgb(0xA0, 0x25, 0x1C);
 
+                var status = this.state.TaxFilingStatus;
                 this.totalTaxes = 0;
                 decimal conversionAmount = 0;
                 decimal socialSecurity = this.state.SocialSecurityAmount;
@@ -381,6 +444,10 @@ namespace Walkabout.Reports
 
                 for (int age = this.state.CurrentAge; age <= this.state.GraduationAge; age++)
                 {
+                    decimal income = 0; // trying to make this number match our inflation adjusted futureIncome
+                    decimal socialSecurityIncome = 0;
+                    funds.Reset();
+
                     if (age == this.state.TaxDeferredStrategyAge)
                     {
                         if (this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
@@ -396,29 +463,15 @@ namespace Walkabout.Reports
 
                     if (age >= this.state.RetirementAge)
                     {
-                        decimal income = 0;
-                        decimal incomeTaxes = 0;
-                        decimal capitalGainsTaxes = 0;
-                        decimal baseIncome = 0;
-                        decimal taxableIncome = 0;
-                        decimal taxDeferredIncome = 0;
-                        decimal taxFreeIncome = 0;
-                        decimal socialSecurityIncome = 0;
-
                         if (age >= this.state.TaxDeferredStrategyAge && this.state.TaxDeferredStrategy == TaxDeferredStrategyRoth)
                         {
-                            var (tax, amount) = funds.ConvertToRoth(ref baseIncome, conversionAmount);
-                            incomeTaxes += tax;
-                            taxDeferredIncome += amount;
+                            funds.ConvertToRoth(conversionAmount);
                         }
                         decimal dividends = funds.EstimateDividends(calc);
                         if (dividends > 0)
                         {
+                            dividends = funds.PayDividendTaxes(dividends);
                             income += dividends;
-                            // Now pay taxes on these dividends from the dividends.
-                            decimal dividendTax = funds.GetIncomeTax(baseIncome, dividends);
-                            incomeTaxes += dividendTax;
-                            baseIncome += dividends;
                         }
 
                         taxableSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.Taxable, Color = taxableColor, UserData = ChartValueTaxable });
@@ -431,16 +484,16 @@ namespace Walkabout.Reports
                             // must take RMD distribution.
                             var amount = funds.GetMinimumDistribution(age);
                             funds.TaxDeferred -= amount;
-                            taxDeferredIncome += amount;
+                            funds.taxDeferredIncome += amount;
                             income += amount;
                             // Now to pay to taxes on this we need to take out more.                        
-                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
+                            funds.PayIncomeTaxRecursively(amount);
                         }
 
                         if (age >= this.state.SocialSecurityAge)
                         {
                             socialSecurityIncome = socialSecurity * 12;
-                            if (this.state.MarriedFilingJointly)
+                            if (this.state.TaxFilingStatus == TaxFilingStatus.Married)
                             {
                                 int spouseAge = age + this.state.SpouseAge - this.state.CurrentAge;
                                 if (spouseAge >= spousalSocialSecurityAge)
@@ -450,13 +503,13 @@ namespace Walkabout.Reports
                                     spousalSocialSecurity *= (1 + this.state.SocialSecurityCola);
                                 }
                             }
-                            baseIncome += socialSecurityIncome;
+                            funds.baseIncome += socialSecurityIncome;
                             income += socialSecurityIncome;
                             socialSecurity *= (1 + this.state.SocialSecurityCola);
 
                             // estimate taxes on social security income
-                            var sst = funds.CalcSocialSecurityTax(baseIncome, socialSecurityIncome);
-                            incomeTaxes += sst;
+                            var sst = funds.CalcSocialSecurityTax(socialSecurityIncome);
+                            
                             // pay these taxes from the social security income.
                             socialSecurityIncome -= sst;
                         }
@@ -466,11 +519,11 @@ namespace Walkabout.Reports
                             // we need more from taxable.
                             var amount = futureIncome - income;
                             var (amountSold, gains) = funds.SellTaxableAmount(amount);
-                            taxableIncome += amountSold;
+                            funds.taxableIncome += amountSold;
                             income += amountSold;
                             if (gains > 0)
                             {
-                                capitalGainsTaxes += funds.PayCapitalGainsTaxRecursively(ref baseIncome, gains);
+                                funds.PayCapitalGainsTaxRecursively(gains);
                             }
                         }
 
@@ -484,46 +537,38 @@ namespace Walkabout.Reports
                             }
                             funds.TaxDeferred -= amount;
                             income += amount;
-                            taxDeferredIncome += amount;
+                            funds.taxDeferredIncome += amount;
                             // Now to pay to taxes on this we need to take out more.                        
-                            incomeTaxes += funds.PayIncomeTaxRecursively(ref baseIncome, amount);
-                            baseIncome += amount;
+                            funds.PayIncomeTaxRecursively(amount);
                         }
 
                         if (income < futureIncome && funds.TaxFree > 0)
                         {
                             // draw down taxfree last to maximize taxfree inheritance.
                             var amount = futureIncome - income;
-                            if (amount > funds.TaxFree)
-                            {
-                                amount = funds.TaxFree;
-                            }
-                            taxFreeIncome = amount;
-                            funds.TaxFree -= amount;
+                            funds.WithdrawTaxFree(amount);
                         }
 
-                        this.totalTaxes += incomeTaxes + capitalGainsTaxes;
-                        taxableIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
-                        taxDeferredIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
-                        taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
+                        this.totalTaxes += funds.incomeTaxes + funds.capitalGainsTaxes;
+                        taxableIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.taxableIncome, Color = taxableIncomeColor, UserData = ChartValueTaxable });
+                        taxDeferredIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.taxDeferredIncome, Color = taxDeferredIncomeColor, UserData = ChartValueTaxDeferred });
+                        taxFreeIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.taxFreeIncome, Color = taxFreeIncomeColor, UserData = ChartValueTaxFree });
                         socialSecurityIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)socialSecurityIncome, Color = socialSecurityIncomeColor, UserData = ChartValueSocialSecurity });
 
-                        decimal grossUp = baseIncome - taxableIncome - taxDeferredIncome - socialSecurityIncome - dividends;
-                        if (grossUp < 0)
-                        {
-                            grossUp = 0;
-                        }
+                        decimal grossUp = funds.grossUp;
                         grossIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)grossUp, Color = grossIncomeColor, UserData = ChartValueGross });
                         dividendIncomeSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)dividends, Color = dividendIncomeColor, UserData = ChartValueDividends }); 
-                        incomeTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)incomeTaxes, Color = incomeTaxColor, UserData = ChartValueIncomeTaxes });
-                        capitalGainsTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)capitalGainsTaxes, Color = capitalGainsTaxColor, UserData = ChartValueCapitalGainsTaxes });
+
+                        incomeTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)(funds.incomeTaxes - funds.stateTaxes), Color = incomeTaxColor, UserData = ChartValueIncomeTaxes });
+                        capitalGainsTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.capitalGainsTaxes, Color = capitalGainsTaxColor, UserData = ChartValueCapitalGainsTaxes });
+                        stateTaxSeries.Add(new ChartDataValue() { Label = age.ToString(), Value = (double)funds.stateTaxes, Color = stateTaxColor, UserData = ChartValueStateTaxes });
 
                         futureIncome = futureIncome * (1 + this.state.InflationRate);
                     }
 
                     if (age < this.state.GraduationAge)
                     {
-                        funds.Appreciate(this.state.InvestmentRateOfReturn);
+                        funds.Appreciate(this.state.InvestmentRateOfReturn, this.state.TaxBracketInflationRate);
                     }
                     funds.SimulatedDate = funds.SimulatedDate.AddYears(1);
                 }
@@ -592,7 +637,7 @@ namespace Walkabout.Reports
                     this.calc = new CostBasisCalculator(this.myMoney, date);
                 }
                 var funds = new RetirementFunds();
-                funds.MarriedFilingJointly = this.state.MarriedFilingJointly;
+                funds.MarriedFilingJointly = this.state.TaxFilingStatus == TaxFilingStatus.Married;
                 foreach (var accountHolding in this.calc.GetAccountHoldings())
                 {
                     foreach (var holding in accountHolding.GetHoldings())
@@ -633,8 +678,11 @@ namespace Walkabout.Reports
                 var margin = new Thickness(4);
                 foreach (var series in chart.Data.Series)
                 {
-                    legend.Children.Add(new Rectangle() { Margin= margin, Fill = new SolidColorBrush(series.Values[0].Color.Value), Width = 20, Height = 16 });
-                    legend.Children.Add(new TextBlock() { Margin = margin, VerticalAlignment = VerticalAlignment.Center, Text = series.Name });
+                    if (series.Values.Count > 0)
+                    {
+                        legend.Children.Add(new Rectangle() { Margin = margin, Fill = new SolidColorBrush(series.Values[0].Color.Value), Width = 20, Height = 16 });
+                        legend.Children.Add(new TextBlock() { Margin = margin, VerticalAlignment = VerticalAlignment.Center, Text = series.Name });
+                    }
                 }
                 return grid;
             }
@@ -651,15 +699,18 @@ namespace Walkabout.Reports
                 writer.EndColumnDefinitions();
 
                 writer.WriteRow($"Assets remaining at age {this.state.GraduationAge}", this.totalAssets);
-                writer.WriteRow("    Taxable assets", finalFunds.Taxable);
+                if (finalFunds != null)
+                {
+                    writer.WriteRow("    Taxable assets", finalFunds.Taxable);
 
-                if (funds.TaxDeferred > 0)
-                {
-                    writer.WriteRow("    Tax deferred assets", finalFunds.TaxDeferred);
-                }
-                if (funds.TaxFree > 0)
-                {
-                    writer.WriteRow("    Tax free assets", finalFunds.TaxFree);
+                    if (funds.TaxDeferred > 0)
+                    {
+                        writer.WriteRow("    Tax deferred assets", finalFunds.TaxDeferred);
+                    }
+                    if (funds.TaxFree > 0)
+                    {
+                        writer.WriteRow("    Tax free assets", finalFunds.TaxFree);
+                    }
                 }
                 writer.WriteRow("Total taxes paid during retirement", this.totalTaxes);
                 writer.EndTable();
@@ -730,6 +781,7 @@ namespace Walkabout.Reports
 
                 chartData = new ChartData();
                 chartData.AddSeries(incomeTaxSeries);
+                chartData.AddSeries(stateTaxSeries);
                 chartData.AddSeries(capitalGainsTaxSeries);
                 taxesChart.Data = chartData;
 
@@ -806,7 +858,8 @@ namespace Walkabout.Reports
 
         private async Task Simulate()
         {
-            var simulation = new Simulation(this.MyMoney, this.state, (Report)this, this.cache);
+            var state = this.FindState(this.state.TaxFilingState);
+            var simulation = new Simulation(this.MyMoney, this.state, (Report)this, this.cache, state);
             this.simulation = simulation;
             await simulation.Run();
             await simulation.RunRothSimulation();
@@ -823,6 +876,42 @@ namespace Walkabout.Reports
             public int RmdAge = 75;
             public DateTime SimulatedDate;
             private List<SecurityPurchase> holdings = new List<SecurityPurchase>();
+            internal FederalTaxes FederalTaxes;
+            internal StateData stateTaxeRates;
+
+            // accumulated different types of income so far.
+            internal decimal incomeTaxes = 0;
+            internal decimal capitalGains = 0;
+            internal decimal capitalGainsTaxes = 0;
+            internal decimal baseIncome = 0;
+            internal decimal stateTaxes = 0;
+            internal decimal taxableIncome = 0;
+            internal decimal taxDeferredIncome = 0;
+            internal decimal taxFreeIncome = 0;
+            internal decimal grossUp = 0;
+
+            internal void Reset()
+            {
+                this.incomeTaxes = 0;
+                // capital loss can be carried forward
+                if (this.capitalGains > 0)
+                {
+                    this.capitalGains = 0;
+                }
+                this.capitalGainsTaxes = 0;
+                this.baseIncome = 0;
+                this.stateTaxes = 0;
+                this.taxableIncome = 0;
+                this.taxDeferredIncome = 0;
+                this.taxFreeIncome = 0;
+                this.grossUp = 0;
+            }
+
+
+            internal RetirementFunds()
+            {
+                this.FederalTaxes = FederalTaxes.Load();
+            }
 
             internal RetirementFunds Copy()
             {
@@ -835,7 +924,7 @@ namespace Walkabout.Reports
                 };
             }
 
-            internal void Appreciate(decimal investmentRateOfReturn)
+            internal void Appreciate(decimal investmentRateOfReturn, decimal taxBracketInflation)
             {
                 this.TaxDeferred = this.TaxDeferred * (1 + investmentRateOfReturn);
                 this.TaxFree = this.TaxFree * (1 + investmentRateOfReturn);
@@ -846,70 +935,9 @@ namespace Walkabout.Reports
                     holding.FuturePrice *= (1 + investmentRateOfReturn);
                 }
                 this.Taxable = this.ComputeTaxableHoldings();
+                this.FederalTaxes.InflateBrackets(taxBracketInflation);
             }
 
-            private static (decimal Rate, decimal Threshold)[] JointBracket = new (decimal, decimal)[]
-                {
-                    (0.37M, 768700M),
-                    (0.35M, 512450M),
-                    (0.32M, 403550M),
-                    (0.24M, 211400M),
-                    (0.22M, 100800M),
-                    (0.12M, 24800M),
-                    (0.10M, 0M), // floor
-            };
-            private static (decimal Rate, decimal Threshold)[] SingleBrackets = new (decimal, decimal)[]
-                {
-                    (0.37M, 640600M),
-                    (0.35M, 256225M),
-                    (0.32M, 201775M),
-                    (0.24M, 105700M),
-                    (0.22M, 50400M),
-                    (0.12M, 12400M),
-                    (0.10M, 0M),// floor
-            };
-
-            /// <summary>
-            /// Compute additional income tax to be paid for paycheck over and above what we have 
-            /// already paid for the accumulated baseIncome.
-            /// </summary>
-            /// <param name="baseIncome">The amount we've already paid tax on.</param>
-            /// <param name="paycheck">The new amount we need to pay tax on.</param>
-            internal decimal GetIncomeTax(decimal baseIncome, decimal paycheck)
-            {
-                const decimal standardDeduction = 32200M;
-
-                // Brackets for Married Filing Jointly (thresholds are upper bounds for lower brackets)
-                // Ordered from highest threshold to lowest.
-                var brackets = this.MarriedFilingJointly ? JointBracket : SingleBrackets;
-
-                decimal income = baseIncome + paycheck - standardDeduction;
-                if (income <= 0M)
-                {
-                    return 0M;
-                }
-
-                decimal tax = 0M;
-                foreach (var bracket in brackets)
-                {
-                    if (income > bracket.Threshold && paycheck > 0)
-                    {
-                        decimal taxableAtThisRate = income - bracket.Threshold;
-                        if (taxableAtThisRate > paycheck)
-                        {
-                            taxableAtThisRate = paycheck;
-                        }
-                        if (taxableAtThisRate > 0)
-                        {
-                            tax += taxableAtThisRate * bracket.Rate;
-                        }
-                        paycheck -= taxableAtThisRate;
-                        income = bracket.Threshold;
-                    }
-                }
-
-                return tax;
-            }
 
             // See https://www.finsyn.com/wp-content/uploads/2026/04/Required-Minimum-Distributions-Tables-Summary-Guide.pdf
             // Here we start at 75 since that is the age at which RMD must start (of born after 1960).
@@ -971,11 +999,15 @@ namespace Walkabout.Reports
                 return this.TaxDeferred / factor;
             }
 
-            internal decimal PayIncomeTaxRecursively(ref decimal baseIncome, decimal income)
+            internal decimal PayIncomeTaxRecursively(decimal income)
             {
-                decimal capitalGains = 0;
-                decimal incomeTax = this.GetIncomeTax(baseIncome, income);
-                baseIncome += income;
+                var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
+                decimal newCapitalGains = 0;
+                decimal incomeTax = this.FederalTaxes.GetIncomeTax(status, this.baseIncome, income);
+                decimal stateTax = this.stateTaxeRates.GetIncomeTax(status, this.baseIncome, income);
+                this.stateTaxes += stateTax;
+                this.baseIncome += income;
+                incomeTax += stateTax;
                 decimal totalTax = incomeTax;
                 while (incomeTax > 0)
                 {
@@ -983,9 +1015,10 @@ namespace Walkabout.Reports
                     {
                         // sell taxable assets first to maximize how much of deferred assets we can convert to Roth.
                         var (amountSold, gains) = this.SellTaxableAmount(incomeTax);
-                        capitalGains += gains;
+                        this.capitalGains += gains;
+                        newCapitalGains += gains;
                         incomeTax -= amountSold;
-                        baseIncome += amountSold;
+                        this.grossUp += amountSold;
                     }
 
                     if (this.TaxDeferred > 0 && incomeTax > 0)
@@ -998,8 +1031,9 @@ namespace Walkabout.Reports
                         }
                         this.TaxDeferred -= amount;
                         incomeTax -= amount;
-                        var ic = this.GetIncomeTax(baseIncome, amount);
-                        baseIncome += amount;
+                        var ic = this.FederalTaxes.GetIncomeTax(status, baseIncome, amount);
+                        this.baseIncome += amount;
+                        this.grossUp += amount;
                         totalTax += ic;
                         incomeTax += ic;
                     }
@@ -1012,6 +1046,7 @@ namespace Walkabout.Reports
                             amount = this.TaxFree;
                         }
                         this.TaxFree -= amount;
+                        this.taxFreeIncome += amount;
                         incomeTax -= amount;
                         // no tax consequence.
                     }
@@ -1021,44 +1056,52 @@ namespace Walkabout.Reports
                         break;
                     }
                 }
-                if (capitalGains > 0)
+                if (newCapitalGains > 0)
                 {
-                    totalTax += this.PayCapitalGainsTaxRecursively(ref baseIncome, capitalGains);
+                    this.PayCapitalGainsTaxRecursively(newCapitalGains);
                 }
                 else 
                 {
                     // TODO: model carry loss forward to next year...
                 }
+                this.incomeTaxes += totalTax;
                 return totalTax;
             }
 
-            internal decimal PayCapitalGainsTaxRecursively(ref decimal income, decimal capitalGains)
+            internal decimal PayCapitalGainsTaxRecursively(decimal capitalGains)
             {
-                decimal capitalGainsTax = this.GetCapitalGainsTax(income, capitalGains);
-                income += capitalGains;
-                decimal totalTax = capitalGainsTax;
-                while (capitalGainsTax > 0)
+                // Note: this assumes all gains are long term capital gains.
+                var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
+                decimal newCapitalGainsTax = this.FederalTaxes.GetCapitalGainsTax(status, this.capitalGains, capitalGains);
+                decimal stateTaxes = this.stateTaxeRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, capitalGains);
+                this.capitalGains += capitalGains;
+                newCapitalGainsTax += stateTaxes;
+                decimal totalTax = newCapitalGainsTax;
+                while (newCapitalGainsTax > 0)
                 {
-                    if (capitalGainsTax > 0)
+                    if (newCapitalGainsTax > 0)
                     {
                         // Sell this much to pay the incomeTax (which generates capital gains tax)
-                        var (amountSold, gains) = this.SellTaxableAmount(capitalGainsTax);
-                        capitalGainsTax -= amountSold;
-                        var capTax = this.GetCapitalGainsTax(income, gains);
-                        capitalGainsTax += capTax;
-                        income += amountSold;
-                        totalTax += capTax;
+                        var (amountSold, gains) = this.SellTaxableAmount(newCapitalGainsTax);
+                        newCapitalGainsTax -= amountSold;
+                        var capTax = this.FederalTaxes.GetCapitalGainsTax(status, this.capitalGains, gains);
+                        decimal stateCapTaxes = this.stateTaxeRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, gains);
+                        newCapitalGainsTax += capTax + stateCapTaxes;
+                        this.capitalGains += gains;
+                        this.grossUp += amountSold;
+                        totalTax += capTax + stateCapTaxes;
                     }
                     
-                    if (this.TaxFree > 0 && capitalGainsTax > 0)
+                    if (this.TaxFree > 0 && newCapitalGainsTax > 0)
                     {
-                        var amount = capitalGainsTax;
-                        if (capitalGainsTax > this.TaxFree)
+                        var amount = newCapitalGainsTax;
+                        if (newCapitalGainsTax > this.TaxFree)
                         {
                             amount = this.TaxFree;
                         }
                         this.TaxFree -= amount;
-                        capitalGainsTax -= amount;
+                        newCapitalGainsTax -= amount;
+                        this.taxFreeIncome += amount;
                         // no tax consequence.
                     }
                     else
@@ -1067,29 +1110,11 @@ namespace Walkabout.Reports
                         break;
                     }
                 }
+                this.capitalGainsTaxes += totalTax;
                 return totalTax;
             }
 
-            private decimal GetCapitalGainsTax(decimal income, decimal gains)
-            {
-                if (gains < 0)
-                {
-                    return 0;
-                }
-                // Add WA state gains (TODO: make this configurable).
-                decimal stateRate = (gains > 250000) ? 0.07M : 0;
-                if (income + gains > 613700)
-                {
-                    return gains * (0.20M + stateRate);
-                }
-                else if (income + gains > 98900)
-                {
-                    return gains * (0.15M + stateRate);
-                }
-                return 0;
-            }
-
-            internal Tuple<decimal, decimal> ConvertToRoth(ref decimal baseIncome, decimal amountToConvert)
+            internal Tuple<decimal, decimal> ConvertToRoth(decimal amountToConvert)
             {
                 decimal tax = 0;
                 if (this.TaxDeferred > 0)
@@ -1101,7 +1126,11 @@ namespace Walkabout.Reports
                     }
                     this.TaxDeferred -= amount;
                     this.TaxFree += amount;
-                    tax = this.PayIncomeTaxRecursively(ref baseIncome, amount);
+
+                    tax = this.PayIncomeTaxRecursively(amount);
+
+                    this.taxDeferredIncome += amount;
+
                     return Tuple.Create(tax, amount);
                 }
                 return Tuple.Create(0M, 0M);
@@ -1120,14 +1149,14 @@ namespace Walkabout.Reports
                     (0.0M, 0M), // floor
             };
 
-            internal decimal CalcSocialSecurityTax(decimal baseIncome, decimal socialSecurityIncome)
+            internal decimal CalcSocialSecurityTax(decimal socialSecurityIncome)
             {
                 // See https://www.aarp.org/social-security/faq/how-are-benefits-taxed
                 decimal percentage = 0;
                 var brackets = this.MarriedFilingJointly ? JointSocialBracket : SingleSocialBrackets;
                 foreach (var (rate, bracket) in brackets)
                 {
-                    if (baseIncome + socialSecurityIncome > bracket)
+                    if (this.baseIncome + socialSecurityIncome > bracket)
                     {
                         percentage = rate;
                         break;
@@ -1137,7 +1166,10 @@ namespace Walkabout.Reports
                 var taxable = socialSecurityIncome * percentage;
                 if (taxable > 0)
                 {
-                    return this.GetIncomeTax(baseIncome, taxable);
+                    var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
+                    var tax = this.FederalTaxes.GetIncomeTax(status, this.baseIncome, taxable);
+                    this.incomeTaxes += tax;
+                    return tax;
                 }
                 return 0;
             }
@@ -1242,6 +1274,26 @@ namespace Walkabout.Reports
             {
                 return calc.ComputeEstimatedAnnualDividends(this.holdings); 
             }
+
+            internal decimal PayDividendTaxes(decimal dividends)
+            {
+                var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
+                // Now pay taxes on these dividends from the dividends.
+                decimal dividendTax = this.FederalTaxes.GetIncomeTax(status, this.baseIncome, dividends);
+                this.incomeTaxes += dividendTax;
+                this.baseIncome += dividends;
+                return dividends - dividendTax;
+            }
+
+            internal void WithdrawTaxFree(decimal amount)
+            {
+                if (amount > this.TaxFree)
+                {
+                    amount = this.TaxFree;
+                }
+                this.taxFreeIncome = amount;
+                this.TaxFree -= amount;
+            }
         }
 
         public override void ApplyState(IReportState state)
@@ -1258,7 +1310,8 @@ namespace Walkabout.Reports
                     this.panel.DesiredIncome = s.DesiredAnnualIncome;
                     this.panel.CurrentAge = s.CurrentAge;
                     this.panel.SpouseAge = s.SpouseAge;
-                    this.panel.MarriedFilingJointly = s.MarriedFilingJointly;
+                    this.panel.TaxFilingStatus = s.TaxFilingStatus;
+                    this.panel.TaxFilingState = this.FindStateName(s.TaxFilingState);
                     this.panel.GraduationAge = s.GraduationAge;
                     this.panel.RetirementAge = s.RetirementAge;
                     this.panel.TaxDeferredStrategy = s.TaxDeferredStrategy;
@@ -1270,6 +1323,7 @@ namespace Walkabout.Reports
                     this.panel.SocialSecuritySpouseAge = s.SocialSecuritySpouseAge;
                     this.panel.SocialSecuritySpouseAmount = s.SocialSecuritySpouseAmount;
                     this.panel.SocialSecurityCola = s.SocialSecurityCola;
+                    this.panel.TaxBracketInflationRate = s.TaxBracketInflationRate;
                     this.Register();
                 }
             }
@@ -1291,7 +1345,8 @@ namespace Walkabout.Reports
             public decimal DesiredAnnualIncome { get; set; }
             public int CurrentAge { get; set; }
             public int SpouseAge { get; set; }
-            public bool MarriedFilingJointly { get; set; }
+            public TaxFilingStatus TaxFilingStatus { get; set; }
+            public string TaxFilingState { get; set; }
             public int RetirementAge { get; set; }
             public int GraduationAge { get; set; }
             public string TaxDeferredStrategy { get; set; }
@@ -1302,11 +1357,13 @@ namespace Walkabout.Reports
             public int SocialSecuritySpouseAge { get; set; }
             public decimal SocialSecuritySpouseAmount { get; set; }
             public decimal SocialSecurityCola { get; set; }
+            public decimal TaxBracketInflationRate { get; set; }
 
             public bool Stacked { get; set; }
 
 
             public string Name => "RetirementPlan";
+
 
             public RetirementPlanState()
             {
@@ -1327,7 +1384,8 @@ namespace Walkabout.Reports
                     DesiredAnnualIncome = this.DesiredAnnualIncome,
                     CurrentAge = this.CurrentAge,
                     SpouseAge = this.SpouseAge,
-                    MarriedFilingJointly = this.MarriedFilingJointly,
+                    TaxFilingStatus = this.TaxFilingStatus,
+                    TaxFilingState = this.TaxFilingState,
                     GraduationAge = this.GraduationAge,
                     RetirementAge = this.RetirementAge,
                     TaxDeferredStrategy = this.TaxDeferredStrategy,
@@ -1338,6 +1396,7 @@ namespace Walkabout.Reports
                     SocialSecuritySpouseAge = this.SocialSecuritySpouseAge,
                     SocialSecuritySpouseAmount = this.SocialSecuritySpouseAmount,
                     SocialSecurityCola = this.SocialSecurityCola,
+                    TaxBracketInflationRate = this.TaxBracketInflationRate,
                     Stacked = this.Stacked
                 };
             }

@@ -3,14 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Walkabout.Reports;
+using System.Linq;
+using Walkabout.Taxes;
 
 namespace Walkabout.Views.Controls
 {
@@ -24,14 +18,27 @@ namespace Walkabout.Views.Controls
             this.InitializeComponent();
             TaxDeferredRow.Visibility = Visibility.Collapsed;
             this.UpdateVisibility();
+
+            var stateTaxes = StateTaxes.Load();
+            foreach (var state in stateTaxes.Data)
+            {
+                this.TaxFilingStateCombo.Items.Add(state.Name);
+            }
+            this.TaxFilingStateCombo.SelectedIndex = 0;
+
+            foreach (TaxFilingStatus status in Enum.GetValues<TaxFilingStatus>())
+            {
+                this.TaxFilingStatusCombo.Items.Add(status);
+            }
+            this.TaxFilingStatusCombo.SelectedIndex = 0;
         }
 
         private void UpdateVisibility()
         {
-            var visibility = this.MarriedFilingJointly ? Visibility.Visible : Visibility.Collapsed;
+            var visibility = this.TaxFilingStatus == TaxFilingStatus.Married ? Visibility.Visible : Visibility.Collapsed;
             SpouseAgeLabel.Visibility = SpouseAgeBorder.Visibility = visibility;
             TaxDeferredDetails.Visibility = this.TaxDeferredStrategy != "None" ? Visibility.Visible : Visibility.Collapsed;
-            SocialSecuritySpouseDetails.Visibility = this.MarriedFilingJointly ? Visibility.Visible : Visibility.Collapsed;
+            SocialSecuritySpouseDetails.Visibility = this.TaxFilingStatus == TaxFilingStatus.Married ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public decimal InflationRate
@@ -307,24 +314,58 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        public bool MarriedFilingJointly
+        public TaxFilingStatus TaxFilingStatus
         {
-            get => this.FilingJointlyCheckbox.IsChecked == true;
+            get
+            {
+                if (this.TaxFilingStatusCombo.SelectedItem is TaxFilingStatus ts)
+                {
+                    return ts;
+                }
+                return TaxFilingStatus.Single;
+            }
             set
             {
-                this.FilingJointlyCheckbox.IsChecked = value;
+                this.TaxFilingStatusCombo.SelectedItem = value;
             }
         }
 
-        public event EventHandler<bool> MarriedFilingJointlyChanged;
+        public event EventHandler<TaxFilingStatus> TaxFilingStatusChanged;
 
-        private void OnMarriedFilingJointlyChanged(object sender, RoutedEventArgs e)
+        private void OnTaxFilingStatusChanged(object sender, RoutedEventArgs e)
         {
             this.UpdateVisibility();
-            if (MarriedFilingJointlyChanged != null)
+            if (TaxFilingStatusChanged != null)
             {
-                MarriedFilingJointlyChanged(this, this.MarriedFilingJointly);
+                TaxFilingStatusChanged(this, this.TaxFilingStatus);
             }
+        }
+
+        internal string TaxFilingState
+        {
+            get
+            {
+                if (this.TaxFilingStateCombo.SelectedItem is string ts)
+                {
+                    return ts;
+                }
+                return null;
+            }
+            set
+            {
+                this.TaxFilingStateCombo.SelectedItem = value;
+            }
+        }
+
+        internal event EventHandler<string> TaxFilingStateChanged;
+
+        private void OnTaxFilingStateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TaxFilingStateChanged != null)
+            {
+                TaxFilingStateChanged(this, this.TaxFilingState);
+            }
+
         }
 
         public bool StackedBars
@@ -423,5 +464,31 @@ namespace Walkabout.Views.Controls
             }
         }
 
+
+        public decimal TaxBracketInflationRate
+        {
+            get
+            {
+                decimal result = 0;
+                decimal.TryParse(this.TaxBracketInflationRateText.Text, out result);
+                return result / 100.0M;
+            }
+            set
+            {
+                this.TaxBracketInflationRateText.Text = (value * 100).ToString();
+            }
+        }
+
+        public event EventHandler<decimal> TaxBracketInflationRateChanged;
+
+
+        private void OnTaxBracketInflationRateChanged(object sender, string e)
+        {
+            if (TaxBracketInflationRateChanged != null)
+            {
+                this.TaxBracketInflationRateChanged(this, this.TaxBracketInflationRate);
+            }
+
+        }
     }
 }

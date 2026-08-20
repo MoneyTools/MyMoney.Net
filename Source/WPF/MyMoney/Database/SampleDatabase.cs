@@ -282,6 +282,47 @@ namespace Walkabout.Assistance
                     cashBalance[a] = 0;
                 }
 
+                // add dividends
+                foreach (var ss in data.Securities)
+                {
+                    if (ss.Dividends > 0)
+                    {
+                        foreach (var a in brokerageAccounts)
+                        {
+                            decimal owned = ownership.GetUnits(a, ss.Symbol);
+
+                            Security stock = this.money.Securities.FindSecurity(ss.Name, true);
+                            stock.SecurityType = ss.SecurityType;
+                            stock.Symbol = ss.Symbol;
+
+                            var date = new DateTime(year, 12, 31);
+                            var quote = this.GetClosingPrice(stock, date);
+                            decimal dividends = (quote * ss.Dividends) * owned;
+                            if (dividends > 0)
+                            {
+                                // Create a new Transaction
+                                var t = this.money.Transactions.NewTransaction(a);
+                                t.Date = date;
+
+                                //-----------------------------------------------------
+                                // Create the matching Investment transaction
+                                Investment i = t.GetOrCreateInvestment();
+                                i.Transaction = t;
+                                i.Security = stock;
+                                i.UnitPrice = quote;
+                                i.Price = quote;
+                                i.Type = InvestmentType.Dividend;
+                                t.Amount = dividends;
+                                t.Payee = this.money.Payees.FindPayee(ss.Name, true);
+                                t.Category = this.money.Categories.InvestmentDividends;
+                                cashBalance[a] += t.Amount;
+                                // Finally add the new transaction
+                                this.money.Transactions.AddTransaction(t);
+                            }
+                        }
+                    }
+                }
+
                 // now balance the accounts.
                 foreach (Account a in this.money.Accounts.GetAccounts())
                 {
@@ -806,6 +847,9 @@ namespace Walkabout.Assistance
 
         [XmlAttribute]
         public SecurityType SecurityType { get; set; }
+
+        [XmlAttribute]
+        public decimal Dividends { get; set; }
 
         [XmlElement("Split")]
         public SampleSplit[] Splits { get; set; }

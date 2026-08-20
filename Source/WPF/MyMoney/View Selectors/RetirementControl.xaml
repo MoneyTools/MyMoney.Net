@@ -71,15 +71,9 @@
           <Border x:Name="SpouseAgeBorder" Grid.Column="1" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
             <c:HandyTextBox x:Name="SpouseAgeText" HorizontalAlignment="Stretch"  Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the age of your spouse"
-                        Committed="OnSpouseAgeChanged"/>
+                        Committed="OnSpouseAgeChanged" />
           </Border>
         </Grid>
-      </Border>
-
-      <Border Style="{StaticResource Rows}" >
-        <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource ValueAreaBorder}">
-          <CheckBox x:Name="FilingJointlyCheckbox" Checked="OnMarriedFilingJointlyChanged" Unchecked="OnMarriedFilingJointlyChanged">Married filing jointly</CheckBox>
-        </Border>
       </Border>
 
       <Border Style="{StaticResource Rows}" >
@@ -109,6 +103,37 @@
           </Border>
         </Grid>
       </Border>
+
+      <Border Style="{StaticResource Rows}" >
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <TextBlock Text="Filing status:" Grid.Column="0" Grid.Row="0" />
+
+          <ComboBox  Grid.Column="0" Grid.Row="1"  x:Name="TaxFilingStatusCombo" HorizontalAlignment="Stretch" 
+                      ToolTip="Select your tax filing status"
+                    SelectionChanged="OnTaxFilingStatusChanged"
+                     Margin="10,2,20,2"
+                      />
+
+          <TextBlock Text="Filing State:" Grid.Column="1" Grid.Row="0" />
+
+          <ComboBox  Grid.Column="1" Grid.Row="1"  x:Name="TaxFilingStateCombo" HorizontalAlignment="Stretch" 
+                      ToolTip="Enter your tax filing state"
+                    SelectionChanged="OnTaxFilingStateChanged"
+                     Margin="10,2,20,2"
+                      />
+        </Grid>
+      </Border>
+
       <Border Style="{StaticResource Rows}" >
         <StackPanel>
           <TextBlock Text="Inflation Rate (%):" />
@@ -116,6 +141,17 @@
             <c:HandyTextBox x:Name="InflationRateText" HorizontalAlignment="Stretch"
                         ToolTip="Enter the estimated average inflation rate to apply to your desired income"
                         Committed="OnInflationRateChanged" Style="{StaticResource NumericTextBoxStyle}"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Tax Bracket Inflation Rate (%):" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <c:HandyTextBox x:Name="TaxBracketInflationRateText" HorizontalAlignment="Stretch"
+                        ToolTip="The IRS adjusts the brackets up every year to adjust for inflation (%)"
+                        Committed="OnTaxBracketInflationRateChanged" Style="{StaticResource NumericTextBoxStyle}"/>
           </Border>
         </StackPanel>
       </Border>
@@ -206,7 +242,7 @@
                         Committed="OnSocialSecuritySpouseAgeTextChanged"/>
             </Border>
 
-            <TextBlock Text="Average social security cost of living adjustment:" />
+            <TextBlock Text="Average social security cost of living adjustment (%):" />
             <Border Style="{StaticResource ValueAreaBorder}">
               <c:HandyTextBox x:Name="SocialSecurityColaText" HorizontalAlignment="Stretch"   Style="{StaticResource NumericTextBoxStyle}"
                         ToolTip="Enter the average social security COLA (cost of living adjustment)"
