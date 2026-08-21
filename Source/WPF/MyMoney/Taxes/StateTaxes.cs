@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Walkabout.Taxes
 {
-    internal class StateTaxes
+    public class StateTaxes
     {
         public StateTaxes() { }
 
@@ -23,7 +23,7 @@ namespace Walkabout.Taxes
         }
     }
 
-    internal class CapitalGains
+    public class CapitalGains
     {
         public CapitalGains() { }
 
@@ -36,7 +36,7 @@ namespace Walkabout.Taxes
         public decimal surchargeBracket { get; set; }
     }
 
-    internal class StateData
+    public class StateData
     {
         public StateData() { }
 
@@ -82,7 +82,7 @@ namespace Walkabout.Taxes
             }
         }
 
-        internal decimal GetIncomeTax(TaxFilingStatus status, decimal baseIncome, decimal paycheck)
+        public decimal GetIncomeTax(TaxFilingStatus status, decimal baseIncome, decimal paycheck)
         {
             if (this.IncomeBrackets == null)
             {
@@ -147,7 +147,7 @@ namespace Walkabout.Taxes
         }
 
 
-        internal decimal GetCapitalGainsTax(TaxFilingStatus status, decimal baseIncome, decimal baseGains, decimal gains)
+        public decimal GetCapitalGainsTax(TaxFilingStatus status, decimal baseIncome, decimal baseGains, decimal gains)
         {
             if (this.NoCapitalGainsTax)
             {
@@ -155,7 +155,7 @@ namespace Walkabout.Taxes
             }
 
             var totalGain = baseGains + gains - this.CapitalGains.deductionAmount;
-            if (totalGain < 0)
+            if (totalGain <= 0)
             {
                 // capital loss or we have not yet met the deduction amount.
                 return 0;
@@ -170,9 +170,9 @@ namespace Walkabout.Taxes
                 }
 
                 var tax =  gains * this.CapitalGains.fixedRate / 100.0M;
-                if (this.CapitalGains.surchargeBracket > 0 && (baseGains + gains) > this.CapitalGains.surchargeBracket)
+                if (this.CapitalGains.surchargeBracket > 0 && totalGain > this.CapitalGains.surchargeBracket)
                 {
-                    var extra = (baseGains + gains) - this.CapitalGains.surchargeBracket;
+                    var extra = totalGain - this.CapitalGains.surchargeBracket;
                     if (extra > gains)
                     {
                         extra = gains; // all of it is at surcharge rate.
@@ -190,7 +190,7 @@ namespace Walkabout.Taxes
             return 0;
         }
 
-        internal void InflateBrackets(decimal taxBracketInflation)
+        public void InflateBrackets(decimal taxBracketInflation)
         {
             // apply tax bracket inflation.
             var increase = (1 + taxBracketInflation);

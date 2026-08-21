@@ -14,7 +14,7 @@ namespace Walkabout.Taxes
         HeadOfHousehold
     }
 
-    internal class FederalTaxes
+    public class FederalTaxes
     {
         [JsonProperty("standardDeduction")]
         public StandardDeduction StandardDeduction { get; set; }
@@ -104,7 +104,7 @@ namespace Walkabout.Taxes
             return tax;
         }
 
-        internal void InflateBrackets(decimal taxBracketInflation)
+        public void InflateBrackets(decimal taxBracketInflation)
         {
             // apply tax bracket inflation.
             var increase = (1 + taxBracketInflation);
@@ -122,7 +122,7 @@ namespace Walkabout.Taxes
         /// Calculate the incremental taxes we need to pay on the new gains over and above
         /// what we've already paid tax on in the baseGains.
         /// </summary>
-        internal decimal GetCapitalGainsTax(TaxFilingStatus status, decimal baseGains, decimal gains)
+        public decimal GetCapitalGainsTax(TaxFilingStatus status, decimal baseGains, decimal gains)
         {
             if (gains < 0)
             {
