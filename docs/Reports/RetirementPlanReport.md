@@ -1,9 +1,10 @@
 # Retirement Plan Report
 
 If you have a brokerage account containing taxable assets, perhaps also some tax deferred accounts like 401k or
-traditional IRA, and some tax free accounts like a Roth IRA, this report can plot out what your retirement income would
-look like, how your retirement funds could be used, and lets you explore whether you should do a Roth conversion on any
-tax deferred accounts.
+traditional IRA, and some tax free accounts like a Roth IRA, this report can plot out what your retirement income might
+look like, how your retirement funds could be used, and gives you a way to explore some other scenarios, like what
+effect it has if you change your retirement income, do a Roth conversion on any tax deferred accounts, move to a
+different state, or change your social security income age.
 
 To setup the report you need to enter some values in the RETIREMENT details as follows:
 
@@ -20,12 +21,11 @@ reasonable inflation rates.
 
 The first part of the report shows a summary of assets remaining at the end date (in this case age 90):
 
-- Assets remaining at age 90	$7,158,438
-    - Taxable assets	$509,229
+- Assets remaining at age 90	$7,526,603
+    - Taxable assets	$877,394
     - Tax deferred assets	$1,409,389
     - Tax free assets	$5,239,820
-- Total taxes paid during retirement	$192,536
-
+- Total taxes paid during retirement	$211,048
 
 And then it shows some charts, the first one is a chart showing how each class of asset grows and/or is drawn down over
 the years as follows:
@@ -76,8 +76,9 @@ But before settling on a Roth strategy you should also experiment with different
 notice that if the market returns are very low or negative, then Roth conversion usually does not make sense, while high
 market ROI usually means a Roth conversion is a good idea.
 
-Note that all of this is just an `estimate` based on the inflation rate and rate of return predictions you provided and it
-does not compute your real cost basis for capital gains taxes, it uses an estimated capital gains based on your current
-holdings.  This simulation also assumes today's (2026) tax brackets, and does not modify the tax rates over the years which we know
-never happens. Chances are tax rates will always go up, so this should be another consideration when it comes to minimizing
-future taxes which the Roth conversation also helps with.
+Note that all of this is just an `estimate` based on the inflation rate and rate of return predictions you provided and
+it it uses an estimated capital gains based on your current holdings, which assumes you hold the same stuff, which is
+unlikely for this extended period. This simulation also assumes today's (2026) tax brackets, and does not modify the tax
+rates over the years which we know never happens. It does apply inflation adjustments to the tax brackets, but chances
+are tax rates will also always go up.  All this to say this is only a simulation, but it shows you the equation is
+very complicated. You should consult a retirement planning specialist before making any big decisions.
