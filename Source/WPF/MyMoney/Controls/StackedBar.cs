@@ -209,6 +209,7 @@ namespace Walkabout.Controls
                 foreach (var i in infos)
                 {
                     double height = Math.Round((i.Length / totalLength) * bounds.Height);
+                    if (height < 0) height = 0;
                     i.Bounds = new Rect(x, y, width, height);
                     y += height;
                 }
@@ -222,6 +223,7 @@ namespace Walkabout.Controls
                 foreach (var i in infos)
                 {
                     double width = Math.Round((i.Length / totalLength) * bounds.Width);
+                    if (width < 0) width = 0;
                     i.Bounds = new Rect(x, y, width, height);
                     x += width;
                 }
