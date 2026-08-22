@@ -112,6 +112,11 @@ where wingetcreate > nul 2>&1
 if ERRORLEVEL 1 winget install wingetcreate
 winget upgrade wingetcreate
 
+REM Note: This repo is checked out with --sparse:
+REM git clone --sparse --filter=blob:none git@github.com:lovettchris/winget-pkgs.git  
+REM then we added the following:
+REM git sparse-checkout set manifests/m/Microsoft/XMLNotepad manifests/l/LovettSoftware 
+
 set TARGET=%WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net\%VERSION%
 if not exist %TARGET% mkdir %TARGET%
 copy /y %ROOT%WinGetTemplate\LovettSoftware*.yaml  %TARGET%
