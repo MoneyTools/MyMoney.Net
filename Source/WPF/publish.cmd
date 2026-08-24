@@ -120,7 +120,7 @@ REM git sparse-checkout set manifests/m/Microsoft/XMLNotepad manifests/l/LovettS
 set TARGET=%WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net\%VERSION%
 if not exist %TARGET% mkdir %TARGET%
 copy /y %ROOT%WinGetTemplate\LovettSoftware*.yaml  %TARGET%
-wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/MoneyTools/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_x64.msixbundle
+wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/MoneyTools/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_x64.msixbundle --replace 
 if ERRORLEVEL 1 goto :eof
 
 pushd %TARGET%
@@ -134,7 +134,7 @@ git commit -a -m "Money.Net version %VERSION%"
 git push -u origin "clovett/mymoney_%VERSION%"
 
 echo =============================================================================================================
-echo Please create Pull Request for the new "clovett/mymoney_%VERSION%" branch.
+echo Please create Pull Request for the new "clovett/mymoney_%VERSION%" branch on https://github.com/microsoft/winget-pkgs
 
 call gitweb
 

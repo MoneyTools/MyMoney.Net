@@ -3767,7 +3767,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "RetirementPlanReport");
-            HelpService.SetHelpKeyword(view, "Reports/RetirementPlan/");
+            HelpService.SetHelpKeyword(view, "Reports/RetirementPlanReport/");
             RetirementPlanReport report = new RetirementPlanReport(view) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
