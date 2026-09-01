@@ -68,8 +68,8 @@ namespace Walkabout.Reports
         private DelayedActions actions = new DelayedActions();
         private StateTaxes stateTaxes;
 
-        public static string TaxDeferredStrategyNone = "None";
-        public static string TaxDeferredStrategyRoth = "Roth Conversion";
+        public const string TaxDeferredStrategyNone = "None";
+        public const string TaxDeferredStrategyRoth = "Roth Conversion";
 
         public RetirementPlanReport(FlowDocumentView view)
         {
@@ -121,25 +121,28 @@ namespace Walkabout.Reports
 
         private void Register()
         {
-            this.panel.RateOfReturnChanged += this.OnRateOfReturnChanged;
-            this.panel.InflationRateChanged += this.OnInflationRateChanged;
-            this.panel.DesiredIncomeChanged += this.OnDesiredIncomeChanged;
-            this.panel.GraduationAgeChanged += this.OnGraduationAgeChanged;
-            this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
-            this.panel.SpouseAgeChanged += this.OnSpouseAgeChanged;
-            this.panel.TaxFilingStatusChanged += this.OnTaxFilingStatusChanged;
-            this.panel.TaxFilingStateChanged += this.OnTaxFilingStateChanged;
-            this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
-            this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
-            this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
-            this.panel.TaxDeferredStrategyAgeChanged += this.OnTaxDeferredStrategyAgeChanged;
-            this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
-            this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
-            this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
-            this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
-            this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
-            this.panel.SocialSecurityColaChanged += this.OnSocialSecurityColaChanged;
-            this.panel.TaxBracketInflationRateChanged += this.OnTaxBracketInflationRateChanged;
+            if (this.panel != null)
+            {
+                this.panel.RateOfReturnChanged += this.OnRateOfReturnChanged;
+                this.panel.InflationRateChanged += this.OnInflationRateChanged;
+                this.panel.DesiredIncomeChanged += this.OnDesiredIncomeChanged;
+                this.panel.GraduationAgeChanged += this.OnGraduationAgeChanged;
+                this.panel.CurrentAgeChanged += this.OnCurrentAgeChanged;
+                this.panel.SpouseAgeChanged += this.OnSpouseAgeChanged;
+                this.panel.TaxFilingStatusChanged += this.OnTaxFilingStatusChanged;
+                this.panel.TaxFilingStateChanged += this.OnTaxFilingStateChanged;
+                this.panel.RetirementAgeChanged += this.OnRetirementAgeChanged;
+                this.panel.TaxDeferredStrategyChanged += this.OnTaxDeferredStrategyChanged;
+                this.panel.TaxDeferredStrategyYearsChanged += this.OnTaxDeferredStrategyYearsChanged;
+                this.panel.TaxDeferredStrategyAgeChanged += this.OnTaxDeferredStrategyAgeChanged;
+                this.panel.SocialSecurityAgeChanged += this.OnSocialSecurityAgeChanged;
+                this.panel.SocialSecurityAmountChanged += this.OnSocialSecurityAmountChanged;
+                this.panel.StackedBarsChanged += this.OnStackedBarsChanged;
+                this.panel.SocialSecuritySpouseAmountChanged += this.OnSocialSecuritySpouseAmountChanged;
+                this.panel.SocialSecuritySpouseAgeChanged += this.OnSocialSecuritySpouseAgeChanged;
+                this.panel.SocialSecurityColaChanged += this.OnSocialSecurityColaChanged;
+                this.panel.TaxBracketInflationRateChanged += this.OnTaxBracketInflationRateChanged;
+            }
         }
 
 
@@ -476,7 +479,7 @@ namespace Walkabout.Reports
 #endif
                 decimal futureIncome = this.state.DesiredAnnualIncome;
                 var funds = this.funds.Copy(); // make a modifiable copy.
-                funds.stateTaxeRates = this.stateTaxRates;
+                funds.stateTaxRates = this.stateTaxRates;
                 this.finalFunds = funds;
 
                 var taxableColor = Colors.Green;
@@ -912,6 +915,7 @@ namespace Walkabout.Reports
         {
             await Task.CompletedTask;
 
+            this.state.ReportDate = DateTime.Today; // this is not settable, so always today.
             this.DelaySaveState();
 
             this.SetDefaultCurrency(writer, this.state.NormalizedCurrency);
@@ -952,7 +956,7 @@ namespace Walkabout.Reports
             public DateTime SimulatedDate;
             private List<SecurityPurchase> holdings = new List<SecurityPurchase>();
             internal FederalTaxes FederalTaxes;
-            internal StateData stateTaxeRates;
+            internal StateData stateTaxRates;
 
             // accumulated different types of income so far.
             internal decimal incomeTaxes = 0;
@@ -1079,7 +1083,7 @@ namespace Walkabout.Reports
                 var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
                 decimal newCapitalGains = 0;
                 decimal incomeTax = this.FederalTaxes.GetIncomeTax(status, this.baseIncome, income);
-                decimal stateTax = this.stateTaxeRates.GetIncomeTax(status, this.baseIncome, income);
+                decimal stateTax = this.stateTaxRates.GetIncomeTax(status, this.baseIncome, income);
                 this.stateTaxes += stateTax;
                 this.incomeTaxes += incomeTax;
                 this.baseIncome += income;
@@ -1106,7 +1110,7 @@ namespace Walkabout.Reports
                         }
                         this.TaxDeferred -= amount;
                         var ic = this.FederalTaxes.GetIncomeTax(status, baseIncome, amount);
-                        decimal st = this.stateTaxeRates.GetIncomeTax(status, this.baseIncome, income);
+                        decimal st = this.stateTaxRates.GetIncomeTax(status, this.baseIncome, income);
                         this.incomeTaxes += ic;
                         this.stateTaxes += st;
                         this.baseIncome += amount;
@@ -1147,7 +1151,7 @@ namespace Walkabout.Reports
                 // Note: this assumes all gains are long term capital gains.
                 var status = this.MarriedFilingJointly ? Taxes.TaxFilingStatus.Married : Taxes.TaxFilingStatus.Single;
                 decimal newCapitalGainsTax = this.FederalTaxes.GetCapitalGainsTax(status, this.capitalGains, capitalGains);
-                decimal stateTaxes = this.stateTaxeRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, capitalGains);
+                decimal stateTaxes = this.stateTaxRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, capitalGains);
                 this.capitalGains += capitalGains;
                 this.capitalGainsTaxes += newCapitalGainsTax;
                 this.stateTaxes += stateTaxes;
@@ -1160,7 +1164,7 @@ namespace Walkabout.Reports
                         var (amountSold, gains) = this.SellTaxableAmount(newCapitalGainsTax);
                         newCapitalGainsTax -= amountSold;
                         var capTax = this.FederalTaxes.GetCapitalGainsTax(status, this.capitalGains, gains);
-                        decimal stateCapTaxes = this.stateTaxeRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, gains);
+                        decimal stateCapTaxes = this.stateTaxRates.GetCapitalGainsTax(status, this.baseIncome, this.capitalGains, gains);
                         newCapitalGainsTax += capTax + stateCapTaxes;
                         this.capitalGains += gains;
                         this.grossUp += amountSold;
@@ -1476,7 +1480,7 @@ namespace Walkabout.Reports
                     SocialSecuritySpouseAmount = this.SocialSecuritySpouseAmount,
                     SocialSecurityCola = this.SocialSecurityCola,
                     TaxBracketInflationRate = this.TaxBracketInflationRate,
-                    SocialSecurityAmounts = this.SocialSecurityAmounts,
+                    SocialSecurityAmounts = this.SocialSecurityAmounts != null ? new List<SocialSecurityAmount>(this.SocialSecurityAmounts) : null,
                     Stacked = this.Stacked
                 };
             }

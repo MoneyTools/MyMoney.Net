@@ -1237,19 +1237,6 @@ namespace Walkabout.Data
             }
         }
 
-        public async void RebalanceInvestments()
-        {
-            CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
-
-            foreach (Account a in this.Accounts.GetAccounts())
-            {
-                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
-                {
-                    await this.Rebalance(calculator, a);
-                }
-            }
-        }
-
         private readonly HashSet<Account> balancePending = new HashSet<Account>();
 
         public override void EndUpdate()
@@ -10020,16 +10007,13 @@ namespace Walkabout.Data
             bool hasInvestments = false;
             var today = DateTime.Today;
             bool first = true;
+            decimal futureBalance = 0;
 
             foreach (object row in data)
             {
                 Transaction t = row as Transaction;
                 if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
                 {
-                    if (t.Date > toDate)
-                    {
-                        continue;
-                    }
                     if (first)
                     {
                         // we have something in the date range, so include the opening balance.
@@ -10065,6 +10049,10 @@ namespace Walkabout.Data
                         tax = t.Account.GetNormalizedAmount(tax);
                         amount = t.Account.GetNormalizedAmount(amount);
                     }
+                    if (t.Date > toDate)
+                    {
+                        futureBalance += amount;
+                    }
 
                     balance += amount;
                     result.SalesTax += tax;
@@ -10095,7 +10083,9 @@ namespace Walkabout.Data
                     }
                 }
             }
-            result.Balance = balance;
+            // update the transactions to show future balance, but don't include that in the
+            // AccountsControl balances.
+            result.Balance = balance - futureBalance;
             return result;
         }
 

@@ -15,6 +15,7 @@ namespace Walkabout.StockQuotes
         private readonly MyMoney myMoney;
         private readonly DownloadLog log;
         private IDictionary<Security, List<Investment>> transactionsBySecurity;
+        private DateTime cacheDate;
         private HashSet<Security> changed;
         private long lockCount;
 
@@ -115,32 +116,8 @@ namespace Walkabout.StockQuotes
 
             if (!found)
             {
-                // hmmm, then we have to search our own transactions for a recorded UnitPrice.
-                if (this.transactionsBySecurity == null)
-                {
-                    this.transactionsBySecurity = this.myMoney.GetTransactionsGroupedBySecurity((a) => true, date.AddDays(1));
-                }
-
-                if (this.transactionsBySecurity.TryGetValue(s, out List<Investment> trades) && trades != null)
-                {
-                    price = 0;
-                    foreach (var t in trades)
-                    {
-                        if (t.Date > date)
-                        {
-                            break;
-                        }
-                        if (t.UnitPrice != 0)
-                        {
-                            price = t.UnitPrice;
-                        }
-                    }
-                }
-                if (price != 0)
-                {
-                    // remember this one in our index.
-                    index.SetQuote(date, price);
-                }
+                // hmmm, then LoadIndexFromHistory didn't find anything, so let's go with today's price then.
+                price = s.Price;
             }
 
             return price;
@@ -162,10 +139,29 @@ namespace Walkabout.StockQuotes
                 index = new StockQuoteIndex(history, splits);
                 this.quoteIndex[s] = index;
             }
+
             if (index == null)
             {
                 index = new StockQuoteIndex();
                 this.quoteIndex[s] = index;
+            }
+
+            // also populate the index with our current transactions for this security.
+            if (this.transactionsBySecurity == null || this.cacheDate != DateTime.Today)
+            {
+                this.cacheDate = DateTime.Today;
+                this.transactionsBySecurity = this.myMoney.GetTransactionsGroupedBySecurity((a) => true, DateTime.Today);
+            }
+
+            if (this.transactionsBySecurity.TryGetValue(s, out List<Investment> trades) && trades != null)
+            {
+                foreach (var t in trades)
+                {
+                    if (!index.HasQuote(t.Date))
+                    {
+                        index.SetQuote(t.Date, t.UnitPrice);
+                    }
+                }
             }
 
             return index;
@@ -182,6 +178,8 @@ namespace Walkabout.StockQuotes
             public StockQuoteIndex()
             {
             }
+
+            public int Count => index.Count;
 
             /// <summary>
             /// Construct index from the given history.  Now remember ths history is split adjusted so
@@ -203,6 +201,11 @@ namespace Walkabout.StockQuotes
             public void SetQuote(DateTime date, decimal price)
             {
                 this.index[date] = new StockQuote() { Close = price, Date = date };
+            }
+
+            public bool HasQuote(DateTime date)
+            {
+                return this.index.ContainsKey(date.Date);
             }
 
             /// <summary>

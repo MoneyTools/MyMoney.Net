@@ -2511,6 +2511,11 @@ namespace Walkabout
                     {
                         chartsDirty = true;
                     }
+                    if (args.Name == "Price")
+                    {
+                        // if this is an owned stock then the networth may have just changed!
+                        this.delayedActions.StartDelayedAction("updateBalance", this.UpdateBalance, TimeSpan.FromSeconds(1));
+                    }
                 }
                 else
                 {

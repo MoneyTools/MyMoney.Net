@@ -1997,7 +1997,7 @@ namespace Walkabout.Views
         internal void ViewTransactionsForSingleAccount(Account a, TransactionSelection selection, long selectedRowId, TransactionFilter filter = TransactionFilter.All)
         {
             if (a == this.activeAccount && this.currentDisplayName == TransactionViewName.Account &&
-                this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
+                this.InvestmentAccountTabs.SelectedIndex == this.selectedTab && this.selector != null && this.selector.GetType() == typeof(TransactionAccountSelector))
             {
                 // already viewing this account.
                 this.TransactionFilter = filter;

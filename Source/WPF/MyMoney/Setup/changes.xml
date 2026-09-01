@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.74" date="8/16312026">
+		- Bug: Fix F8 when looking at fixed downloaded transactions so you can easily get back to the full account view.
+		- Bug: Fix future balance in accounts that have future bills due lined up but not yet cleared.
+		- Bug: Fix import of Fidelity CONVERSION SHARES DEPOSITED.
+		- Bug: Fix bugs in StockQuoteCache.
+	</change>
 	<change version="2.1.0.73" date="8/16/2026">
 		- Feature: Add setting for social security cost of living adjustment to retirement plan report.
 	</change>
