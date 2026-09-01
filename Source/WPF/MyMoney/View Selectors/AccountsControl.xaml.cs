@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -18,6 +19,7 @@ using Walkabout.Dialogs;
 using Walkabout.Help;
 using Walkabout.Importers;
 using Walkabout.Utilities;
+using Walkabout.StockQuotes;
 
 #if PerformanceBlocks
 using Walkabout.PerformanceProvider;
@@ -992,12 +994,12 @@ namespace Walkabout.Views.Controls
                 if (fd.ShowDialog() == true)
                 {
                     var file = fd.FileName;
-                    this.ImportCsv(a, file);
+                    _ = this.ImportCsv(a, file);
                 }
             }
         }
 
-        private void ImportCsv(Account account, string fileName)
+        private async Task ImportCsv(Account account, string fileName)
         {
             DownloadControl downloadControl = (DownloadControl)this.Site.GetService(typeof(DownloadControl));
             var entries = new ThreadSafeObservableCollection<DownloadData>();
@@ -1018,10 +1020,11 @@ namespace Walkabout.Views.Controls
                     CsvTransactionImporter.BrokerageAccountFields :
                     CsvTransactionImporter.BankAccountFields;
                 entries.Add(data);
-                var importer = new CsvTransactionImporter(this.myMoney, account, map, data, fields);
+                var cache = (StockQuoteCache)this.Site.GetService(typeof(StockQuoteCache));
+                var importer = new CsvTransactionImporter(this.myMoney, account, map, data, fields, cache);
                 var count = importer.Import(csv);
                 data.Message = (count > 0) ? $"Downloaded {count} transactions" : null;
-                importer.Commit();
+                await importer.Commit();
                 data.Success = true;
                 map.Save();
                 _ = this.myMoney.Rebalance(account);
@@ -1074,7 +1077,8 @@ namespace Walkabout.Views.Controls
                         CsvTransactionImporter.BrokerageAccountFields :
                         CsvTransactionImporter.BankAccountFields;
                     DownloadData data = new DownloadData(null, account, "");
-                    var ti = new CsvTransactionImporter(this.myMoney, account, map, data, fields);
+                    var cache = (StockQuoteCache)this.Site.GetService(typeof(StockQuoteCache));
+                    var ti = new CsvTransactionImporter(this.myMoney, account, map, data, fields, cache);
                     ti.EditCsvMap(null);
                 } 
                 catch (UserCanceledException)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Walkabout.StockQuotes;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Utilities;
@@ -18,11 +19,13 @@ namespace Walkabout.Importers
         private DownloadControl control;
         private MyMoney myMoney;
         private string databaseDir;
+        private StockQuoteCache cache;
 
-        public CsvImportController(DownloadControl control, MyMoney money, string databaseDir)
+        public CsvImportController(DownloadControl control, MyMoney money, string databaseDir, StockQuoteCache cache)
         {
             this.myMoney = money;
             this.databaseDir = databaseDir;
+            this.cache = cache;
             this.control = control;
         }
 
@@ -45,7 +48,7 @@ namespace Walkabout.Importers
                         var data = new DownloadData(null, key);
                         entries.Add(data);
                         var doc = grouped[key];
-                        var result = this.ImportCsvForAccount(doc, key, data, map);
+                        var result = await this.ImportCsvForAccount(doc, key, data, map);
                         var count = result.Item1;
                         if (map == null)
                         {
@@ -67,7 +70,7 @@ namespace Walkabout.Importers
                     var acct = AccountHelper.PickAccount(this.myMoney, null, prompt);
                     var data = new DownloadData(null, acct);
                     entries.Add(data);
-                    var result = this.ImportCsvForAccount(csv, acct, data);
+                    var result = await this.ImportCsvForAccount(csv, acct, data);
                     var count = result.Item1;
                     if (count > 0 && acct != null)
                     {
@@ -95,7 +98,7 @@ namespace Walkabout.Importers
             return total;
         }
 
-        private Tuple<int, CsvMap> ImportCsvForAccount(CsvDocument csv, Account acct, DownloadData data, CsvMap defaultMap = null)
+        private async Task<Tuple<int, CsvMap>> ImportCsvForAccount(CsvDocument csv, Account acct, DownloadData data, CsvMap defaultMap = null)
         {
             int count = 0;
             CsvMap map = null;
@@ -105,9 +108,9 @@ namespace Walkabout.Importers
                 CsvTransactionImporter.BrokerageAccountFields :
                 CsvTransactionImporter.BankAccountFields;
 
-            var importer = new CsvTransactionImporter(this.myMoney, acct, map, data, fields);
+            var importer = new CsvTransactionImporter(this.myMoney, acct, map, data, fields, this.cache);
             count = importer.Import(csv);
-            importer.Commit();
+            await importer.Commit();
             map.Save();
             return new Tuple<int, CsvMap>(count, map);
         }

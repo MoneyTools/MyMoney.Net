@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Data;
 using Walkabout.Dialogs;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Importers
@@ -75,18 +77,20 @@ namespace Walkabout.Importers
         private readonly Regex numericRegex = new Regex(@"([+-]?[\d,.]+)");
         private readonly string[] fields;
         private readonly DownloadData data;
+        private readonly StockQuoteCache cache;
 
         // this is what we "can" import...must match the values in the MapField switch statement.
         public static string[] BankAccountFields = new string[] { "Date", "Payee", "Memo", "Amount", "FITID" };
         public static string[] BrokerageAccountFields = new string[] { "Date", "Payee", "Memo", "Action", "Symbol", "TradeType", "UnitPrice", "Quantity", "Amount", "FITID" };
 
-        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map, DownloadData data, string[] fields)
+        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map, DownloadData data, string[] fields, StockQuoteCache cache)
         {
             this.money = money;
             this.account = account;
             this.map = map;
             this.fields = fields;
             this.data = data;
+            this.cache = cache;
         }
 
         public static Dictionary<Account, CsvDocument> GroupCsvByAccount(MyMoney money, CsvDocument csv)
@@ -156,8 +160,9 @@ namespace Walkabout.Importers
             return groupedByAccount;
         }
 
-        public void Commit()
+        public async Task Commit()
         {
+            List<Transaction> noUnitPrices = new List<Transaction>();
             // ok, we have typed data, no exceptions, so merge with the account.
             if (this.typedData.Count == 0)
             {
@@ -172,7 +177,6 @@ namespace Walkabout.Importers
                 // So we need constant time lookup by date so that import can quickly match existing matching transactions.
                 Dictionary<DateTime, object> indexed = new Dictionary<DateTime, object>();
                 
-
                 foreach (var bag in this.typedData)
                 {
                     Transaction found = cache.FindMatch(bag);
@@ -206,8 +210,47 @@ namespace Walkabout.Importers
                             this.AddInvestmentInfo(found, bag);
                         }
                     }
+                    if (found.Investment != null && found.Investment.Security != null && found.Investment.Units > 0 && found.Investment.UnitPrice == 0)
+                    {
+                        noUnitPrices.Add(found);
+                    }
+
                     found.IsDownloaded = true;
                     this.data.AddItem(found);
+                }
+            }
+            finally
+            {
+                this.money.EndUpdate();
+            }
+
+            if (noUnitPrices != null)
+            {
+                await this.LookupUnitPrice(noUnitPrices);
+            }
+        }
+
+        private async Task LookupUnitPrice(List<Transaction> noUnitPrices)
+        {
+            Dictionary<Transaction, decimal> prices = new Dictionary<Transaction, decimal>();
+            foreach (var t in noUnitPrices)
+            {
+                var s = t.Investment.Security;
+                if (s != null)
+                {
+                    var price = await this.cache.GetSecurityMarketPrice(t.Date, s);
+                    prices[t] = price;
+                    t.Investment.UnitPrice = price;
+                }
+            }
+
+            // ok, now we are outside the async part, update the model in one quick transaction.
+            try
+            {
+                this.money.BeginUpdate(this);
+                foreach (var (t,price) in prices)
+                {
+                    t.Investment.UnitPrice = price;
                 }
             }
             finally
@@ -240,7 +283,12 @@ namespace Walkabout.Importers
                 }
                 else
                 {
-                    if (t.Amount < 0)
+                    if (t.Amount == 0)
+                    {
+                        i.Type = bag.Quantity > 0 ? InvestmentType.Add : InvestmentType.Buy;
+                        bag.Quantity = Math.Abs(bag.Quantity);
+                    }
+                    else if (t.Amount < 0)
                     {
                         i.Type = bag.TradeType == "Shares" ? InvestmentType.Add : InvestmentType.Buy;
                     }

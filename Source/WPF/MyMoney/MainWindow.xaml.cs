@@ -4113,7 +4113,7 @@ namespace Walkabout
         {
             TabItem item = this.ShowDownloadTab();
             DownloadControl dc = item.Content as DownloadControl;
-            CsvImportController importer = new CsvImportController(dc, this.myMoney, this.GetDatabaseDir());
+            CsvImportController importer = new CsvImportController(dc, this.myMoney, this.GetDatabaseDir(), this.cache);
             return await importer.ImportCsv(fileName);
         }
 
