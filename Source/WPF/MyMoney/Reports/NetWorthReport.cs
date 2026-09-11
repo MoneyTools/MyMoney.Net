@@ -221,7 +221,7 @@ namespace Walkabout.Reports
                     totalBalance += balance;
 
                     // Investment Cash
-                    Predicate<Account> investmentAccountFilter = (a) => { return this.IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; };
+                    Predicate<Account> investmentAccountFilter = (a) => { return a.IsInvestmentAccount && !a.IsTaxDeferred && !a.IsTaxFree; };
                     balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, investmentAccountFilter);
                     if (balance != 0)
                     {
@@ -233,7 +233,7 @@ namespace Walkabout.Reports
                     }
 
                     // Tax-Deferred Cash
-                    Predicate<Account> taxDeferredAccountFilter = (a) => { return this.IsInvestmentAccount(a) && a.IsTaxDeferred; };
+                    Predicate<Account> taxDeferredAccountFilter = (a) => { return a.IsInvestmentAccount && a.IsTaxDeferred; };
                     balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, taxDeferredAccountFilter);
                     if (balance != 0)
                     {
@@ -245,7 +245,7 @@ namespace Walkabout.Reports
                     }
 
                     // Tax-Free Cash
-                    Predicate<Account> taxFreeAccountFilter = (a) => { return this.IsInvestmentAccount(a) && a.IsTaxFree; };
+                    Predicate<Account> taxFreeAccountFilter = (a) => { return a.IsInvestmentAccount && a.IsTaxFree; };
                     balance = this.myMoney.GetCashBalanceNormalized(this.ReportDate, taxFreeAccountFilter);
                     if (balance != 0)
                     {
@@ -261,7 +261,7 @@ namespace Walkabout.Reports
                     if (hasTaxDeferred)
                     {
                         WriteHeader(writer, "Tax Deferred Assets");
-                        r = await this.WriteSecurities(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return this.IsInvestmentAccount(a) && a.IsTaxDeferred; }));
+                        r = await this.WriteSecurities(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsInvestmentAccount && a.IsTaxDeferred; }));
                         totalBalance += r.Item1;
                         hasNoneTypeTaxDeferred = r.Item2;
                     }
@@ -270,7 +270,7 @@ namespace Walkabout.Reports
                     if (hasTaxFree)
                     {
                         WriteHeader(writer, "Tax Free Assets");
-                        r = await this.WriteSecurities(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return this.IsInvestmentAccount(a) && a.IsTaxFree; }));
+                        r = await this.WriteSecurities(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsInvestmentAccount && a.IsTaxFree; }));
                         totalBalance += r.Item1;
                         hasNoneTypeTaxFree = r.Item2;
                     }
@@ -282,7 +282,7 @@ namespace Walkabout.Reports
                     totalBalance += this.WriteLoanAccountRows(writer, data, color, false);
                     totalBalance += this.WriteAssetAccountRows(writer, data);
 
-                    r = await this.WriteSecurities(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return this.IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; }));
+                    r = await this.WriteSecurities(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return a.IsInvestmentAccount && !a.IsTaxDeferred && !a.IsTaxFree; }));
                     totalBalance += r.Item1;
                     bool hasNoneType = r.Item2;
 
@@ -674,11 +674,6 @@ namespace Walkabout.Reports
                 return false;
             }
             return true;
-        }
-
-        private bool IsInvestmentAccount(Account a)
-        {
-            return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }
 
         private static void WriteHeader(IReportWriter writer, string caption)

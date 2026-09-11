@@ -377,9 +377,9 @@ namespace Walkabout.Reports
                 }
                 else
                 {
-                    await this.WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
-                    await this.WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }), true, false);
-                    await this.WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && a.IsInvestmentAccount; }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && a.IsInvestmentAccount; }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && a.IsInvestmentAccount; }), true, false);
                 }
             }
             else
@@ -435,9 +435,9 @@ namespace Walkabout.Reports
 
                     if (this.account == null)
                     {
-                        await this.WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }));
-                        await this.WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
-                        await this.WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
+                        await this.WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && a.IsInvestmentAccount; }));
+                        await this.WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && a.IsInvestmentAccount; }));
+                        await this.WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && a.IsInvestmentAccount; }));
                     }
                     else
                     {
@@ -520,11 +520,6 @@ namespace Walkabout.Reports
                     break;
             }
             return caption;
-        }
-
-        private bool IsInvestmentAccount(Account a)
-        {
-            return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }
 
         private void OnPieSliceClicked(object sender, ChartDataValue e)

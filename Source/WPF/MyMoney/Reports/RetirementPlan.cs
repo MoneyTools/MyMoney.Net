@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -464,9 +465,6 @@ namespace Walkabout.Reports
                     {
 #endif
                         var date = state.ReportDate;
-                        Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
-                        var cashBalance = this.myMoney.GetCashBalanceNormalized(date, notLoans);
-                        decimal loanBalance = this.GetTotalLoansBalance(date);
                         this.funds = await this.CalculatePortfolioBalance(date);                        
 #if PerformanceBlocks
                     }
@@ -714,10 +712,41 @@ namespace Walkabout.Reports
                 {
                     this.calc = new CostBasisCalculator(this.myMoney, date);
                 }
-                var funds = new RetirementFunds();
-                funds.MarriedFilingJointly = this.state.TaxFilingStatus == TaxFilingStatus.Married;
+                var funds = new RetirementFunds()
+                {
+                    MarriedFilingJointly = this.state.TaxFilingStatus == TaxFilingStatus.Married
+                };
+
+                foreach (var account in this.myMoney.Accounts.GetAccounts())
+                {
+                    if (!account.IsClosed && account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage || account.Type == AccountType.MoneyMarket)
+                    {
+                        Predicate<Account> predicate = (a) => a == account;
+                        var cashBalance = this.myMoney.GetCashBalanceNormalized(date, predicate);
+                        if (cashBalance > 0)
+                        {
+                            if (account.IsTaxDeferred)
+                            {
+                                funds.TaxDeferred += cashBalance;
+                            }
+                            else if (account.IsTaxFree)
+                            {
+                                funds.TaxFree += cashBalance;
+                            }
+                            else
+                            {
+                                funds.Taxable += cashBalance;
+                            }
+                        }
+                    }
+                }                    
+
+
                 foreach (var accountHolding in this.calc.GetAccountHoldings())
                 {
+                    var account = accountHolding.Account;
+                    if (!account.IsClosed && account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage || account.Type == AccountType.MoneyMarket)
+                    {
                     foreach (var holding in accountHolding.GetHoldings())
                     {
                         var price = await this.cache.GetSecurityMarketPrice(date, holding.Security);
@@ -732,6 +761,7 @@ namespace Walkabout.Reports
                         else
                         {
                             // we will deal with these holdings separately.
+                        }
                         }
                     }
                 }
@@ -781,11 +811,11 @@ namespace Walkabout.Reports
                 {
                     writer.WriteRow("    Taxable assets", finalFunds.Taxable);
 
-                    if (funds.TaxDeferred > 0)
+                    if (finalFunds.TaxDeferred > 0)
                     {
                         writer.WriteRow("    Tax deferred assets", finalFunds.TaxDeferred);
                     }
-                    if (funds.TaxFree > 0)
+                    if (finalFunds.TaxFree > 0)
                     {
                         writer.WriteRow("    Tax free assets", finalFunds.TaxFree);
                     }
@@ -1098,6 +1128,10 @@ namespace Walkabout.Reports
                         newCapitalGains += gains;
                         incomeTax -= amountSold;
                         this.grossUp += amountSold;
+                        if (amountSold > 0)
+                        {
+                            continue;
+                        }
                     }
 
                     if (this.TaxDeferred > 0 && incomeTax > 0)
@@ -1116,18 +1150,15 @@ namespace Walkabout.Reports
                         this.baseIncome += amount;
                         this.grossUp += amount;
                         incomeTax += ic + st - amount;
+                        if (amount > 0)
+                        {
+                            continue;
+                        }
                     }
 
                     if (this.TaxFree > 0 && incomeTax > 0)
                     {
-                        var amount = incomeTax;
-                        if (incomeTax > this.TaxFree)
-                        {
-                            amount = this.TaxFree;
-                        }
-                        this.TaxFree -= amount;
-                        this.taxFreeIncome += amount;
-                        incomeTax -= amount;
+                        incomeTax -= this.WithdrawTaxFree(incomeTax);
                         // no tax consequence.
                     }
                     else if (incomeTax > 0)
@@ -1156,9 +1187,9 @@ namespace Walkabout.Reports
                 this.capitalGainsTaxes += newCapitalGainsTax;
                 this.stateTaxes += stateTaxes;
                 newCapitalGainsTax += stateTaxes;                
-                while (newCapitalGainsTax > 0)
+                while ((int)newCapitalGainsTax > 0)
                 {
-                    if (newCapitalGainsTax > 0)
+                    if ((int)newCapitalGainsTax > 0)
                     {
                         // Sell this much to pay the incomeTax (which generates capital gains tax)
                         var (amountSold, gains) = this.SellTaxableAmount(newCapitalGainsTax);
@@ -1170,18 +1201,10 @@ namespace Walkabout.Reports
                         this.grossUp += amountSold;
                         this.capitalGainsTaxes += capTax;
                         this.stateTaxes += stateCapTaxes;
-                    }
-                    
-                    if (this.TaxFree > 0 && newCapitalGainsTax > 0)
+                    }                    
+                    else if (this.TaxFree > 0)
                     {
-                        var amount = newCapitalGainsTax;
-                        if (newCapitalGainsTax > this.TaxFree)
-                        {
-                            amount = this.TaxFree;
-                        }
-                        this.TaxFree -= amount;
-                        newCapitalGainsTax -= amount;
-                        this.taxFreeIncome += amount;
+                        newCapitalGainsTax -= this.WithdrawTaxFree(newCapitalGainsTax);
                         // no tax consequence.
                     }
                     else
@@ -1194,7 +1217,6 @@ namespace Walkabout.Reports
 
             internal void ConvertToRoth(decimal amountToConvert)
             {
-                decimal tax = 0;
                 if (this.TaxDeferred > 0)
                 {
                     var amount = amountToConvert;
@@ -1360,14 +1382,15 @@ namespace Walkabout.Reports
                 return dividends - dividendTax;
             }
 
-            internal void WithdrawTaxFree(decimal amount)
+            internal decimal WithdrawTaxFree(decimal amount)
             {
                 if (amount > this.TaxFree)
                 {
                     amount = this.TaxFree;
                 }
-                this.taxFreeIncome = amount;
+                this.taxFreeIncome += amount;
                 this.TaxFree -= amount;
+                return amount;
             }
         }
 

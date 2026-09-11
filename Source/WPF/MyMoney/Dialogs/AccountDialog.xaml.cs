@@ -58,6 +58,16 @@ namespace Walkabout.Dialogs
 
             this.comboBoxOnlineAccount.ItemsSource = this.onlineAccounts;
 
+            // add all AccountType enum values to AccountTypeCombo
+            foreach (var field in typeof(AccountType).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+            {
+                var value = (AccountType)field.GetValue(null);
+                if (value != AccountType.Loan && value != AccountType.CategoryFund)
+                {
+                    this.AccountTypeCombo.Items.Add(value);
+                }
+            }
+
             foreach (var alias in money.AccountAliases)
             {
                 if (alias.AccountId == a.AccountId && !alias.IsDeleted)

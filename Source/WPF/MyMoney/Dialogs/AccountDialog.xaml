@@ -91,14 +91,6 @@
 
             <TextBlock Text="Account Type:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" />
             <ComboBox x:Name="AccountTypeCombo" Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" VerticalAlignment="Top" Text="{Binding Path=Type, Mode=TwoWay}" TabIndex="4">
-                <ComboBoxItem Content="Cash" />
-                <ComboBoxItem Content="Checking" />
-                <ComboBoxItem Content="Credit" />
-                <ComboBoxItem Content="Brokerage" />
-                <ComboBoxItem Content="Retirement" />
-                <ComboBoxItem Content="MoneyMarket" />
-                <ComboBoxItem Content="Savings" />
-                <ComboBoxItem Content="Asset" />
             </ComboBox>
 
             <TextBlock Text="Tax Status:" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Right"/>

@@ -1850,7 +1850,7 @@ namespace Walkabout.Data
         /// have happened in the date range of the transactions.
         /// </summary>
         /// <param name="transactions">The list of transactions, must all have the same Security</param>
-        public void ApplyStockSplits(List<Investment> transactions)
+        public void ApplyStockSplits(IList<Investment> transactions)
         {
             Security security = null;
             IList<StockSplit> splits = null;
@@ -2599,9 +2599,11 @@ namespace Walkabout.Data
         // There is a hole here from deleted type which we can fill when we invent new types, but the types 8-10 have to keep those numbers        
         // or else we mess up the existing databases.
         Asset = 8,              // Used for tracking Assets like "House, Car, Boat, Jewelry, this helps to make NetWorth more accurate
-        CategoryFund = 9, // unused, but must leave a hole here for data compatibility.        
+        CategoryFund = 9,    // unused, but must leave a hole here for data compatibility.        
         Loan = 10,
-        CreditLine = 11
+        CreditLine = 11,
+        Education = 12, // 529 plans
+        HSA = 13, // HSA health accounts.
     }
 
     [Flags]
@@ -2780,6 +2782,14 @@ namespace Walkabout.Data
                     this.description = Truncate(value, 255);
                     this.OnChanged("Description");
                 }
+            }
+        }
+
+        public bool IsInvestmentAccount
+        {
+            get
+            {
+                return this.Type == AccountType.Brokerage || this.Type == AccountType.Retirement || this.Type == AccountType.Education || this.Type == AccountType.HSA;
             }
         }
 
@@ -10270,15 +10280,11 @@ namespace Walkabout.Data
             decimal sortedRunningUnits = 0;
             decimal runningUnitPrice = 0;
             MyMoney money = this.Parent as MyMoney;
-            var splits = money.StockSplits.GetStockSplitsForSecurity(s);
+
+            money.ApplyStockSplits(new List<Investment>(from t in view select t.Investment));
 
             foreach (Transaction t in view)
             {
-                foreach (StockSplit split in splits)
-                {
-                    t.Investment.ApplySplit(split);
-                }
-
                 if (t.InvestmentType == InvestmentType.Buy || t.InvestmentType == InvestmentType.Add)
                 {
                     if (t.Investment.CurrentUnits == 0)

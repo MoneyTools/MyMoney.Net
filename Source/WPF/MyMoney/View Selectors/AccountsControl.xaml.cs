@@ -441,7 +441,7 @@ namespace Walkabout.Views.Controls
                 sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
-                var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
+                var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket || a.Type == AccountType.Education || a.Type == AccountType.HSA select a;
                 sh = BundleAccount("Brokerage", this.items, accountOfTypeBrokerage);
                 sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
