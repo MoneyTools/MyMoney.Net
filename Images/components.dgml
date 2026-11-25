@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="TopToBottom" Layout="Sugiyama" Offset="-83.4534912109375,-274.497650146484" ZoomLevel="1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Category="CodeSchema_Project" Bounds="120.968271302573,37.7478801440611,94.7488998477857,26.002233181116" Label="BuildTasks" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Category="CodeSchema_Project" Bounds="331.740000000001,55.9980000770811,139.405566514448,26.002233181116" Label="EdgeDetectionTest">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\FindUnusedStyles\FindUnusedStyles.csproj" Category="CodeSchema_Project" Bounds="630.43163243288,47.9966834890231,134.022233181116,26.002233181116" Label="FindUnusedStyles">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Category="File" Bounds="245.717171150359,-10.2502216953399,111.651333410413,25.9980000770811" Label="MyMoney.sln" />
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Category="CodeSchema_Project" Bounds="282.31001154258,118.500186835363,94.2655665144484,26.002233181116" Label="MyMoney" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\OfxTestServer\OfxTestServer.csproj" Category="CodeSchema_Project" Bounds="798,49.9980000770811,112.885566514451,26.002233181116" Label="OfxTestServer" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Category="CodeSchema_Project" Bounds="20.0500268013693,168.752544812012,180.785566514449,26.002233181116" Label="PerformanceEventProvider" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Category="CodeSchema_Project" Bounds="41.3933601347018,101.750211630896,140.098899847784,26.002233181116" Label="PerformanceGraph" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Category="CodeSchema_Project" Bounds="533.118360134702,47.9966834890231,66.6488998477835,26.002233181116" Label="Tests">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Category="CodeSchema_Project" Bounds="580.11502680137,110.499013258084,88.6555665144479,26.002233181116" Label="UnitTests" UseManualLocation="True">
+      <Category Ref="File" />
+    </Node>
+    <Node Id="EntityFramework" Category="CodeSchema_PackageReference" Bounds="521.792609786987,359.004699620529,129.300400543213,26" Label="EntityFramework" PackageVersion="6.4.4" UseManualLocation="True" />
+    <Node Id="LovettSoftware.DgmlTestModeling.2022.dll" Category="CodeSchema_PackageReference" Bounds="681.967579269409,166.5013464392,266.950400543213,26" Label="LovettSoftware.DgmlTestModeling.2022.dll" PackageVersion="3.9.1" UseManualLocation="True" />
+    <Node Id="MSTest.TestAdapter" Category="CodeSchema_PackageReference" Bounds="502.128304753621,230.001342773438,144.340400543213,26" Label="MSTest.TestAdapter" PackageVersion="2.1.2" UseManualLocation="True" />
+    <Node Id="MSTest.TestFramework" Category="CodeSchema_PackageReference" Bounds="676.468705296834,230.001342773438,160.450400543213,26" Label="MSTest.TestFramework" PackageVersion="2.2.8" UseManualLocation="True" />
+    <Node Id="Microsoft.Build.Framework" Category="CodeSchema_Assembly" Label="Microsoft.Build.Framework" />
+    <Node Id="Microsoft.Build.Utilities.v4.0" Category="CodeSchema_Assembly" Label="Microsoft.Build.Utilities.v4.0" />
+    <Node Id="Microsoft.CSharp" Category="CodeSchema_Assembly" Label="Microsoft.CSharp" />
+    <Node Id="Microsoft.VisualBasic" Category="CodeSchema_Assembly" Bounds="1886.89303411533,168.042418037134,150.763333333332,25.9599999999991" Label="Microsoft.VisualBasic" />
+    <Node Id="Microsoft.VisualStudio.QualityTools.UnitTestFramework" Category="CodeSchema_Assembly" Label="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <Node Id="ModernWpfUI" Category="CodeSchema_PackageReference" Bounds="24.1837697906493,234.003570556641,116.570400543213,26" Label="ModernWpfUI" PackageVersion="0.9.4" UseManualLocation="True" />
+    <Node Id="Newtonsoft.Json" Category="CodeSchema_PackageReference" Bounds="170.754170333862,237.003570556641,128.55706720988,26" Label="Newtonsoft.Json" PackageVersion="13.0.1" UseManualLocation="True" />
+    <Node Id="PresentationCore" Category="CodeSchema_Assembly" Bounds="784.285350924901,303.694768552717,131.206666666667,25.9599999999991" Label="PresentationCore" />
+    <Node Id="PresentationFramework" Category="CodeSchema_Assembly" Bounds="589.395250924902,280.004835625161,164.889999999999,25.9599999999991" Label="PresentationFramework" />
+    <Node Id="PresentationFramework.Aero" Category="CodeSchema_Assembly" Bounds="1715.16576690545,224.042386833949,192.709999999999,25.9599999999991" Label="PresentationFramework.Aero" />
+    <Node Id="Stub.System.Data.SQLite.Core.NetStandard" Category="CodeSchema_PackageReference" Bounds="211.685515776709,357.0039062502,266.10706720988,26" Label="Stub.System.Data.SQLite.Core.NetStandard" PackageVersion="1.0.116" UseManualLocation="True" />
+    <Node Id="System" Category="CodeSchema_Assembly" Bounds="925.862030910676,247.734783850569,77.6033333333326,25.9599999999991" Label="System" />
+    <Node Id="System.ComponentModel.DataAnnotations" Category="CodeSchema_Assembly" Bounds="1163.98890023878,224.002420707408,268.766666666666,25.9599999999992" Label="System.ComponentModel.DataAnnotations" />
+    <Node Id="System.Core" Category="CodeSchema_Assembly" Bounds="1028.87546690545,191.774845616694,105.113333333335,25.9599999999991" Label="System.Core" />
+    <Node Id="System.Data" Category="CodeSchema_Assembly" Bounds="1163.98890023878,168.042336829304,104.896666666667,25.9599999999991" Label="System.Data" />
+    <Node Id="System.Data.DataSetExtensions" Category="CodeSchema_Assembly" Label="System.Data.DataSetExtensions" />
+    <Node Id="System.Data.SQLite" Category="CodeSchema_PackageReference" Bounds="329.311237543742,235.003677368164,142.817067209879,26" Label="System.Data.SQLite" PackageVersion="1.0.108" UseManualLocation="True" />
+    <Node Id="System.Data.SQLite.Core" Category="CodeSchema_PackageReference" Bounds="193.289988123575,301.0038062502,170.327067209881,26" Label="System.Data.SQLite.Core" PackageVersion="1.0.116" UseManualLocation="True" />
+    <Node Id="System.Data.SQLite.EF6" Category="CodeSchema_PackageReference" Bounds="393.61702486674,300.004599620829,163.817067209879,26" Label="System.Data.SQLite.EF6" PackageVersion="1.0.116" UseManualLocation="True" />
+    <Node Id="System.Data.SQLite.Linq" Category="CodeSchema_PackageReference" Bounds="595.434103927611,303.004599620829,167.830400543215,26" Label="System.Data.SQLite.Linq" PackageVersion="1.0.116" UseManualLocation="True" />
+    <Node Id="System.Deployment" Category="CodeSchema_Assembly" Bounds="1287.59553438343,279.962412677234,145.16,25.9599999999991" Label="System.Deployment" />
+    <Node Id="System.Drawing" Category="CodeSchema_Assembly" Bounds="469.421475169552,224.002418037133,124.333333333336,25.9599999999991" Label="System.Drawing" />
+    <Node Id="System.EnterpriseServices" Category="CodeSchema_Assembly" Bounds="1082.12212983154,306.063513860699,175.473333333333,25.9599999999991" Label="System.EnterpriseServices" />
+    <Node Id="System.IO.Compression" Category="CodeSchema_Assembly" Bounds="337.820600543212,168.042384734706,164.256666666666,25.9599999999991" Label="System.IO.Compression" />
+    <Node Id="System.IO.Compression.FileSystem" Category="CodeSchema_Assembly" Bounds="1462.75566690545,224.042348787517,222.41,25.9599999999991" Label="System.IO.Compression.FileSystem" />
+    <Node Id="System.Net.Http" Category="CodeSchema_Assembly" Label="System.Net.Http" />
+    <Node Id="System.Runtime.Serialization" Category="CodeSchema_Assembly" Bounds="1298.88566690545,168.042513806105,191.123333333333,25.9599999999991" Label="System.Runtime.Serialization" />
+    <Node Id="System.ServiceModel" Category="CodeSchema_Assembly" Bounds="407.838484258234,279.962345828519,151.556666666667,25.9599999999991" Label="System.ServiceModel" />
+    <Node Id="System.Web.Services" Category="CodeSchema_Assembly" Bounds="158.55716720988,168.042418037134,149.263333333332,25.9599999999991" Label="System.Web.Services" />
+    <Node Id="System.Windows.Forms" Category="CodeSchema_Assembly" Bounds="1520.00910023878,168.042387458346,164.066666666669,25.9599999999991" Label="System.Windows.Forms" />
+    <Node Id="System.XML" Category="CodeSchema_Assembly" Label="System.XML" />
+    <Node Id="System.Xaml" Category="CodeSchema_Assembly" Bounds="945.492020964068,315.349592085462,106.630000000001,25.9599999999991" Label="System.Xaml" />
+    <Node Id="System.Xml" Category="CodeSchema_Assembly" Bounds="1033.46550900749,250.103472524905,100.523333333334,25.9599999999991" Label="System.Xml" />
+    <Node Id="System.Xml.Linq" Category="CodeSchema_Assembly" Bounds="770.325257500965,224.044835625161,125.536666666667,25.9599999999991" Label="System.Xml.Linq" />
+    <Node Id="UIAutomationClient" Category="CodeSchema_Assembly" Label="UIAutomationClient" />
+    <Node Id="UIAutomationTypes" Category="CodeSchema_Assembly" Label="UIAutomationTypes" />
+    <Node Id="WindowsBase" Category="CodeSchema_Assembly" Bounds="532.077367209879,168.042418037134,113.126666666667,25.9599999999991" Label="WindowsBase" />
+    <Node Id="file:///D:/git/clovett/MyMoney.Net/Source/WPF/Tests/$(SolutionDir)tools/Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll" Category="CodeSchema_Assembly" Label="Microsoft.VisualStudio.Diagnostics.PerformanceProvider" />
+  </Nodes>
+  <Links>
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="Microsoft.Build.Framework" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="Microsoft.Build.Utilities.v4.0" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="Microsoft.CSharp" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Data.DataSetExtensions" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Net.Http" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Xml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Bounds="351.215990573388,82.0002353954896,35.2500327877645,30.6000699077225" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="Microsoft.CSharp" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="PresentationCore" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="PresentationFramework" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Data.DataSetExtensions" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Xaml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Xml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Target="WindowsBase" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\BuildTasks\BuildTasks.csproj" Bounds="212.887697506836,15.7477783817412,52.5830477787338,18.9489156686986" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\EdgeDetectionTest\EdgeDetectionTest.csproj" Bounds="321.144236682632,15.7477783817412,53.1934065939249,35.276109652425" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\FindUnusedStyles\FindUnusedStyles.csproj" Bounds="357.368513384894,10.9624466318482,264.158978950798,38.8658901294826" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Bounds="304.35965046664,15.7477783817412,20.3598738574142,93.9565521741317" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\OfxTestServer\OfxTestServer.csproj" Bounds="357.368499755859,7.95123243331909,442.225189208984,41.211437702179" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Bounds="142.930282592773,15.7477779388428,146.203018188477,148.760934829712" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Bounds="157.035125732422,15.7477779388428,130.890350341797,83.0259113311768" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Bounds="356.520606459948,14.8378729720182,167.807751799736,36.8993534670088" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney.sln" Target="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Bounds="336.303340736916,15.7477783817412,244.943471277878,91.5988186859302" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Bounds="175.873750866938,142.292242087693,106.54211232602,24.4474572075038" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="Microsoft.VisualBasic" Bounds="1075.1328125,127.389915466309,806.839965820313,40.2045974731445" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="ModernWpfUI" Bounds="118.418856919728,144.502421217023,183.224189534649,85.6884642713" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="Newtonsoft.Json" Bounds="250.997789031251,144.502421217023,68.0871026588149,85.4619942429939" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="PresentationCore" Bounds="866.497924804688,138.042419433594,158.38232421875,158.772003173828" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="PresentationFramework" Bounds="711.201904296875,132.081283569336,269.665405273438,144.427291870117" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="PresentationFramework.Aero" Bounds="1051.18432617188,138.042419433594,686.244140625,84.2463531494141" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System" Bounds="975.596008300781,138.042419433594,47.4213256835938,101.712600708008" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.ComponentModel.DataAnnotations" Bounds="1051.18432617188,138.042419433594,188.899169921875,83.6807250976563" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Core" Bounds="1036.71473732033,138.042418037134,31.0057962433186,46.2565379429197" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Data" Bounds="1071.76299539832,138.042418037134,92.355063497517,27.4369036206744" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Data.SQLite" Bounds="337.396983519142,144.502421217023,50.6723583315546,82.8240975450995" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Deployment" Bounds="1054.67407226563,138.042419433594,224.44091796875,141.995330810547" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Drawing" Bounds="602.621398925781,132.081283569336,378.245910644531,93.1736907958984" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.EnterpriseServices" Bounds="1054.67407226563,138.042419433594,111.0966796875,159.174926757813" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.IO.Compression" Bounds="511.01025390625,137.624816894531,471.330200195313,32.2416534423828" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.IO.Compression.FileSystem" Bounds="1051.18432617188,138.042419433594,402.912109375,86.79296875" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Runtime.Serialization" Bounds="1075.13286120465,132.241656499366,225.451945349877,34.4417185168571" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.ServiceModel" Bounds="567.588134765625,132.081283569336,413.279174804688,147.552383422852" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Web.Services" Bounds="289.487365722656,137.624816894531,692.853088378906,28.1036987304688" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Windows.Forms" Bounds="1075.1328125,129.007186889648,454.947143554688,38.2805786132813" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Xaml" Bounds="1001.95031797721,138.042418037134,24.1827447265835,168.398562755039" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Xml" Bounds="1026.02709960938,138.042419433594,15.44775390625,108.669204711914" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="System.Xml.Linq" Bounds="904.216003417969,138.042419433594,120.664245605469,85.7028198242188" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Target="WindowsBase" Bounds="640.1123046875,137.624816894531,342.228149414063,27.8505859375" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="Microsoft.CSharp" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System.Data.DataSetExtensions" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System.Xml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceEventProvider\PerformanceEventProvider.csproj" Bounds="110.77115849955,127.752444812012,0.477611824071417,32.0011105491405" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="Microsoft.CSharp" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="PresentationCore" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="PresentationFramework" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Data.DataSetExtensions" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Xaml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Xml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\PerformanceGraph\PerformanceGraph.csproj" Target="WindowsBase" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Bounds="381.772908025983,70.9112621333005,151.345452108719,45.0227205523089" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="LovettSoftware.DgmlTestModeling.2022.dll" Bounds="593.760791284919,73.9989174175844,186.239748939714,88.6348324827213" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="MSTest.TestAdapter" Bounds="567.003967502774,73.9989174175844,6.34531677151324,147.010797069618" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="PresentationCore" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="PresentationFramework" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Data.SQLite" Bounds="418.209368520227,73.9989166701391,136.711959686254,154.269055840132" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Drawing" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Runtime.Serialization" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Windows.Forms" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.XML" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Xaml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="UIAutomationClient" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="UIAutomationTypes" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="WindowsBase" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\Tests\Tests.csproj" Target="file:///D:/git/clovett/MyMoney.Net/Source/WPF/Tests/$(SolutionDir)tools/Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="D:\git\clovett\MyMoney.Net\Source\WPF\MyMoney\MyMoney.csproj" Bounds="385.572284775245,124.702415751539,194.542742026125,5.27651010409474" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="EntityFramework" Bounds="586.266357421875,136.501251220703,62.8218994140625,213.503448486328" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="MSTest.TestAdapter" Bounds="583.235832746354,136.5012464392,35.7515337743384,85.2011125515604" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="MSTest.TestFramework" Bounds="632.079284667969,136.501251220703,88.5463256835938,89.7000274658203" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.ComponentModel.DataAnnotations" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Core" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Data" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Data.SQLite" Bounds="431.943968466146,136.5012464392,169.136859287879,94.1259178564027" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Runtime.Serialization" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Xml" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="System.Xml.Linq" />
+    <Link Source="D:\git\clovett\MyMoney.Net\Source\WPF\UnitTests\UnitTests.csproj" Target="WindowsBase" />
+    <Link Source="System.Data.SQLite" Target="System.Data.SQLite.Core" Bounds="310.4560036856,261.00366973877,66.1810598792153,35.7249814222201" />
+    <Link Source="System.Data.SQLite" Target="System.Data.SQLite.EF6" Bounds="415.680703328929,261.00366973877,38.0903194627241,33.0977830398558" />
+    <Link Source="System.Data.SQLite" Target="System.Data.SQLite.Linq" Bounds="453.98644209205,261.00366973877,163.352801179789,39.8670654060786" />
+    <Link Source="System.Data.SQLite.Core" Target="Stub.System.Data.SQLite.Core.NetStandard" Bounds="293.841206027128,327.0038062502,28.6352016008071,24.1919195628452" />
+    <Link Source="System.Data.SQLite.EF6" Target="EntityFramework" Bounds="499.964903104721,326.004608154297,54.0927414564379,28.7734884238425" />
+  </Links>
+  <Categories>
+    <Category Id="CodeSchema_Assembly" Label="Assembly" BasedOn="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Assembly" NavigationActionLabel="Assemblies" />
+    <Category Id="CodeSchema_PackageReference" Label="Package Reference" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_PackageReference" NavigationActionLabel="Package Reference" />
+    <Category Id="CodeSchema_Project" Label="Project" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_ProjectItem" Icon="CodeSchema_Project" NavigationActionLabel="Projects" />
+    <Category Id="CodeSchema_Type" Label="Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" NavigationActionLabel="Types" />
+    <Category Id="File" Label="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="File" NavigationActionLabel="Files" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="Icon" Label="Icon" DataType="System.String" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
+    <Property Id="Offset" DataType="System.String" />
+    <Property Id="PackageVersion" DataType="System.String" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Package Reference" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_PackageReference')" />
+      <Setter Property="Background" Value="#FFF9BEBE" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Assembly" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_Assembly')" />
+      <Setter Property="Visibility" Value="Hidden" />
+      <Setter Property="Background" Value="#FFBAF1F5" />
+      <Setter Property="Foreground" Value="#FF000000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Comment" ValueLabel="Has comment">
+      <Condition Expression="HasCategory('Comment')" />
+      <Setter Property="Background" Value="#FFFFFACD" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+      <Setter Property="StrokeThickness" Value="1" />
+      <Setter Property="NodeRadius" Value="2" />
+      <Setter Property="MaxWidth" Value="250" />
+    </Style>
+  </Styles>
+</DirectedGraph>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/CostBasis/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Cost Basis - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Cost Basis", url: "#_top", children: [
+              {title: "Transfers", url: "#transfers" },
+              {title: "FIFO Rule", url: "#fifo-rule" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../OFXBankList/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../OFXBankList/" class="btn btn-xs btn-link">
+        OFX Bank List
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Assets/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Assets/" class="btn btn-xs btn-link">
+        Assets
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="cost-basis">Cost Basis<a class="headerlink" href="#cost-basis" title="Permanent link">#</a></h1>
+<p>The <a href="../../Reports/InvestmentPortfolio/">Investment Portfolio</a> report computes the cost basis of shares that you still own based on when those shares were added to  your money accounts, taking into account any stock splits that have been recorded for those securities (see <a href="../../Basics/Securities/">Securities</a>).  The <a href="../../Reports/TaxReport/">Tax Report</a> also computes long term and short term capital gains based on those same Cost Basis calculations.</p>
+<p>For example, suppose you bought 100 shares of Microsoft stock on  1/1/2001</p>
+<p><img alt="" src="../../Images/Cost%20Basis.png" /></p>
+<p>Then if you enter the correct stock split information you would have a 2 for 1 split recorded on 2/18/2003:</p>
+<p><img alt="" src="../../Images/Cost%20Basis1.png" /></p>
+<p>This means the portfolio report will show a calculation of your Cost Basis and total Gain/Loss showing your cost basis is $15 (half the $30 you paid before the stock split). The quantity will be doubled because in today's terms the stock split in 2003 means you now own 200 shares. </p>
+<p>Now it gets more interesting if you have several purchases on different dates each with different cost basis, then you do a single sale to sell all your holdings.  The sale has to record the correct cost basis in order compute the correct long or short term capital gains.</p>
+<p>For example, suppose you have this:</p>
+<p><img alt="" src="../../Images/Cost%20Basis2.png" /></p>
+<p>Then the portfolio report will double the units in the first 2 transactions but not the 3rd since 2013 comes after the last stock split.  So this leaves a total of 350 shares and the unit price is the weighted average, and the Cost Basis is the sum of what you paid for all the shares.  The Gain/Loss is computed using today's stock price.  Yeah, I wish I bought more :-)</p>
+<p><img alt="" src="../../Images/Cost%20Basis3.png" /></p>
+<p>Now if you sell some shares:
+<img alt="" src="../../Images/Cost%20Basis4.png" /></p>
+<p>The capital gains tax report will report two separate events for the sale since they have different dates acquired, and therefore different cost basis.   Notice the stock split also means the first lot has half the acquisition price and therefore much higher gain.  It also determines if the gain is long term or short term capital gain.</p>
+<p><img alt="" src="../../Images/Cost%20Basis5.png" /></p>
+<h3 id="transfers">Transfers<a class="headerlink" href="#transfers" title="Permanent link">#</a></h3>
+<p>Now transfers can make this even more interesting.  Suppose you transferred those MSFT shares to a different account before selling them.  Then the first account will show this:</p>
+<p><img alt="" src="../../Images/Cost%20Basis6.png" /></p>
+<p>And the Fidelity account will show this:</p>
+<p><img alt="" src="../../Images/Cost%20Basis7.png" /></p>
+<p>But the original cost basis information has to flow over to the other account with the "transfer".  So in this case the Tax report will show the exact same thing.</p>
+<h3 id="fifo-rule">FIFO Rule<a class="headerlink" href="#fifo-rule" title="Permanent link">#</a></h3>
+<p>Now in computing the capital gains the assumption is made that when you sell some stocks you want to sell from your oldest holdings first, and sometimes this is required by law.  So the FIFO rule is used in matching sales with purchases.  This is why the above Capital Gains report shows the 250 shares were drawn from the first lot dated 2/8/2001 and the second lot dated 12/5/2001 and after this sale your portfolio report lists the remainder of 50 shares dated 12/5/2001 and the untouched third lot dated 1/7/2013 containing 50 shares.</p>
+<p><img alt="" src="../../Images/Cost%20Basis8.png" /></p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../OFXBankList/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../OFXBankList/" class="btn btn-xs btn-link">
+        OFX Bank List
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Assets/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Assets/" class="btn btn-xs btn-link">
+        Assets
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

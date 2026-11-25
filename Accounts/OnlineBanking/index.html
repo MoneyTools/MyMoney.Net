@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/OnlineBanking/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Online Banking - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Online Banking", url: "#_top", children: [
+              {title: "Multiple Accounts at the same Financial Institution", url: "#multiple-accounts-at-the-same-financial-institution" },
+              {title: "Downloading Statements", url: "#downloading-statements" },
+              {title: "Download Range", url: "#download-range" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../OnlineSecurity/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../OnlineSecurity/" class="btn btn-xs btn-link">
+        Online Security
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Loans/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Loans/" class="btn btn-xs btn-link">
+        Loans
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="online-banking">Online Banking<a class="headerlink" href="#online-banking" title="Permanent link">#</a></h1>
+<p>Once you have setup online banking, you can download an OFX or QFX (Quicken Format) file from your bank and import it using the File/Import… menu.</p>
+<p>When this happens you will see a Download tab appear at the bottom with a summary of what happened.  Here we see 8 new transactions were found and merged in my Citibank VISA account:</p>
+<p><img alt="" src="../../Images/Online%20Banking.png" /></p>
+<p>You can click the row saying "Downloaded 8 new transactions" and it will change the Transaction view to show you those 8 new transactions only so you can quickly review them, fill in missing category information and double check everything looks good.</p>
+<p>For a more automated download MyMoney.Net also supports OFX banking.  When you have configured your OFX information correctly the download button will do the above without having to logging into websites, finding the recent activity, exporting it then importing it into MyMoney.Net.  So it is a lot simpler:</p>
+<p><img alt="" src="../../Images/Online%20Banking1.png" /></p>
+<p>If your bank is in the <a href="../OFXBankList/">OFX Bank List</a> then MyMoney may be able to download statements for you using the OFX protocol over a secure sockets (SSL) channel.   If you are not sure you trust the internet for this sort of thing, please see <a href="../OnlineSecurity/">Online Security</a> for more information.</p>
+<p>You can sign up for online banking features using the “<strong>Download Accounts</strong> ” menu item on the accounts panel context menu, or on the top level <strong>Online</strong>  menu.  This takes you to the following Online Accounts dialog.  This dialog fetches known banks that support online banking (otherwise known as <strong>OFX</strong> ) and shows a list in the Name field dropdown. </p>
+<p><img alt="" src="../../Images/Online%20Banking2.png" /></p>
+<p>Find your bank in this list and then click “<strong>Connect…”.</strong>   If your bank is not listed here you may need to call and find out what the OFX Address is, and the Institution Name and ID.  Sometimes you can search the web and get the information from other financial software packages.  If you still have a copy of Quicken lying around it has log files that contain this information.</p>
+<p>When you connect, if anything goes wrong you will see a message like this.</p>
+<p><img alt="" src="../../Images/Online%20Banking3.png" /></p>
+<p>In this case you need to call your bank and ask for the online banking feature to be enabled.   If you have other problems connecting to your bank, then check  the <a href="../KnownOFXIssues/">Known OFX Issues </a>for more information.</p>
+<p>If the “<strong>Connect</strong> ” step works then it will show you the information returned from the OFX address, together with the credentials you need to logon:</p>
+<p><img alt="" src="../../Images/Online%20Banking4.png" /></p>
+<p>If this looks right you can enter your online banking user id and password for that bank.  Included are instructions from the financial institution on how to enroll in online services in case you have not done that yet.</p>
+<p>It is possible that your bank will also challenge you to provide more information as part of their "<strong>Multi-Factor Authentication</strong> ", or "AUTHTOKEN", or "ChangePassword" protocols.</p>
+<p>If you enter the right authentication information then you should see your online accounts which you can then <strong>Add</strong>  (if they are not already found in your list of accounts).</p>
+<p><img alt="" src="../../Images/Online%20Banking5.png" /></p>
+<p>The question mark icon means the account number didn't match any of your existing accounts. Click
+this question mark button to find the matching account or add this account to your list of accounts.</p>
+<p><img alt="" src="../../Images/Online%20Banking6.png" /></p>
+<p>If the account was found in your local database you will see a green check mark instead:</p>
+<p><img alt="" src="../../Images/Online%20Banking7.png" /></p>
+<p>If you were expecting a green check mark, but instead see a blue question mark for a given account, then it means your account numbers don't match what was downloaded from your bank. You can go back to your Account Properties to fix your account number, then try again.  Sometimes a financial institution might add or remove a dash in the account number.   See <a href="../SetupAccounts/">Setup Accounts</a></p>
+<h3 id="multiple-accounts-at-the-same-financial-institution">Multiple Accounts at the same Financial Institution<a class="headerlink" href="#multiple-accounts-at-the-same-financial-institution" title="Permanent link">#</a></h3>
+<p>If you are tracking multiple accounts in the same Money Database that come from the same online bank (for example, you may have a personal AMEX card and one for work) then you may need two separate online accounts for that bank, with different logon credentials. </p>
+<p>To set this up, edit the "Name" field of the OnlineAccount dialog so it is unique:</p>
+<p><img alt="" src="../../Images/Online%20Banking8.png" /></p>
+<p>When you click Connect you will then be prompted for new credentials, type in the different credentials. </p>
+<p><strong>Deselecting Accounts</strong></p>
+<p>You can remove the online banking connection for a given account by clicking the checkmark
+icon to toggle the state to "disconnected" and this still stop that account from receiving
+future updates when you synchronize online accounts:</p>
+<p><img alt="" src="../../Images/Online%20Banking9.png" /></p>
+<h3 id="downloading-statements">Downloading Statements<a class="headerlink" href="#downloading-statements" title="Permanent link">#</a></h3>
+<p>Now when you click the download button the following tab appears at the bottom section of the app
+and when complete it tells you how many transactions were downloaded:</p>
+<p><img alt="" src="../../Images/Online%20Banking11.png" /></p>
+<p>You can click the row titled "Downloaded 10 new transactions" to see the transactions that were downloaded.  From there you can add missing <a href="../../Basics/Categories/">Category</a> information.  They will stay <strong>bold</strong>  as a reminder that you need to review them.  A good practice is to only accept the ones you have receipts for.  For example, I recently found a transaction for several thousand dollars for the purchase of a painting in Denmark on my credit card.  I had no recollection of this transaction, nor any receipt, and was able to quickly inform my credit card company and start the fraud investigation the same day the charge appeared in my downloaded transactions.  The bold highlighting helps make these new 'unverified' transactions more visible.</p>
+<p>The first download will get as much data as is available from the online service.  If you need more history you may be able to manually download OFX, QFX or QIF files from your bank's website and then use File/Import… to import those in the money program.    You can also import OFX, QFX or QIF files from other financial software packages if you have the history there.  The <strong>OFX or QFX format</strong>  is preferred, QIF is harder to merge because it doesn't contain account information. </p>
+<p>Sometimes the OFX service might be down for maintenance, and you will get an error like this:</p>
+<p><img alt="" src="../../Images/Online%20Banking13.png" /></p>
+<p>When this happens you can click the "Details" link to find out more about what happened, sometimes this contains a message from the bank as to why the service is unavailable.   If this keeps happening, you can deselect the account as shown above.  You can also manually remove the online connection by clearing the Online Account field in your Account Properties dialog.</p>
+<h3 id="download-range">Download Range<a class="headerlink" href="#download-range" title="Permanent link">#</a></h3>
+<p>By default for new accounts the program requests the last 30 days.  After the first download it requests new transactions from the last time you clicked "Download".  But if you need to you can reset the "<strong>Last Download</strong> " date using the Account Properties dialog.  See <a href="../SetupAccounts/">Setup Accounts</a>.</p>
+<p>See also: <a href="../../Basics/Merging/">Merging</a></p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../OnlineSecurity/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../OnlineSecurity/" class="btn btn-xs btn-link">
+        Online Security
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Loans/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Loans/" class="btn btn-xs btn-link">
+        Loans
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
