@@ -15,6 +15,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
+using Walkabout.Views;
+
 #if PerformanceBlocks
 using Walkabout.PerformanceProvider;
 #endif
@@ -10356,19 +10358,24 @@ namespace Walkabout.Data
         {
             MyMoney money = this.Parent as MyMoney;
             List<Transaction> view = new List<Transaction>();
-            if (c == null)
-            {
-                return view;
-            }
+            DateTime toFind = new DateTime(2026, 3, 13);
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
                 {
                     continue;
                 }
-
                 if (include != null && !include(t))
                 {
+                    continue;
+                }
+
+                if (c == null)
+                {
+                    if (t.Category == null)
+                    {
+                        view.Add(t);
+                    }
                     continue;
                 }
 
@@ -10376,9 +10383,12 @@ namespace Walkabout.Data
                 {
                     view.Add(t);
                 }
-                else if (t.SplitMatchesCategory(matches, out Split s))
+                else if (t.IsSplit)
                 {
-                    view.Add(new Transaction(t, s));
+                    foreach (var split in t.SplitsMatchingCategory(matches))
+                    {
+                        view.Add(new Transaction(t, split));
+                    }
                 }
                 else if (money != null && (c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
                 {
@@ -12919,7 +12929,7 @@ namespace Walkabout.Data
             return matches(this.Category);
         }
 
-        internal bool SplitMatchesCategory(Predicate<Category> matches, out Split match)
+        internal IEnumerable<Split> SplitsMatchingCategory(Predicate<Category> matches)
         {
             if (this.IsSplit)
             {
@@ -12928,13 +12938,10 @@ namespace Walkabout.Data
                 {
                     if (matches(s.Category))
                     {
-                        match = s;
-                        return true;
+                        yield return s;
                     }
                 }
             }
-            match = null;
-            return false;
         }
 
         #endregion

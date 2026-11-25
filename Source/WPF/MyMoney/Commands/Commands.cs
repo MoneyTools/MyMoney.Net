@@ -33,6 +33,7 @@ namespace Walkabout.Commands
         public static readonly RoutedUICommand CommandTaxReport;
         public static readonly RoutedUICommand CommandW2Report;
         public static readonly RoutedUICommand CommandReportCashFlow;
+        public static readonly RoutedUICommand CommandReportCashFlowForecast;
         public static readonly RoutedUICommand CommandReportUnaccepted;
         public static readonly RoutedUICommand CommandFutureBills;
         public static readonly RoutedUICommand CommandAccountSummary;
@@ -106,6 +107,7 @@ namespace Walkabout.Commands
             CommandTaxReport = new RoutedUICommand("Tax Report", "TaxReport", typeof(AppCommands));
             CommandW2Report = new RoutedUICommand("W2 Report", "W2Report", typeof(AppCommands));
             CommandReportCashFlow = new RoutedUICommand("Report Cash Flow", "ReportCashFlow", typeof(AppCommands));
+            CommandReportCashFlowForecast = new RoutedUICommand("Report Cash Flow Forecast", "ReportCashFlowForecast", typeof(AppCommands));
             CommandReportUnaccepted = new RoutedUICommand("Report Unaccepted", "ReportUnaccepted", typeof(AppCommands));
             CommandFutureBills = new RoutedUICommand("Report Future Bills", "ReportFutureBills", typeof(AppCommands));
             CommandAccountSummary = new RoutedUICommand("Report Account Summary", "ReportAccountSummary", typeof(AppCommands));

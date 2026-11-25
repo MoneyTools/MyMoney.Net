@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Walkabout.Charts;
 using Walkabout.Data;
@@ -39,14 +40,16 @@ namespace Walkabout.Reports
         private FlowDocumentView view;
         private ReportsControl panel;        
         public event EventHandler<SecurityGroup> DrillDown;
+        private bool showPanel;
 
         /// <summary>
         /// Create new PortfolioReport
         /// </summary>
-        public PortfolioReport(FlowDocumentView view)
+        public PortfolioReport(FlowDocumentView view, bool showPanel = false)
         {
             this.ReportDate = DateTime.Now;
             this.view = view;
+            this.showPanel = showPanel;
         }
 
         ~PortfolioReport()
@@ -74,9 +77,12 @@ namespace Walkabout.Reports
 
         private void Register()
         {
-            this.panel.ReportDateChanged += this.OnReportDateChanged;
-            this.panel.ReportExport += this.OnReportExport;
-            this.panel.ShowExportButton();
+            if (this.panel != null)
+            {
+                this.panel.ReportDateChanged += this.OnReportDateChanged;
+                this.panel.ReportExport += this.OnReportExport;
+                this.panel.ShowExportButton();
+            }
         }
 
         private void OnReportExport(object sender, bool e)
@@ -107,11 +113,14 @@ namespace Walkabout.Reports
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
             this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
             this.Unregister();
-            // this also makes the panel visible!
-            this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
-            this.panel.ReportDate = this.ReportDate;
-            this.Unregister();
-            this.Register();
+            if (this.showPanel)
+            {
+                // this also makes the panel visible!
+                this.panel = (ReportsControl)this.ServiceProvider.GetService(typeof(ReportsControl));
+                this.panel.ReportDate = this.ReportDate;
+                this.Unregister();
+                this.Register();
+            }
         }
 
         public class PortfolioReportState : IReportState

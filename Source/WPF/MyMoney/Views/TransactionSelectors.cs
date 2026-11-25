@@ -154,10 +154,13 @@ namespace Walkabout.Views
                         {
                             yield return t;
                         }
-                        else if (t.SplitMatchesCategory(matches, out Split s))
+                        else if (t.IsSplit)
                         {
-                            // fake read only transaction to represent the split.
-                            yield return new Transaction(t, s);
+                            foreach (var split in t.SplitsMatchingCategory(matches))
+                            {
+                                // fake read only transaction to represent the split.
+                                yield return new Transaction(t, split);
+                            }
                         }
                         else if (money != null && (c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
                         {

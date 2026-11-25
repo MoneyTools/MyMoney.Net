@@ -258,7 +258,7 @@ namespace Walkabout.Reports
                 writer.WriteParagraph("Conversion $1 USD is " + amount + " in " + ri.CurrencyEnglishName,
                     FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
             }
-            writer.WriteParagraph("Generated for " + reportDate.ToLongDateString(),
+            writer.WriteParagraph("Generated for " + reportDate.ToLongDateString() + "\n\n\n\n\n\n\n\n\n\n",
                 FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
         }
 

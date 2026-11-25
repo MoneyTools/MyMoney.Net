@@ -179,6 +179,8 @@ namespace Walkabout.Reports
                 document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateExportTxfButton()));
             }
 
+            this.WriteTrailer(writer, this.ReportDate);
+
             return Task.CompletedTask;
         }
 

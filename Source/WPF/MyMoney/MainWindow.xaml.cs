@@ -3811,7 +3811,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view)
+            PortfolioReport report = new PortfolioReport(view, true)
             {
                 ServiceProvider = this
             };
@@ -3886,6 +3886,16 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
             CashFlowReport report = new CashFlowReport() { ServiceProvider = this };
+            this.OnReportCreated(this, report);
+            this.GenerateReport(report);
+        }
+
+        private void OnCommandReportCashFlowForecast(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.SaveViewStateOfCurrentView();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlowForecast");
+            CashFlowForecastReport report = new CashFlowForecastReport() { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }

@@ -962,6 +962,7 @@ namespace Walkabout.Reports
             else
             {
                 sim.Render(writer);
+                this.WriteTrailer(writer, this.ReportDate);
             }
         }
 

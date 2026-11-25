@@ -451,28 +451,6 @@ namespace LovettSoftware.Charts
             sb.Begin();
 
         }
-
-        private void AddSeries(Grid grid, ChartDataSeries s, double availableHeight)
-        {
-            int index = 0;
-            // Add the actual grid columns
-            foreach (ChartDataValue cv in s.Values)
-            {
-
-                // create new column object.
-                Color c1 = ChartColors.GetColor(index);
-                double colWidth = grid.ColumnDefinitions[index].Width.Value;
-                var min = (from i in s.Values select i.Value).Min();
-                var max = (from i in s.Values select i.Value).Min();
-                var range = max - min;
-                ChartColumn col = new ChartColumn(cv, this.nfi, c1, colWidth - 1, availableHeight, range);
-                Grid.SetColumn(col, index++);
-                Grid.SetRow(col, 1);
-                col.VerticalAlignment = VerticalAlignment.Bottom;
-                grid.Children.Add(col);
-            }
-        }
-
     }
 
     public class ChartColumn : StackPanel

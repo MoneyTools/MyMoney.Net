@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.76" date="11/24/2026">
+		- Bug: Some reports were clipped at the end by the scroll viewer, added more padding.
+		- Bug: Fix drag/drop of an entire category hierarchy so all subcategories are moved correctly.
+		- Feature: First draft of a new Cash Flow Forecast report.
+		- Feature: Upgrade to System.Security.Cryptography.Xml Version 11.0.0 for encrypted binary XML files.
+	</change>
 	<change version="2.1.0.75" date="9/10/2026">
 		- Bug: Include cash balances from investment accounts to the retirement plan report.
 		- Feature: Add two new account types for 529 plan accounts (Education) and HSA health accounts.

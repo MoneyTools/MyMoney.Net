@@ -2175,7 +2175,7 @@ namespace Walkabout.Views
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;            
-            PortfolioReport report = new PortfolioReport(view)
+            PortfolioReport report = new PortfolioReport(view, false)
             {
                 ServiceProvider = this.ServiceProvider,
                 ReportDate = reportDate,
@@ -2232,6 +2232,10 @@ namespace Walkabout.Views
                 selector = new TransactionFilterSelector(selector, this.TransactionFilter);
             }
             var result = selector.GetSelectedTransactions(this.GetSelectorContext());
+            if (result == null)
+            {
+                return new List<Transaction>();
+            }
             if (result is IList<Transaction> list)
             {
                 return list;

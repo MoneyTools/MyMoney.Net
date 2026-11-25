@@ -70,6 +70,7 @@
     <CommandBinding Command="p:AppCommands.CommandTaxReport" Executed="OnTaxReport"/>
     <CommandBinding Command="p:AppCommands.CommandW2Report" Executed="OnCommandW2Report"/>
     <CommandBinding Command="p:AppCommands.CommandReportCashFlow" Executed="OnCommandReportCashFlow"/>
+    <CommandBinding Command="p:AppCommands.CommandReportCashFlowForecast" Executed="OnCommandReportCashFlowForecast"/>
     <CommandBinding Command="p:AppCommands.CommandReportUnaccepted" Executed="OnCommandReportUnaccepted"/>
     <CommandBinding Command="p:AppCommands.CommandFutureBills" Executed="OnCommandFutureBills"/>
     <CommandBinding Command="p:AppCommands.CommandAccountSummary" Executed="OnCommandAccountSummary"/>
@@ -203,9 +204,10 @@
             <MenuItem x:Name="MenuReportsW2Report" Header="W2 and _Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
             <Separator/>
             <MenuItem x:Name="MenuReportsCashFlow" Header="Cash _Flow" Command="p:AppCommands.CommandReportCashFlow"/>
+            <MenuItem x:Name="MenuReportsCashFlowForecast" Header="Cash Flo_w Forecast" Command="p:AppCommands.CommandReportCashFlowForecast"/>
             <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
             <MenuItem x:Name="MenuFutureBills" Header="Future _Bills" Command="p:AppCommands.CommandFutureBills"/>
-            <MenuItem x:Name="MenuAccountSummary" Header="Account _Summary" Command="p:AppCommands.CommandAccountSummary"/>
+            <MenuItem x:Name="MenuAccountSummary" Header="_Account Summary" Command="p:AppCommands.CommandAccountSummary"/>
             <MenuItem x:Name="MenuRetirementPlan" Header="_Retirement Plan" Command="p:AppCommands.CommandRetirementPlan"/>
             
           </MenuItem>

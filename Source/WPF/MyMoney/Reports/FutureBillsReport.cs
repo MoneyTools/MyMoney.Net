@@ -80,8 +80,7 @@ namespace Walkabout.Reports
             foreach (Transaction t in this.myMoney.Transactions.GetAllTransactions())
             {
                 if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Account == null ||
-                    t.Date < start || t.Date > today || t.Payee == null || t.Category == null
-                    || (t.Category.Type != CategoryType.Expense))
+                    t.Date < start || t.Date > today || t.Payee == null || t.Category == null)
                 {
                     continue;
                 }
@@ -110,13 +109,21 @@ namespace Walkabout.Reports
             return Task.CompletedTask;
         }
 
+        class RowData
+        {
+            public DateTime Date { get; set; }
+            public Payee Payee { get; set; }
+            public string Category { get; set; }
+            public double Amount { get; set; }
+        }
+
         private decimal WriteContents(IReportWriter writer, DateTime today, List<Transaction> view)
         {
             decimal total = 0;
             DateTime startDate = new DateTime(today.Year, today.Month, 1);
             DateTime endDate = startDate.AddYears(1);
 
-            var recurring = Payments.FindRecurringPayments(view);
+            var recurring = Payments.FindRecurringPayments(view, today);
 
             while (startDate < endDate)
             {
@@ -140,6 +147,7 @@ namespace Walkabout.Reports
                 }
                 writer.EndHeaderRow();
 
+                List<RowData> rows = new List<RowData>();
                 foreach (var key in recurring.Keys)
                 {
                     var payment = recurring[key];
@@ -149,14 +157,22 @@ namespace Walkabout.Reports
                         (date.Year == startDate.Year && date.Month <= startDate.Month))
                     {
                         var amount = payment.GetNextPrediction();
-                        this.WriteRow(writer, date,
-                            payment.Payee,
-                            payment.Category,
-                            amount);
+                        rows.Add(new RowData() { Date = date, Payee = payment.Payee, Category = payment.Category, Amount = amount });
                         total += (decimal)amount;
                         date = payment.NextDate;
                     }
                 }
+
+                rows.Sort((a, b) => a.Date.CompareTo(b.Date));
+
+                decimal intervalTotal = 0;
+                foreach (var row in rows)
+                {
+                    this.WriteRow(writer, row.Date, row.Payee, row.Category, row.Amount);
+                    intervalTotal += (decimal)row.Amount;
+                }
+
+                this.WriteTally(writer, intervalTotal);
 
                 startDate = startDate.AddMonths(1);
                 writer.EndTable();
@@ -164,7 +180,27 @@ namespace Walkabout.Reports
             return total;
         }
 
-        private void WriteRow(IReportWriter writer, DateTime date, Payee payee, Category category, double amount)
+        private void WriteTally(IReportWriter writer, decimal total)
+        {
+            writer.StartRow();
+            writer.StartCell();
+            writer.EndCell();
+
+            writer.StartCell();
+            writer.WriteParagraph("Total");
+            writer.EndCell();
+
+            writer.StartCell();
+            writer.EndCell();
+
+            writer.StartCell();
+            writer.WriteParagraph(total.ToString("C"));
+            writer.EndCell();
+
+            writer.EndRow();
+        }
+
+        private void WriteRow(IReportWriter writer, DateTime date, Payee payee, string category, double amount)
         {
             writer.StartRow();
             writer.StartCell();
@@ -176,7 +212,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteHyperlink(category.Name, FontStyles.Normal, FontWeights.Normal, (s, e) => this.OnSelectCategory(category));
+            writer.WriteHyperlink(category, FontStyles.Normal, FontWeights.Normal, (s, e) => this.OnSelectCategory(category));
             writer.EndCell();
 
             writer.StartCell();
@@ -188,11 +224,15 @@ namespace Walkabout.Reports
 
         public event EventHandler<Category> CategorySelected;
 
-        private void OnSelectCategory(Category category)
+        private void OnSelectCategory(string category)
         {
             if (CategorySelected != null)
             {
-                CategorySelected(this, category);
+                var cat = this.myMoney.Categories.FindCategory(category);
+                if (cat != null)
+                {
+                    CategorySelected(this, cat);
+                }
             }
         }
 
@@ -208,7 +248,6 @@ namespace Walkabout.Reports
 
         public override void Export(string filename)
         {
-            throw new NotImplementedException();
         }
 
     }

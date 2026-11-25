@@ -10,10 +10,11 @@ namespace Walkabout.Data
     {
         private const int AllowedMissedPayments = 2;
         internal const double AmountSensitivity = 0.5; // % stderr on amount variation (taking inflation into account).
-        internal const double TimeSensitivity = 0.5; // % stderr on date
+        internal const double TimeSensitivity = 0.25; // % stderr on date (1/4 of a month variation is allowed).
 
+        public bool IsIncome { get; internal set; }
         public Payee Payee { get; internal set; }
-        public Category Category { get; internal set; }
+        public string Category { get; internal set; }
 
         public List<Transaction> Transactions { get; set; }
         public double Amount { get; set; }
@@ -30,7 +31,7 @@ namespace Walkabout.Data
         internal struct PaymentKey
         {
             private Payee payee;
-            private Category category;
+            private string category;
             private int hashCode;
 
             public Payee Payee
@@ -42,7 +43,7 @@ namespace Walkabout.Data
                     hashCode = 0;
                 }
             }
-            public Category Category
+            public string Category
             {
                 get => category;
                 set
@@ -68,28 +69,53 @@ namespace Walkabout.Data
                 // return equals if payment and category pair are the same
                 if (this.hashCode == 0)
                 {
-                    this.hashCode = this.Payee.Name.GetHashCode() ^ this.Category.GetFullName().GetHashCode();
+                    this.hashCode = this.Payee.Name.GetHashCode() ^ this.Category.GetHashCode();
                 }
                 return this.hashCode;
             }
         }
 
-
-        public static IDictionary<string, Payments> FindRecurringPayments(List<Transaction> view)
+        public static IDictionary<string, Payments> FindRecurringPayments(IList<Transaction> view, DateTime reportDate)
         {
             Dictionary<PaymentKey, Payments> groupedByPayeeCategory = new Dictionary<PaymentKey, Payments>();
 
             PaymentKey temp = new PaymentKey();
             foreach (Transaction t in view)
             {
+                if (t.Amount >= 0)
+                {
+                    continue;
+                }
+                string category = null;
+                var frequency = CalendarRange.None;
+                if (t.IsSplit)
+                {
+                    if (HasSplitExpenses(t))
+                    {
+                        category = t.PayeeName;
+                    } 
+                }
+                else if (t.Category != null && t.Category.Type == CategoryType.Expense)
+                {
+                    category = t.Category.Name;
+                    frequency = t.Category.Frequency;
+                }
+                
+                if (category == null)
+                {
+                    continue;
+                }
+
                 temp.Payee = t.Payee;
-                temp.Category = t.Category;
+                temp.Category = category;
                 if (!groupedByPayeeCategory.TryGetValue(temp, out Payments payments))
                 {
                     payments = new Payments()
                     {
                         Payee = t.Payee,
-                        Category = t.Category
+                        Category = category,
+                        IsIncome = false,
+                        Frequency = frequency,
                     };
                     groupedByPayeeCategory[temp] = payments;
                 }
@@ -102,13 +128,92 @@ namespace Walkabout.Data
             {
                 var key = pair.Key;
                 var payments = pair.Value;
-                if (payments.ComputeRecurrence())
+                if (payments.ComputeRecurrence(reportDate))
                 {
-                    string sortName = key.Payee.Name + ":" + key.Category.GetFullName();
+                    string sortName = key.Payee.Name + ":" + key.Category;
                     recurring[sortName] = payments;
                 }
             }
             return recurring;
+        }
+
+        private static bool HasSplitExpenses(Transaction t)
+        {
+            if (t.IsSplit)
+            {
+                return t.Splits.GetSplits().Any(s => s.Category != null && s.Category.Type == CategoryType.Expense);
+            }
+            return false;
+        }
+
+        public static IDictionary<string, Payments> FindRecurringIncomes(IList<Transaction> view, DateTime reportDate)
+        {
+            Dictionary<PaymentKey, Payments> groupedByPayeeCategory = new Dictionary<PaymentKey, Payments>();
+
+            PaymentKey temp = new PaymentKey();
+            foreach (Transaction t in view)
+            {
+                if (t.Amount <= 0)
+                {
+                    continue;
+                }
+                string category = null;
+                var frequency = CalendarRange.None;
+                if (t.IsSplit)
+                {
+                    if (HasSplitIncomes(t))
+                    {
+                        category = t.PayeeName;
+                    }
+                }
+                else if (t.Category != null && t.Category.Type == CategoryType.Income)
+                {
+                    category = t.Category.Name;
+                    frequency = t.Category.Frequency;
+                }
+                if (category == null)
+                {
+                    continue;
+                }
+
+                temp.Payee = t.Payee;
+                temp.Category = category;
+                if (!groupedByPayeeCategory.TryGetValue(temp, out Payments payments))
+                {
+                    payments = new Payments()
+                    {
+                        Payee = t.Payee,
+                        Category = category,
+                        IsIncome = true,
+                        Frequency = frequency
+                    };
+                    groupedByPayeeCategory[temp] = payments;
+                }
+                payments.Transactions.Add(t);
+            }
+
+            SortedDictionary<string, Payments> recurring = new SortedDictionary<string, Payments>();
+            // ok, now figure out if the list has a recurring smell to it...
+            foreach (var pair in groupedByPayeeCategory)
+            {
+                var key = pair.Key;
+                var payments = pair.Value;
+                if (payments.ComputeRecurrence(reportDate))
+                {
+                    string sortName = key.Payee.Name + ":" + key.Category;
+                    recurring[sortName] = payments;
+                }
+            }
+            return recurring;
+        }
+
+        private static bool HasSplitIncomes(Transaction t)
+        {
+            if (t.IsSplit)
+            {
+                return t.Splits.GetSplits().Any(s => s.Category != null && s.Category.Type == CategoryType.Income);
+            }
+            return false;
         }
 
         public double GetNextPrediction()
@@ -158,9 +263,8 @@ namespace Walkabout.Data
             return this.GetPredictedAmount();
         }
 
-        public bool ComputeRecurrence()
-        {
-            this.Frequency = this.Category.Frequency;
+        public bool ComputeRecurrence(DateTime reportDate)
+        {            
             if (this.Transactions.Count < 3 && this.Frequency == CalendarRange.None) return false;
             if (this.Frequency == CalendarRange.Never) return false;
 
@@ -170,9 +274,14 @@ namespace Walkabout.Data
                 var account = this.Transactions[0].Account;
                 List<double> amounts = new List<double>(from t in this.Transactions select (double)account.GetNormalizedAmount(t.Amount));
                 var sumAmount = amounts.Sum();
-                if (sumAmount > 0)
+                if (!this.IsIncome && sumAmount > 0)
                 {
                     // not a bill if the amount is positive!
+                    return false;
+                }
+                else if (this.IsIncome && sumAmount < 0)
+                {
+                    // not income
                     return false;
                 }
 
@@ -202,19 +311,21 @@ namespace Walkabout.Data
                         // removing this transaction.
                     }
                 }
-                if (filtered.Count < this.Transactions.Count) 
-                {
-                    // compute the cleaner stddev.
-                    amounts = new List<double>(from t in this.Transactions select (double)account.GetNormalizedAmount(t.Amount));
-                    MathHelpers.LinearRegression(amounts, out double a1, out double b1);
-                    distances = new List<double>(MathHelpers.DistancesToLine(amounts, a1, b1));
-                    sumDistances = distances.Sum();
-                    stdErrAmount = Math.Abs(sumDistances / sumAmount);
-                }
 
                 if (filtered.Count < 3 && this.Frequency == CalendarRange.None)
                 {
                     return false;
+                }
+
+                if (filtered.Count < this.Transactions.Count) 
+                {
+                    // compute the cleaner stddev.
+                    amounts = new List<double>(from t in filtered select (double)account.GetNormalizedAmount(t.Amount));
+                    MathHelpers.LinearRegression(amounts, out double a1, out double b1);
+                    distances = new List<double>(MathHelpers.DistancesToLine(amounts, a1, b1));
+                    sumDistances = distances.Sum();
+                    sumAmount = amounts.Sum();
+                    stdErrAmount = Math.Abs(sumDistances / sumAmount);
                 }
 
                 List<double> daysBetween = new List<double>();
@@ -237,55 +348,58 @@ namespace Walkabout.Data
                 var stdDevDays = MathHelpers.StandardDeviation(daysBetween);
                 var stdErrDays = Math.Abs(stdDevDays / meanDays);
 
-                if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
+                if (/*stdErrDays < TimeSensitivity &&*/ stdErrAmount < AmountSensitivity)
                 {
                     if (meanDays == 1)
                     {
                         this.Frequency = CalendarRange.Daily;
                     }
-                    else if (meanDays == 7)
+                    else if (meanDays <= 12)
                     {
                         this.Frequency = CalendarRange.Weekly;
                     }
-                    else if (meanDays == 14)
+                    else if (meanDays <= 18)
                     {
                         this.Frequency = CalendarRange.BiWeekly;
                     }
-                    else if (meanDays >= 28 && meanDays <= 31)
+                    else if (meanDays <= 40)
                     {
                         this.Frequency = CalendarRange.Monthly;
                     }
-                    else if (meanDays >= 58 && meanDays <= 62)
+                    else if (meanDays <= 80)
                     {
                         this.Frequency = CalendarRange.BiMonthly;
                     }
-                    else if (meanDays >= 88 && meanDays <= 93)
+                    else if (meanDays <= 108)
                     {
                         this.Frequency = CalendarRange.TriMonthly;
                     }
-                    else if (meanDays >= 120 && meanDays <= 124)
+                    else if (meanDays <= 150)
                     {
                         this.Frequency = CalendarRange.Quarterly;
                     }
-                    else if (meanDays >= 180 && meanDays <= 185)
+                    else if (meanDays <= 200)
                     {
                         this.Frequency = CalendarRange.SemiAnnually;
                     }
-                    else if (meanDays >= 720 && meanDays <= 740)
+                    else if (meanDays <= 400)
+                    {
+                        this.Frequency = CalendarRange.BiAnnually;
+                    }
+                    else if (meanDays <= 800)
                     {
                         this.Frequency = CalendarRange.BiAnnually;
                     }
 
-                    var today = DateTime.Today;
-                    // tranactions are sorted in reverse order, so the most recent one is the expected amount.
+                    // transactions are sorted in reverse order, so the most recent one is the expected amount.
                     var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
-                    var steps = (today - this.Transactions.First().Date).TotalDays / meanDays;
+                    var steps = (reportDate - this.Transactions.First().Date).TotalDays / meanDays;
                     if (steps >= AllowedMissedPayments)
                     {
                         return false; // too far back in time to be a current bill.
                     }
                     // skip ahead so bill is in the future (allow for some missed payments).
-                    while (nextDate < today)
+                    while (nextDate < reportDate)
                     {
                         nextDate = nextDate + TimeSpan.FromDays(meanDays);
                     }
